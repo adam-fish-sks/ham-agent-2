@@ -17,6 +17,12 @@ from psycopg2.extras import execute_values
 from datetime import datetime
 from decimal import Decimal
 from dotenv import load_dotenv
+import urllib3
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Suppress InsecureRequestWarning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Load environment variables
 load_dotenv()
@@ -131,7 +137,30 @@ def fetch_assets():
     return all_assets
 
 
-def transform_asset(asset):
+def fetch_asset_detail(asset_id):
+    """Fetch detailed asset info including warehouse location from individual endpoint."""
+    headers = {
+        'Authorization': f'Bearer {WORKWIZE_KEY}',
+        'Accept': 'application/json'
+    }
+    
+    try:
+        url = f'{WORKWIZE_BASE_URL}/assets/{asset_id}'
+        response = requests.get(url, headers=headers, verify=False, timeout=10)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        print(f"    ⚠️  Failed to fetch detail for asset {asset_id}: {str(e)[:50]}")
+        return None
+    finally:
+        # Rate limiting - 10ms delay
+        time.sleep(0.01)
+
+
+def transform_asset(asset, detailed_location=None):
     """Transform API asset data to database format with PII scrubbing."""
     # Extract and scrub data
     asset_id = str(asset.get('id', ''))
@@ -147,7 +176,7 @@ def transform_asset(asset):
             category = str(asset['category'])
     
     status = asset.get('status')
-    serial_number = asset.get('serial_number') or asset.get('serialNumber')
+    serial_number = asset.get('serial_code') or asset.get('serial_number') or asset.get('serialNumber')
     
     # Product ID
     product_id = None
@@ -164,12 +193,17 @@ def transform_asset(asset):
     # Assigned employee - ID only from location.location_detail
     assigned_to_id = None
     location_data = asset.get('location')
+    
+    # Use detailed location if provided (from individual asset endpoint)
+    if detailed_location:
+        location_data = detailed_location
+    
     if location_data and isinstance(location_data, dict):
         location_type = location_data.get('location_type')
-        location_detail = location_data.get('location_detail')
         
-        if location_type == 'employee' and location_detail and isinstance(location_detail, dict):
-            emp_id = location_detail.get('id')
+        if location_type == 'employee':
+            # Employee ID is in location_id when location_type is 'employee'
+            emp_id = location_data.get('location_id')
             if emp_id:
                 assigned_to_id = str(emp_id)
     
@@ -227,16 +261,12 @@ def transform_asset(asset):
     warehouse_id = None
     if location_data and isinstance(location_data, dict):
         location_type = location_data.get('location_type')
-        location_detail = location_data.get('location_detail')
+        location_id = location_data.get('location_id')
         
-        if location_type == 'office' and location_detail and isinstance(location_detail, dict):
-            off_id = location_detail.get('id')
-            if off_id:
-                office_id = str(off_id)
-        elif location_type == 'warehouse' and location_detail and isinstance(location_detail, dict):
-            wh_id = location_detail.get('id')
-            if wh_id:
-                warehouse_id = str(wh_id)
+        if location_type == 'office' and location_id:
+            office_id = str(location_id)
+        elif location_type == 'warehouse' and location_id:
+            warehouse_id = str(location_id)
     
     # Timestamps
     created_at = datetime.now()
@@ -278,13 +308,86 @@ def transform_asset(asset):
 
 
 def populate_assets(assets):
-    """Insert assets into PostgreSQL database."""
+    """Insert assets into PostgreSQL database with warehouse location fetching."""
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     
     try:
-        # Transform all assets
-        asset_data = [transform_asset(asset) for asset in assets]
+        print(f"\n📍 Fetching detailed location data for {len(assets)} assets...")
+        print("   (This includes warehouse/office assignments)")
+        
+        # Fetch detailed info in parallel for warehouse/office data
+        asset_data = []
+        completed = 0
+        batch_size = 100
+        
+        def fetch_and_transform(asset):
+            """Fetch detailed info and transform asset"""
+            asset_id = asset.get('id')
+            detailed_asset = fetch_asset_detail(asset_id)
+            
+            # Use detailed location if available
+            detailed_location = None
+            if detailed_asset and detailed_asset.get('location'):
+                detailed_location = detailed_asset['location']
+            
+            return transform_asset(asset, detailed_location)
+        
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            future_to_asset = {executor.submit(fetch_and_transform, asset): asset for asset in assets}
+            
+            for future in as_completed(future_to_asset):
+                try:
+                    result = future.result()
+                    asset_data.append(result)
+                    completed += 1
+                    
+                    if completed % batch_size == 0:
+                        print(f"   Progress: {completed}/{len(assets)} assets processed")
+                except Exception as e:
+                    # If individual fetch fails, transform with base data
+                    asset = future_to_asset[future]
+                    asset_data.append(transform_asset(asset, None))
+                    completed += 1
+        
+        print(f"   ✓ Completed: {completed}/{len(assets)} assets processed")
+        
+        # Get existing office and warehouse IDs to validate foreign keys
+        cursor.execute("SELECT id FROM offices")
+        existing_office_ids = {str(row[0]) for row in cursor.fetchall()}
+        
+        cursor.execute("SELECT id FROM warehouses")
+        existing_warehouse_ids = {str(row[0]) for row in cursor.fetchall()}
+        
+        # Filter out invalid office/warehouse IDs
+        validated_data = []
+        invalid_offices = 0
+        invalid_warehouses = 0
+        
+        for row in asset_data:
+            # Convert to list to modify
+            row_list = list(row)
+            office_id_idx = 14  # officeId position
+            warehouse_id_idx = 15  # warehouseId position
+            
+            # Validate office ID
+            if row_list[office_id_idx] and row_list[office_id_idx] not in existing_office_ids:
+                row_list[office_id_idx] = None
+                invalid_offices += 1
+            
+            # Validate warehouse ID
+            if row_list[warehouse_id_idx] and row_list[warehouse_id_idx] not in existing_warehouse_ids:
+                row_list[warehouse_id_idx] = None
+                invalid_warehouses += 1
+            
+            validated_data.append(tuple(row_list))
+        
+        if invalid_offices > 0:
+            print(f"   ⚠️  {invalid_offices} assets had invalid office IDs (set to NULL)")
+        if invalid_warehouses > 0:
+            print(f"   ⚠️  {invalid_warehouses} assets had invalid warehouse IDs (set to NULL)")
+        
+        asset_data = validated_data
         
         # Insert query with ON CONFLICT to handle duplicates
         insert_query = """

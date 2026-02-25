@@ -11,9 +11,21 @@ assetsRouter.get('/', async (req, res) => {
     const assets = await prisma.asset.findMany({
       include: {
         product: true,
-        assignedTo: true,
-        office: true,
-        warehouse: true,
+        assignedTo: {
+          include: {
+            address: true,
+          },
+        },
+        office: {
+          include: {
+            address: true,
+          },
+        },
+        warehouse: {
+          include: {
+            address: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -31,9 +43,21 @@ assetsRouter.get('/:id', async (req, res) => {
       where: { id: req.params.id },
       include: {
         product: true,
-        assignedTo: true,
-        office: true,
-        warehouse: true,
+        assignedTo: {
+          include: {
+            address: true,
+          },
+        },
+        office: {
+          include: {
+            address: true,
+          },
+        },
+        warehouse: {
+          include: {
+            address: true,
+          },
+        },
       },
     });
     

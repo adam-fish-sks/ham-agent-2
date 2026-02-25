@@ -5,7 +5,7 @@ import axios from 'axios';
 
 interface Asset {
   id: string;
-  assetTag: string;
+  serialNumber: string | null;
   name: string;
   category: string | null;
   status: string | null;
@@ -22,7 +22,25 @@ interface Asset {
   assignedTo?: {
     firstName: string;
     lastName: string;
+    address?: {
+      country: string | null;
+    } | null;
   };
+  warehouse?: {
+    name: string;
+    code: string;
+    address?: {
+      country: string | null;
+      city: string | null;
+    } | null;
+  } | null;
+  office?: {
+    name: string;
+    address?: {
+      country: string | null;
+      city: string | null;
+    } | null;
+  } | null;
 }
 
 export default function AssetsPage() {
@@ -87,19 +105,22 @@ export default function AssetsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Asset Tag
+                    Serial Number
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Assigned To
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Country
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Category
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Assigned To
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Location
@@ -110,7 +131,7 @@ export default function AssetsPage() {
                 {assets.map((asset) => (
                   <tr key={asset.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {asset.assetTag}
+                      {asset.serialNumber || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {asset.name}
@@ -119,6 +140,21 @@ export default function AssetsPage() {
                           {asset.product.manufacturer}
                         </div>
                       )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {asset.assignedTo ? (
+                        <span title="PII Scrubbed">
+                          {asset.assignedTo.firstName} {asset.assignedTo.lastName}
+                        </span>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {asset.assignedTo?.address?.country || 
+                       asset.warehouse?.address?.country || 
+                       asset.office?.address?.country || 
+                       '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {asset.category || '-'}
@@ -131,15 +167,6 @@ export default function AssetsPage() {
                       }`}>
                         {asset.status || 'unknown'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {asset.assignedTo ? (
-                        <span title="PII Scrubbed">
-                          {asset.assignedTo.firstName} {asset.assignedTo.lastName}
-                        </span>
-                      ) : (
-                        '-'
-                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {asset.location || '-'}

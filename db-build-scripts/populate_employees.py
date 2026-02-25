@@ -16,6 +16,12 @@ import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
 from dotenv import load_dotenv
+import time
+import urllib3
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Suppress InsecureRequestWarning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Load environment variables
 load_dotenv()
@@ -43,6 +49,42 @@ def anonymize_email(email):
         return f"***@{domain}"
     
     return f"{local[0]}***@{domain}"
+
+
+def fetch_employee_address(employee_id):
+    """Fetch address ID for a specific employee."""
+    url = f'{WORKWIZE_BASE_URL}/employees/{employee_id}/addresses'
+    headers = {
+        'Authorization': f'Bearer {WORKWIZE_KEY}',
+        'Accept': 'application/json'
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, verify=False, timeout=10)
+        
+        # If 404, employee has no address
+        if response.status_code == 404:
+            return None
+        
+        response.raise_for_status()
+        data = response.json()
+        
+        # Extract address ID
+        if isinstance(data, dict) and data.get('data'):
+            address_data = data['data']
+            if address_data and address_data.get('id'):
+                return str(address_data['id'])
+        
+        return None
+    except requests.exceptions.Timeout:
+        return None
+    except requests.exceptions.RequestException as e:
+        if hasattr(e, 'response') and e.response and e.response.status_code == 404:
+            return None
+        return None
+    finally:
+        # Small delay to avoid overwhelming API (10 workers * 0.01s = ~100 req/sec max)
+        time.sleep(0.01)
 
 
 def fetch_employees():
@@ -100,7 +142,7 @@ def fetch_employees():
     return all_employees
 
 
-def transform_employee(employee):
+def transform_employee(employee, address_id=None):
     """Transform API employee data to database format with PII scrubbing."""
     # Extract basic data
     employee_id = str(employee.get('id', ''))
@@ -205,11 +247,23 @@ def transform_employee(employee):
         job_title,
         manager_id,
         office_id,
+        address_id,
         start_date,
         end_date,
         created_at,
         updated_at
     )
+
+
+def fetch_employee_with_address(employee):
+    """Fetch address for a single employee."""
+    employee_id = employee.get('id')
+    address_id = None
+    
+    if employee_id:
+        address_id = fetch_employee_address(employee_id)
+    
+    return transform_employee(employee, address_id)
 
 
 def populate_employees(employees):
@@ -218,14 +272,65 @@ def populate_employees(employees):
     cursor = conn.cursor()
     
     try:
-        # Transform all employees
-        employee_data = [transform_employee(employee) for employee in employees]
+        # Get all existing address IDs from database
+        cursor.execute("SELECT id FROM addresses")
+        existing_address_ids = {str(row[0]) for row in cursor.fetchall()}
+        print(f"\n✅ Found {len(existing_address_ids)} addresses in database")
+        
+        # Transform all employees with address data using parallel processing
+        employee_data = []
+        print("\nFetching address data for employees (parallel processing)...")
+        
+        # Use ThreadPoolExecutor for concurrent API calls
+        max_workers = 10  # Concurrent requests
+        batch_size = 100  # Progress update frequency
+        
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_employee = {executor.submit(fetch_employee_with_address, emp): emp for emp in employees}
+            
+            completed = 0
+            for future in as_completed(future_to_employee):
+                try:
+                    result = future.result()
+                    employee_data.append(result)
+                    completed += 1
+                    
+                    if completed % batch_size == 0 or completed == len(employees):
+                        print(f"  Progress: {completed}/{len(employees)} ({completed*100//len(employees)}%)")
+                except Exception as e:
+                    emp = future_to_employee[future]
+                    print(f"  ⚠️  Error processing employee {emp.get('id')}: {e}")
+                    # Add employee without address on error
+                    employee_data.append(transform_employee(emp, None))
+                    completed += 1
+        
+        print(f"\n✅ Fetched address data for {len(employee_data)} employees")
+        
+        # Filter out invalid address IDs (those not in the addresses table)
+        filtered_employee_data = []
+        invalid_address_count = 0
+        for emp_tuple in employee_data:
+            # emp_tuple is (id, firstName, lastName, ..., addressId, ...)
+            # addressId is at index 10
+            address_id = emp_tuple[10]
+            if address_id is None or str(address_id) in existing_address_ids:
+                filtered_employee_data.append(emp_tuple)
+            else:
+                # Set addressId to None for employees with non-existent addresses
+                emp_list = list(emp_tuple)
+                emp_list[10] = None
+                filtered_employee_data.append(tuple(emp_list))
+                invalid_address_count += 1
+        
+        if invalid_address_count > 0:
+            print(f"⚠️  {invalid_address_count} employees have address IDs not in the addresses table (set to NULL)")
         
         # Insert query with ON CONFLICT to handle duplicates
         insert_query = """
             INSERT INTO employees (
                 id, "firstName", "lastName", email, department, role,
-                status, "jobTitle", "managerId", "officeId",
+                status, "jobTitle", "managerId", "officeId", "addressId",
                 "startDate", "endDate", "createdAt", "updatedAt"
             ) VALUES %s
             ON CONFLICT (id) DO UPDATE SET
@@ -238,16 +343,17 @@ def populate_employees(employees):
                 "jobTitle" = EXCLUDED."jobTitle",
                 "managerId" = EXCLUDED."managerId",
                 "officeId" = EXCLUDED."officeId",
+                "addressId" = EXCLUDED."addressId",
                 "startDate" = EXCLUDED."startDate",
                 "endDate" = EXCLUDED."endDate",
                 "updatedAt" = EXCLUDED."updatedAt"
         """
         
-        # Execute batch insert
-        execute_values(cursor, insert_query, employee_data)
+        # Execute batch insert with filtered data
+        execute_values(cursor, insert_query, filtered_employee_data)
         
         conn.commit()
-        print(f"✅ Successfully inserted/updated {len(employee_data)} employees")
+        print(f"✅ Successfully inserted/updated {len(filtered_employee_data)} employees")
         
         # Show summary
         cursor.execute("SELECT COUNT(*) FROM employees")
