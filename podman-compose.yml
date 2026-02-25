@@ -3,11 +3,11 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: ham-agent-postgres
+    container_name: ham-agent-2-postgres
     environment:
-      POSTGRES_USER: ham_agent
-      POSTGRES_PASSWORD: ham_agent_password
-      POSTGRES_DB: ham_agent_db
+      POSTGRES_USER: ham_agent_2
+      POSTGRES_PASSWORD: ham_agent_2_password
+      POSTGRES_DB: ham_agent_2_db
     ports:
       - "5432:5432"
     volumes:

@@ -20,6 +20,9 @@ build/
 .env.local
 .env.*.local
 
+# Data samples (contains real API data)
+data-samples/
+
 # Logs
 logs/
 *.log
