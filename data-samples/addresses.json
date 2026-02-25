@@ -1,0 +1,41 @@
+﻿{
+    "code":  200,
+    "success":  true,
+    "status":  true,
+    "message":  null,
+    "data":  {
+                 "id":  31029,
+                 "city":  "Amsterdam",
+                 "country":  {
+                                 "id":  32,
+                                 "name":  "Netherlands",
+                                 "code":  "NL",
+                                 "requires_tin":  false,
+                                 "invoice_currency":  "EUR"
+                             },
+                 "company_name":  null,
+                 "country_id":  32,
+                 "address_line_1":  "Leidsegracht 38, 38",
+                 "address_line_2":  "",
+                 "region":  null,
+                 "postcode":  "1016 CM",
+                 "postal_code":  "1016 CM",
+                 "additional_address_line":  null,
+                 "name":  "Skillsoft",
+                 "first_name":  "Skillsoft",
+                 "last_name":  "LLC",
+                 "email":  "csm+skillsoft@goworkwize.com",
+                 "phone_number":  "0000000000",
+                 "is_verified":  false
+             },
+    "links":  {
+
+              },
+    "meta":  {
+
+             },
+    "errors":  [
+
+               ],
+    "redirect":  ""
+}

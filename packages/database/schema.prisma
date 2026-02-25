@@ -1,0 +1,180 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Orders table
+model Order {
+  id              String   @id
+  orderNumber     String   @unique
+  status          String
+  orderDate       DateTime
+  deliveryDate    DateTime?
+  totalAmount     Decimal?
+  currency        String?
+  customerId      String?
+  employeeId      String?
+  warehouseId     String?
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  employee        Employee? @relation(fields: [employeeId], references: [id])
+  warehouse       Warehouse? @relation(fields: [warehouseId], references: [id])
+  
+  @@map("orders")
+}
+
+// Products table
+model Product {
+  id              String   @id
+  name            String
+  sku             String?  @unique
+  category        String?
+  description     String?  @db.Text
+  manufacturer    String?
+  model           String?
+  price           Decimal?
+  currency        String?
+  status          String?
+  stockQuantity   Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  assets          Asset[]
+  
+  @@map("products")
+}
+
+// Employees table - PII SCRUBBED
+model Employee {
+  id              String   @id
+  firstName       String   // Scrubbed: "J***"
+  lastName        String   // Scrubbed: "D***"
+  email           String   // Scrubbed: "j***@company.com"
+  department      String?
+  role            String?
+  status          String?
+  jobTitle        String?
+  managerId       String?
+  officeId        String?
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  office          Office?  @relation(fields: [officeId], references: [id])
+  assets          Asset[]
+  orders          Order[]
+  offboards       Offboard[]
+  
+  @@map("employees")
+}
+
+// Assets table - PII SCRUBBED
+model Asset {
+  id              String   @id
+  assetTag        String   @unique
+  name            String
+  category        String?
+  status          String?
+  serialNumber    String?
+  productId       String?
+  assignedToId    String?  // Employee ID only, no name
+  location        String?  // City/State only, no street address
+  purchaseDate    DateTime?
+  purchasePrice   Decimal?
+  currency        String?
+  warrantyExpires DateTime?
+  notes           String?  @db.Text // Scrubbed: emails/phones/SSNs redacted
+  officeId        String?
+  warehouseId     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  product         Product? @relation(fields: [productId], references: [id])
+  assignedTo      Employee? @relation(fields: [assignedToId], references: [id])
+  office          Office?  @relation(fields: [officeId], references: [id])
+  warehouse       Warehouse? @relation(fields: [warehouseId], references: [id])
+  
+  @@map("assets")
+}
+
+// Offices table
+model Office {
+  id              String   @id
+  name            String
+  code            String?  @unique
+  addressId       String?
+  phone           String?
+  email           String?
+  capacity        Int?
+  status          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  address         Address? @relation(fields: [addressId], references: [id])
+  employees       Employee[]
+  assets          Asset[]
+  
+  @@map("offices")
+}
+
+// Warehouses table
+model Warehouse {
+  id              String   @id
+  name            String
+  code            String?  @unique
+  addressId       String?
+  capacity        Int?
+  status          String?
+  type            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  address         Address? @relation(fields: [addressId], references: [id])
+  assets          Asset[]
+  orders          Order[]
+  
+  @@map("warehouses")
+}
+
+// Addresses table - PII SCRUBBED (no street addresses)
+model Address {
+  id              String   @id
+  city            String?  // Kept
+  region          String?  // State/Province - Kept
+  country         String?  // Kept
+  postalCode      String?  // Optional - may be scrubbed
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  offices         Office[]
+  warehouses      Warehouse[]
+  
+  @@map("addresses")
+}
+
+// Offboards table
+model Offboard {
+  id              String   @id
+  employeeId      String
+  offboardDate    DateTime
+  reason          String?
+  status          String?
+  returnedAssets  Boolean  @default(false)
+  notes           String?  @db.Text
+  processedBy     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  employee        Employee @relation(fields: [employeeId], references: [id])
+  
+  @@map("offboards")
+}

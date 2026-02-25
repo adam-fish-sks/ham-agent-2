@@ -1,0 +1,117 @@
+﻿{
+    "value":  [
+                  {
+                      "id":  1,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "LDW",
+                      "created_at":  "2023-06-22T13:39:37.000000Z",
+                      "updated_at":  "2025-04-08T08:17:03.000000Z"
+                  },
+                  {
+                      "id":  2,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "ER3",
+                      "created_at":  "2023-06-22T13:39:37.000000Z",
+                      "updated_at":  "2025-09-09T09:50:40.000000Z"
+                  },
+                  {
+                      "id":  4,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "VEW",
+                      "created_at":  "2023-08-23T10:51:57.000000Z",
+                      "updated_at":  "2025-05-28T17:03:18.000000Z"
+                  },
+                  {
+                      "id":  7,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "LBZ",
+                      "created_at":  "2024-02-12T09:15:27.000000Z",
+                      "updated_at":  "2025-06-05T09:48:49.000000Z"
+                  },
+                  {
+                      "id":  6,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "LPB",
+                      "created_at":  "2024-02-12T09:15:27.000000Z",
+                      "updated_at":  "2025-09-30T10:57:55.000000Z"
+                  },
+                  {
+                      "id":  8,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "YYZ",
+                      "created_at":  "2024-07-17T08:08:55.000000Z",
+                      "updated_at":  "2024-12-20T07:47:46.000000Z"
+                  },
+                  {
+                      "id":  9,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "SYD",
+                      "created_at":  "2024-07-17T08:08:55.000000Z",
+                      "updated_at":  "2025-10-24T07:32:04.000000Z"
+                  },
+                  {
+                      "id":  10,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "LPP",
+                      "created_at":  "2024-09-23T07:50:02.000000Z",
+                      "updated_at":  "2024-12-20T07:47:46.000000Z"
+                  },
+                  {
+                      "id":  11,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "MXW",
+                      "created_at":  "2024-10-21T10:45:02.000000Z",
+                      "updated_at":  "2025-02-05T10:08:21.000000Z"
+                  },
+                  {
+                      "id":  12,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "SIW",
+                      "created_at":  "2025-05-22T08:10:48.000000Z",
+                      "updated_at":  "2025-05-22T08:10:48.000000Z"
+                  },
+                  {
+                      "id":  13,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "SOA",
+                      "created_at":  "2025-05-22T08:10:48.000000Z",
+                      "updated_at":  "2025-11-04T07:04:46.000000Z"
+                  },
+                  {
+                      "id":  14,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "CSW",
+                      "created_at":  "2025-05-22T08:10:48.000000Z",
+                      "updated_at":  "2025-05-22T08:10:48.000000Z"
+                  },
+                  {
+                      "id":  15,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "TYO",
+                      "created_at":  "2026-02-11T09:49:32.000000Z",
+                      "updated_at":  "2026-02-11T09:49:32.000000Z"
+                  },
+                  {
+                      "id":  16,
+                      "warehouse_provider":  "logistic_plus",
+                      "name":  "Logistics Plus",
+                      "warehouse_code":  "DXB",
+                      "created_at":  "2026-02-11T09:49:32.000000Z",
+                      "updated_at":  "2026-02-11T09:49:32.000000Z"
+                  }
+              ],
+    "Count":  14
+}

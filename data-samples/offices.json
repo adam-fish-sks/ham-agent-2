@@ -1,0 +1,7 @@
+{
+  "note": "The /offices endpoint returned 404 Not Found. This endpoint may not be available for this Workwize account or may require different permissions.",
+  "error": "404 Not Found",
+  "attempted_url": "https://prod-back.goworkwize.com/api/public/offices",
+  "date": "2026-02-24",
+  "recommendation": "Check with Workwize support or account administrator to verify if this endpoint is available for your account tier."
+}
