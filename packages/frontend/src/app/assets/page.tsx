@@ -146,6 +146,12 @@ export default function AssetsPage() {
                         <span title="PII Scrubbed">
                           {asset.assignedTo.firstName} {asset.assignedTo.lastName}
                         </span>
+                      ) : asset.warehouse ? (
+                        'Warehouse'
+                      ) : asset.office ? (
+                        <span className="text-purple-600">
+                          Office - {asset.office.name}
+                        </span>
                       ) : (
                         '-'
                       )}

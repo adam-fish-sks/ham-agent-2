@@ -17,6 +17,10 @@ import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
 from dotenv import load_dotenv
+import urllib3
+
+# Suppress InsecureRequestWarning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Load environment variables
 load_dotenv()
