@@ -9,15 +9,44 @@ interface Message {
 }
 
 export default function AIAssistantPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('ai-chat-history');
+    if (saved) {
+      try {
+        setMessages(JSON.parse(saved));
+      } catch (error) {
+        console.error('Failed to load chat history:', error);
+        // Set default message if parsing fails
+        setMessages([
+          {
+            role: 'assistant',
+            content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+          },
+        ]);
+      }
+    } else {
+      // Set default message if no history
+      setMessages([
+        {
+          role: 'assistant',
+          content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+        },
+      ]);
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('ai-chat-history', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,9 +65,13 @@ export default function AIAssistantPage() {
     setLoading(true);
 
     try {
+      // Load custom prompt from localStorage if available
+      const customPrompt = localStorage.getItem('ai-system-prompt') || undefined;
+      
       const response = await axios.post('http://localhost:3001/api/ai/chat', {
         message: input,
         history: messages,
+        customPrompt,
       });
 
       const assistantMessage: Message = {
@@ -65,9 +98,26 @@ export default function AIAssistantPage() {
     }
   };
 
+  const clearHistory = () => {
+    const defaultMessage: Message = {
+      role: 'assistant',
+      content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+    };
+    setMessages([defaultMessage]);
+    localStorage.setItem('ai-chat-history', JSON.stringify([defaultMessage]));
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900">AI Assistant</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-900">AI Assistant</h1>
+        <button
+          onClick={clearHistory}
+          className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+        >
+          Clear History
+        </button>
+      </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="text-blue-900 font-semibold mb-2">🤖 AI Assistant Features:</h3>

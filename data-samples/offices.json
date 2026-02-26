@@ -1,7 +1,1184 @@
 {
-  "note": "The /offices endpoint returned 404 Not Found. This endpoint may not be available for this Workwize account or may require different permissions.",
-  "error": "404 Not Found",
-  "attempted_url": "https://prod-back.goworkwize.com/api/public/offices",
-  "date": "2026-02-24",
-  "recommendation": "Check with Workwize support or account administrator to verify if this endpoint is available for your account tier."
+  "data": [
+    {
+      "id": 133,
+      "name": "Dubai",
+      "employer_id": 415,
+      "manager_id": 45131,
+      "name_preference": "manager",
+      "created_at": "2024-10-17T08:20:44.000000Z",
+      "updated_at": "2024-10-30T15:01:23.000000Z",
+      "manager": {
+        "id": 45131,
+        "name": "Skillsoft",
+        "last_name": "LLC",
+        "phone_number": "0000000000",
+        "personal_phone_number": null,
+        "invite": null,
+        "employer": {
+          "id": 415,
+          "company_name": "Skillsoft",
+          "city": "Hyderabad",
+          "total_employees": 1632,
+          "address_line_1": "JVP",
+          "warehouse_storage_code": "SKI",
+          "postcode": "500090",
+          "catalog_id": 743,
+          "currency_id": 3,
+          "currency": {
+            "id": 3,
+            "icon": "credit ",
+            "name": "CREDIT",
+            "created_at": "2020-12-25T13:32:23.000000Z",
+            "updated_at": "2020-12-25T13:32:23.000000Z"
+          },
+          "message": null,
+          "theme": {
+            "id": 272,
+            "employer_id": 415,
+            "name": "Skillsoft",
+            "theme": {
+              "logo": {
+                "url": "https://workwize-bucket.s3.eu-west-3.amazonaws.com/logo/vTiLzkpjT7ONVGanCLmINnKuvMhJxOxKbEwegTZR.png"
+              },
+              "forms": {
+                "inputText": "#000000",
+                "inputLabel": "#546e7a",
+                "inputBorder": "#0000003b",
+                "inputErrorText": "#f44336",
+                "inputBorderError": "#f44336",
+                "inputBorderHover": "#00000042",
+                "inputLabelFocused": "#ff375a",
+                "inputTextDisabled": "#00000061",
+                "inputBorderFocused": "#ff375a",
+                "inputLabelDisabled": "#00000061",
+                "inputBorderDisabled": "#00000042"
+              },
+              "icons": {
+                "cart": "#141c36",
+                "edit": "#546e7a",
+                "arrow": "#546e7a",
+                "delete": "#263238"
+              },
+              "navBar": {
+                "menu": "#ffffff",
+                "mainText": "#141c36",
+                "nameText": "#7057ff",
+                "activeMenu": "#ffffff",
+                "background": "#faf0e6",
+                "textSecondary": "#A2A6D2",
+                "budgetTextFull": "#ffffff",
+                "helpTextButton": "#ffffff",
+                "budgetTextEmpty": "#ffffff",
+                "budgetContainerFull": "#ff375a",
+                "helpContainerButton": "#7057ff",
+                "budgetContainerEmpty": "#ff375a"
+              },
+              "topBar": {
+                "nameText": "#ffffff",
+                "background": "#7057ff"
+              },
+              "defaults": {
+                "divider": "#0000001f",
+                "mainText": "#000000",
+                "redButton": "#E53935",
+                "blueButton": "#ff375a",
+                "grayButton": "#e0e0e0",
+                "headerText": "#263238",
+                "textButton": "#263238",
+                "breadCrumbs": "#546e7a",
+                "greenButton": "#4caf50",
+                "whiteButton": "#ffffff",
+                "redLabelText": "#d32f2f",
+                "tickCheckout": "#ffffff",
+                "redTextButton": "#ffffff",
+                "secondaryText": "#546E7A",
+                "blueTextButton": "#ffffff",
+                "grayButtonText": "#263238",
+                "greenLabelText": "#43a047",
+                "greenButtonText": "#ffffff",
+                "orangeLabelText": "#ffa000",
+                "whiteButtonText": "#263238",
+                "redLabelContainer": "#d32f2f14",
+                "breadCrumbHighlight": "#263238",
+                "greenLabelContainer": "#43a04714",
+                "orangeLabelContainer": "#ffa00014",
+                "checkoutSuccessMainText": "#263238",
+                "checkoutSuccessSecondaryText": "#263238"
+              },
+              "miniCart": {
+                "mainText": "#141c36",
+                "secondary": "#141c36",
+                "background": "#ffffff",
+                "mainButton": "#ff375a",
+                "mainButtonText": "#141c36",
+                "secondaryButton": "#e0e0e0",
+                "secondaryButtonText": "#141c36"
+              },
+              "background": {
+                "paper": "#ffffff",
+                "background": "#f4f6f8"
+              },
+              "profile_image": {
+                "url": "https://www.seekpng.com/png/small/143-1435868_headshot-silhouette-person-placeholder.png"
+              }
+            },
+            "created_at": "2024-05-30T13:23:41.000000Z",
+            "updated_at": "2024-06-28T14:57:46.000000Z"
+          },
+          "limits": [],
+          "created_at": "2024-05-30T13:23:41.000000Z",
+          "updated_at": "2026-01-15T10:10:27.000000Z",
+          "synced_asset": 1,
+          "countries": [],
+          "org_id": "org_U362wKmi1IKDJvJV",
+          "announcement": null,
+          "settings": [
+            {
+              "id": 7,
+              "name": "Cancel Product",
+              "slug": "cancel-product",
+              "description": ""
+            },
+            {
+              "id": 8,
+              "name": "Offboard Employee",
+              "slug": "offboard-employee",
+              "description": ""
+            },
+            {
+              "id": 9,
+              "name": "Generate Token",
+              "slug": "generate-token",
+              "description": ""
+            },
+            {
+              "id": 11,
+              "name": "Warehouse",
+              "slug": "warehouse",
+              "description": "Warehouse Features"
+            },
+            {
+              "id": 12,
+              "name": "Automations",
+              "slug": "automations",
+              "description": "This will enable automations like auto-off-boarding."
+            },
+            {
+              "id": 15,
+              "name": "Assets in Catalog",
+              "slug": "assets-in-catalog",
+              "description": "Allows assets in catalog feature"
+            }
+          ],
+          "total_orders": 832,
+          "account_type": "live",
+          "total_pending_requests": 0,
+          "should_override": false
+        },
+        "email": "csm+skillsoft@goworkwize.com",
+        "personal_email": null,
+        "created_at": "2024-05-30T13:23:41.000000Z",
+        "updated_at": "2024-06-26T11:44:23.000000Z",
+        "role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "original_role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "sub": null,
+        "read_privacy": 1,
+        "hasAsset": false,
+        "status": "Uninvited",
+        "display_name": "Skillsoft LLC",
+        "is_deactivated": false
+      },
+      "address": {
+        "id": 44870,
+        "city": "Dubai",
+        "country": {
+          "id": 433,
+          "name": "United Arab Emirates",
+          "code": "AE",
+          "requires_tin": false,
+          "invoice_currency": "EUR",
+          "is_offboardable": 1
+        },
+        "company_name": "Skillsoft",
+        "country_id": 433,
+        "province_id": null,
+        "address_line_1": "Block 2a, 1st Floor, Office F-68",
+        "address_line_2": "",
+        "region": null,
+        "postcode": "500716",
+        "postal_code": "500716",
+        "additional_address_line": null,
+        "name": null,
+        "first_name": null,
+        "last_name": null,
+        "email": null,
+        "phone_number": "+971558331989",
+        "is_verified": false
+      }
+    },
+    {
+      "id": 149,
+      "name": "Saudi Arabia",
+      "employer_id": 415,
+      "manager_id": 45131,
+      "name_preference": "manager",
+      "created_at": "2024-10-30T13:43:42.000000Z",
+      "updated_at": "2024-10-30T13:43:42.000000Z",
+      "manager": {
+        "id": 45131,
+        "name": "Skillsoft",
+        "last_name": "LLC",
+        "phone_number": "0000000000",
+        "personal_phone_number": null,
+        "invite": null,
+        "employer": {
+          "id": 415,
+          "company_name": "Skillsoft",
+          "city": "Hyderabad",
+          "total_employees": 1632,
+          "address_line_1": "JVP",
+          "warehouse_storage_code": "SKI",
+          "postcode": "500090",
+          "catalog_id": 743,
+          "currency_id": 3,
+          "currency": {
+            "id": 3,
+            "icon": "credit ",
+            "name": "CREDIT",
+            "created_at": "2020-12-25T13:32:23.000000Z",
+            "updated_at": "2020-12-25T13:32:23.000000Z"
+          },
+          "message": null,
+          "theme": {
+            "id": 272,
+            "employer_id": 415,
+            "name": "Skillsoft",
+            "theme": {
+              "logo": {
+                "url": "https://workwize-bucket.s3.eu-west-3.amazonaws.com/logo/vTiLzkpjT7ONVGanCLmINnKuvMhJxOxKbEwegTZR.png"
+              },
+              "forms": {
+                "inputText": "#000000",
+                "inputLabel": "#546e7a",
+                "inputBorder": "#0000003b",
+                "inputErrorText": "#f44336",
+                "inputBorderError": "#f44336",
+                "inputBorderHover": "#00000042",
+                "inputLabelFocused": "#ff375a",
+                "inputTextDisabled": "#00000061",
+                "inputBorderFocused": "#ff375a",
+                "inputLabelDisabled": "#00000061",
+                "inputBorderDisabled": "#00000042"
+              },
+              "icons": {
+                "cart": "#141c36",
+                "edit": "#546e7a",
+                "arrow": "#546e7a",
+                "delete": "#263238"
+              },
+              "navBar": {
+                "menu": "#ffffff",
+                "mainText": "#141c36",
+                "nameText": "#7057ff",
+                "activeMenu": "#ffffff",
+                "background": "#faf0e6",
+                "textSecondary": "#A2A6D2",
+                "budgetTextFull": "#ffffff",
+                "helpTextButton": "#ffffff",
+                "budgetTextEmpty": "#ffffff",
+                "budgetContainerFull": "#ff375a",
+                "helpContainerButton": "#7057ff",
+                "budgetContainerEmpty": "#ff375a"
+              },
+              "topBar": {
+                "nameText": "#ffffff",
+                "background": "#7057ff"
+              },
+              "defaults": {
+                "divider": "#0000001f",
+                "mainText": "#000000",
+                "redButton": "#E53935",
+                "blueButton": "#ff375a",
+                "grayButton": "#e0e0e0",
+                "headerText": "#263238",
+                "textButton": "#263238",
+                "breadCrumbs": "#546e7a",
+                "greenButton": "#4caf50",
+                "whiteButton": "#ffffff",
+                "redLabelText": "#d32f2f",
+                "tickCheckout": "#ffffff",
+                "redTextButton": "#ffffff",
+                "secondaryText": "#546E7A",
+                "blueTextButton": "#ffffff",
+                "grayButtonText": "#263238",
+                "greenLabelText": "#43a047",
+                "greenButtonText": "#ffffff",
+                "orangeLabelText": "#ffa000",
+                "whiteButtonText": "#263238",
+                "redLabelContainer": "#d32f2f14",
+                "breadCrumbHighlight": "#263238",
+                "greenLabelContainer": "#43a04714",
+                "orangeLabelContainer": "#ffa00014",
+                "checkoutSuccessMainText": "#263238",
+                "checkoutSuccessSecondaryText": "#263238"
+              },
+              "miniCart": {
+                "mainText": "#141c36",
+                "secondary": "#141c36",
+                "background": "#ffffff",
+                "mainButton": "#ff375a",
+                "mainButtonText": "#141c36",
+                "secondaryButton": "#e0e0e0",
+                "secondaryButtonText": "#141c36"
+              },
+              "background": {
+                "paper": "#ffffff",
+                "background": "#f4f6f8"
+              },
+              "profile_image": {
+                "url": "https://www.seekpng.com/png/small/143-1435868_headshot-silhouette-person-placeholder.png"
+              }
+            },
+            "created_at": "2024-05-30T13:23:41.000000Z",
+            "updated_at": "2024-06-28T14:57:46.000000Z"
+          },
+          "limits": [],
+          "created_at": "2024-05-30T13:23:41.000000Z",
+          "updated_at": "2026-01-15T10:10:27.000000Z",
+          "synced_asset": 1,
+          "countries": [],
+          "org_id": "org_U362wKmi1IKDJvJV",
+          "announcement": null,
+          "settings": [
+            {
+              "id": 7,
+              "name": "Cancel Product",
+              "slug": "cancel-product",
+              "description": ""
+            },
+            {
+              "id": 8,
+              "name": "Offboard Employee",
+              "slug": "offboard-employee",
+              "description": ""
+            },
+            {
+              "id": 9,
+              "name": "Generate Token",
+              "slug": "generate-token",
+              "description": ""
+            },
+            {
+              "id": 11,
+              "name": "Warehouse",
+              "slug": "warehouse",
+              "description": "Warehouse Features"
+            },
+            {
+              "id": 12,
+              "name": "Automations",
+              "slug": "automations",
+              "description": "This will enable automations like auto-off-boarding."
+            },
+            {
+              "id": 15,
+              "name": "Assets in Catalog",
+              "slug": "assets-in-catalog",
+              "description": "Allows assets in catalog feature"
+            }
+          ],
+          "total_orders": 832,
+          "account_type": "live",
+          "total_pending_requests": 0,
+          "should_override": false
+        },
+        "email": "csm+skillsoft@goworkwize.com",
+        "personal_email": null,
+        "created_at": "2024-05-30T13:23:41.000000Z",
+        "updated_at": "2024-06-26T11:44:23.000000Z",
+        "role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "original_role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "sub": null,
+        "read_privacy": 1,
+        "hasAsset": false,
+        "status": "Uninvited",
+        "display_name": "Skillsoft LLC",
+        "is_deactivated": false
+      },
+      "address": {
+        "id": 45525,
+        "city": "Riyadh",
+        "country": {
+          "id": 402,
+          "name": "Saudi Arabia",
+          "code": "SA",
+          "requires_tin": false,
+          "invoice_currency": "EUR",
+          "is_offboardable": 0
+        },
+        "company_name": "Skillsoft",
+        "country_id": 402,
+        "province_id": null,
+        "address_line_1": "Al Urubah Rd, Al Wurud Dist",
+        "address_line_2": "Building Number 393",
+        "region": null,
+        "postcode": "12251",
+        "postal_code": "12251",
+        "additional_address_line": null,
+        "name": null,
+        "first_name": null,
+        "last_name": null,
+        "email": null,
+        "phone_number": "+966593300117",
+        "is_verified": false
+      }
+    },
+    {
+      "id": 150,
+      "name": "Egypt",
+      "employer_id": 415,
+      "manager_id": 45131,
+      "name_preference": "manager",
+      "created_at": "2024-10-30T13:50:29.000000Z",
+      "updated_at": "2024-10-30T13:50:29.000000Z",
+      "manager": {
+        "id": 45131,
+        "name": "Skillsoft",
+        "last_name": "LLC",
+        "phone_number": "0000000000",
+        "personal_phone_number": null,
+        "invite": null,
+        "employer": {
+          "id": 415,
+          "company_name": "Skillsoft",
+          "city": "Hyderabad",
+          "total_employees": 1632,
+          "address_line_1": "JVP",
+          "warehouse_storage_code": "SKI",
+          "postcode": "500090",
+          "catalog_id": 743,
+          "currency_id": 3,
+          "currency": {
+            "id": 3,
+            "icon": "credit ",
+            "name": "CREDIT",
+            "created_at": "2020-12-25T13:32:23.000000Z",
+            "updated_at": "2020-12-25T13:32:23.000000Z"
+          },
+          "message": null,
+          "theme": {
+            "id": 272,
+            "employer_id": 415,
+            "name": "Skillsoft",
+            "theme": {
+              "logo": {
+                "url": "https://workwize-bucket.s3.eu-west-3.amazonaws.com/logo/vTiLzkpjT7ONVGanCLmINnKuvMhJxOxKbEwegTZR.png"
+              },
+              "forms": {
+                "inputText": "#000000",
+                "inputLabel": "#546e7a",
+                "inputBorder": "#0000003b",
+                "inputErrorText": "#f44336",
+                "inputBorderError": "#f44336",
+                "inputBorderHover": "#00000042",
+                "inputLabelFocused": "#ff375a",
+                "inputTextDisabled": "#00000061",
+                "inputBorderFocused": "#ff375a",
+                "inputLabelDisabled": "#00000061",
+                "inputBorderDisabled": "#00000042"
+              },
+              "icons": {
+                "cart": "#141c36",
+                "edit": "#546e7a",
+                "arrow": "#546e7a",
+                "delete": "#263238"
+              },
+              "navBar": {
+                "menu": "#ffffff",
+                "mainText": "#141c36",
+                "nameText": "#7057ff",
+                "activeMenu": "#ffffff",
+                "background": "#faf0e6",
+                "textSecondary": "#A2A6D2",
+                "budgetTextFull": "#ffffff",
+                "helpTextButton": "#ffffff",
+                "budgetTextEmpty": "#ffffff",
+                "budgetContainerFull": "#ff375a",
+                "helpContainerButton": "#7057ff",
+                "budgetContainerEmpty": "#ff375a"
+              },
+              "topBar": {
+                "nameText": "#ffffff",
+                "background": "#7057ff"
+              },
+              "defaults": {
+                "divider": "#0000001f",
+                "mainText": "#000000",
+                "redButton": "#E53935",
+                "blueButton": "#ff375a",
+                "grayButton": "#e0e0e0",
+                "headerText": "#263238",
+                "textButton": "#263238",
+                "breadCrumbs": "#546e7a",
+                "greenButton": "#4caf50",
+                "whiteButton": "#ffffff",
+                "redLabelText": "#d32f2f",
+                "tickCheckout": "#ffffff",
+                "redTextButton": "#ffffff",
+                "secondaryText": "#546E7A",
+                "blueTextButton": "#ffffff",
+                "grayButtonText": "#263238",
+                "greenLabelText": "#43a047",
+                "greenButtonText": "#ffffff",
+                "orangeLabelText": "#ffa000",
+                "whiteButtonText": "#263238",
+                "redLabelContainer": "#d32f2f14",
+                "breadCrumbHighlight": "#263238",
+                "greenLabelContainer": "#43a04714",
+                "orangeLabelContainer": "#ffa00014",
+                "checkoutSuccessMainText": "#263238",
+                "checkoutSuccessSecondaryText": "#263238"
+              },
+              "miniCart": {
+                "mainText": "#141c36",
+                "secondary": "#141c36",
+                "background": "#ffffff",
+                "mainButton": "#ff375a",
+                "mainButtonText": "#141c36",
+                "secondaryButton": "#e0e0e0",
+                "secondaryButtonText": "#141c36"
+              },
+              "background": {
+                "paper": "#ffffff",
+                "background": "#f4f6f8"
+              },
+              "profile_image": {
+                "url": "https://www.seekpng.com/png/small/143-1435868_headshot-silhouette-person-placeholder.png"
+              }
+            },
+            "created_at": "2024-05-30T13:23:41.000000Z",
+            "updated_at": "2024-06-28T14:57:46.000000Z"
+          },
+          "limits": [],
+          "created_at": "2024-05-30T13:23:41.000000Z",
+          "updated_at": "2026-01-15T10:10:27.000000Z",
+          "synced_asset": 1,
+          "countries": [],
+          "org_id": "org_U362wKmi1IKDJvJV",
+          "announcement": null,
+          "settings": [
+            {
+              "id": 7,
+              "name": "Cancel Product",
+              "slug": "cancel-product",
+              "description": ""
+            },
+            {
+              "id": 8,
+              "name": "Offboard Employee",
+              "slug": "offboard-employee",
+              "description": ""
+            },
+            {
+              "id": 9,
+              "name": "Generate Token",
+              "slug": "generate-token",
+              "description": ""
+            },
+            {
+              "id": 11,
+              "name": "Warehouse",
+              "slug": "warehouse",
+              "description": "Warehouse Features"
+            },
+            {
+              "id": 12,
+              "name": "Automations",
+              "slug": "automations",
+              "description": "This will enable automations like auto-off-boarding."
+            },
+            {
+              "id": 15,
+              "name": "Assets in Catalog",
+              "slug": "assets-in-catalog",
+              "description": "Allows assets in catalog feature"
+            }
+          ],
+          "total_orders": 832,
+          "account_type": "live",
+          "total_pending_requests": 0,
+          "should_override": false
+        },
+        "email": "csm+skillsoft@goworkwize.com",
+        "personal_email": null,
+        "created_at": "2024-05-30T13:23:41.000000Z",
+        "updated_at": "2024-06-26T11:44:23.000000Z",
+        "role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "original_role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "sub": null,
+        "read_privacy": 1,
+        "hasAsset": false,
+        "status": "Uninvited",
+        "display_name": "Skillsoft LLC",
+        "is_deactivated": false
+      },
+      "address": {
+        "id": 45526,
+        "city": "Cairo",
+        "country": {
+          "id": 446,
+          "name": "Egypt",
+          "code": "EG",
+          "requires_tin": false,
+          "invoice_currency": "EUR",
+          "is_offboardable": 0
+        },
+        "company_name": "Skillsoft",
+        "country_id": 446,
+        "province_id": null,
+        "address_line_1": "1141/3 Extension Abd El-Hameed Badawi",
+        "address_line_2": "Sheraton Buildings, El Nozha",
+        "region": null,
+        "postcode": "11799",
+        "postal_code": "11799",
+        "additional_address_line": null,
+        "name": null,
+        "first_name": null,
+        "last_name": null,
+        "email": null,
+        "phone_number": "+19844592006",
+        "is_verified": false
+      }
+    },
+    {
+      "id": 151,
+      "name": "JVP",
+      "employer_id": 415,
+      "manager_id": 66405,
+      "name_preference": "manager",
+      "created_at": "2024-10-30T15:00:20.000000Z",
+      "updated_at": "2024-12-11T10:10:35.000000Z",
+      "manager": {
+        "id": 66405,
+        "name": "Vamshikrishna",
+        "last_name": "Dudyala",
+        "phone_number": "917259777748",
+        "personal_phone_number": "917259777748",
+        "invite": {
+          "id": 27518,
+          "email": "vamshikrishna.dudyala@skillsoft.com",
+          "status": "Accepted",
+          "department_id": 2372,
+          "invitee_role_id": 4,
+          "name": null,
+          "last_name": null,
+          "created_at": "2024-11-07T15:12:35.000000Z",
+          "updated_at": "2025-01-29T06:44:32.000000Z"
+        },
+        "employer": {
+          "id": 415,
+          "company_name": "Skillsoft",
+          "city": "Hyderabad",
+          "total_employees": 1632,
+          "address_line_1": "JVP",
+          "warehouse_storage_code": "SKI",
+          "postcode": "500090",
+          "catalog_id": 743,
+          "currency_id": 3,
+          "currency": {
+            "id": 3,
+            "icon": "credit ",
+            "name": "CREDIT",
+            "created_at": "2020-12-25T13:32:23.000000Z",
+            "updated_at": "2020-12-25T13:32:23.000000Z"
+          },
+          "message": null,
+          "theme": {
+            "id": 272,
+            "employer_id": 415,
+            "name": "Skillsoft",
+            "theme": {
+              "logo": {
+                "url": "https://workwize-bucket.s3.eu-west-3.amazonaws.com/logo/vTiLzkpjT7ONVGanCLmINnKuvMhJxOxKbEwegTZR.png"
+              },
+              "forms": {
+                "inputText": "#000000",
+                "inputLabel": "#546e7a",
+                "inputBorder": "#0000003b",
+                "inputErrorText": "#f44336",
+                "inputBorderError": "#f44336",
+                "inputBorderHover": "#00000042",
+                "inputLabelFocused": "#ff375a",
+                "inputTextDisabled": "#00000061",
+                "inputBorderFocused": "#ff375a",
+                "inputLabelDisabled": "#00000061",
+                "inputBorderDisabled": "#00000042"
+              },
+              "icons": {
+                "cart": "#141c36",
+                "edit": "#546e7a",
+                "arrow": "#546e7a",
+                "delete": "#263238"
+              },
+              "navBar": {
+                "menu": "#ffffff",
+                "mainText": "#141c36",
+                "nameText": "#7057ff",
+                "activeMenu": "#ffffff",
+                "background": "#faf0e6",
+                "textSecondary": "#A2A6D2",
+                "budgetTextFull": "#ffffff",
+                "helpTextButton": "#ffffff",
+                "budgetTextEmpty": "#ffffff",
+                "budgetContainerFull": "#ff375a",
+                "helpContainerButton": "#7057ff",
+                "budgetContainerEmpty": "#ff375a"
+              },
+              "topBar": {
+                "nameText": "#ffffff",
+                "background": "#7057ff"
+              },
+              "defaults": {
+                "divider": "#0000001f",
+                "mainText": "#000000",
+                "redButton": "#E53935",
+                "blueButton": "#ff375a",
+                "grayButton": "#e0e0e0",
+                "headerText": "#263238",
+                "textButton": "#263238",
+                "breadCrumbs": "#546e7a",
+                "greenButton": "#4caf50",
+                "whiteButton": "#ffffff",
+                "redLabelText": "#d32f2f",
+                "tickCheckout": "#ffffff",
+                "redTextButton": "#ffffff",
+                "secondaryText": "#546E7A",
+                "blueTextButton": "#ffffff",
+                "grayButtonText": "#263238",
+                "greenLabelText": "#43a047",
+                "greenButtonText": "#ffffff",
+                "orangeLabelText": "#ffa000",
+                "whiteButtonText": "#263238",
+                "redLabelContainer": "#d32f2f14",
+                "breadCrumbHighlight": "#263238",
+                "greenLabelContainer": "#43a04714",
+                "orangeLabelContainer": "#ffa00014",
+                "checkoutSuccessMainText": "#263238",
+                "checkoutSuccessSecondaryText": "#263238"
+              },
+              "miniCart": {
+                "mainText": "#141c36",
+                "secondary": "#141c36",
+                "background": "#ffffff",
+                "mainButton": "#ff375a",
+                "mainButtonText": "#141c36",
+                "secondaryButton": "#e0e0e0",
+                "secondaryButtonText": "#141c36"
+              },
+              "background": {
+                "paper": "#ffffff",
+                "background": "#f4f6f8"
+              },
+              "profile_image": {
+                "url": "https://www.seekpng.com/png/small/143-1435868_headshot-silhouette-person-placeholder.png"
+              }
+            },
+            "created_at": "2024-05-30T13:23:41.000000Z",
+            "updated_at": "2024-06-28T14:57:46.000000Z"
+          },
+          "limits": [],
+          "created_at": "2024-05-30T13:23:41.000000Z",
+          "updated_at": "2026-01-15T10:10:27.000000Z",
+          "synced_asset": 1,
+          "countries": [],
+          "org_id": "org_U362wKmi1IKDJvJV",
+          "announcement": null,
+          "settings": [
+            {
+              "id": 7,
+              "name": "Cancel Product",
+              "slug": "cancel-product",
+              "description": ""
+            },
+            {
+              "id": 8,
+              "name": "Offboard Employee",
+              "slug": "offboard-employee",
+              "description": ""
+            },
+            {
+              "id": 9,
+              "name": "Generate Token",
+              "slug": "generate-token",
+              "description": ""
+            },
+            {
+              "id": 11,
+              "name": "Warehouse",
+              "slug": "warehouse",
+              "description": "Warehouse Features"
+            },
+            {
+              "id": 12,
+              "name": "Automations",
+              "slug": "automations",
+              "description": "This will enable automations like auto-off-boarding."
+            },
+            {
+              "id": 15,
+              "name": "Assets in Catalog",
+              "slug": "assets-in-catalog",
+              "description": "Allows assets in catalog feature"
+            }
+          ],
+          "total_orders": 832,
+          "account_type": "live",
+          "total_pending_requests": 0,
+          "should_override": false
+        },
+        "email": "vamshikrishna.dudyala@skillsoft.com",
+        "personal_email": null,
+        "created_at": "2024-11-07T15:12:35.000000Z",
+        "updated_at": "2025-03-07T12:19:56.000000Z",
+        "role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "original_role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "sub": null,
+        "read_privacy": 1,
+        "hasAsset": false,
+        "status": "Accepted",
+        "display_name": "Vamshikrishna Dudyala",
+        "is_deactivated": false
+      },
+      "address": {
+        "id": 45533,
+        "city": "Telangana",
+        "country": {
+          "id": 329,
+          "name": "India",
+          "code": "IN",
+          "requires_tin": true,
+          "invoice_currency": "INR",
+          "is_offboardable": 1
+        },
+        "company_name": "Skillsoft",
+        "country_id": 329,
+        "province_id": null,
+        "address_line_1": "3rd floor, JVP Building",
+        "address_line_2": "Plot No. 5, APIIC Layout, Hitech City, Madhapur",
+        "region": null,
+        "postcode": "500081",
+        "postal_code": "500081",
+        "additional_address_line": null,
+        "name": null,
+        "first_name": null,
+        "last_name": null,
+        "email": null,
+        "phone_number": "+9100067767",
+        "is_verified": false
+      }
+    },
+    {
+      "id": 583,
+      "name": "Nieuwegein( Netherlands)- GK",
+      "employer_id": 415,
+      "manager_id": 66405,
+      "name_preference": "employee",
+      "created_at": "2025-08-26T13:54:22.000000Z",
+      "updated_at": "2025-08-26T13:54:22.000000Z",
+      "manager": {
+        "id": 66405,
+        "name": "Vamshikrishna",
+        "last_name": "Dudyala",
+        "phone_number": "917259777748",
+        "personal_phone_number": "917259777748",
+        "invite": {
+          "id": 27518,
+          "email": "vamshikrishna.dudyala@skillsoft.com",
+          "status": "Accepted",
+          "department_id": 2372,
+          "invitee_role_id": 4,
+          "name": null,
+          "last_name": null,
+          "created_at": "2024-11-07T15:12:35.000000Z",
+          "updated_at": "2025-01-29T06:44:32.000000Z"
+        },
+        "employer": {
+          "id": 415,
+          "company_name": "Skillsoft",
+          "city": "Hyderabad",
+          "total_employees": 1632,
+          "address_line_1": "JVP",
+          "warehouse_storage_code": "SKI",
+          "postcode": "500090",
+          "catalog_id": 743,
+          "currency_id": 3,
+          "currency": {
+            "id": 3,
+            "icon": "credit ",
+            "name": "CREDIT",
+            "created_at": "2020-12-25T13:32:23.000000Z",
+            "updated_at": "2020-12-25T13:32:23.000000Z"
+          },
+          "message": null,
+          "theme": {
+            "id": 272,
+            "employer_id": 415,
+            "name": "Skillsoft",
+            "theme": {
+              "logo": {
+                "url": "https://workwize-bucket.s3.eu-west-3.amazonaws.com/logo/vTiLzkpjT7ONVGanCLmINnKuvMhJxOxKbEwegTZR.png"
+              },
+              "forms": {
+                "inputText": "#000000",
+                "inputLabel": "#546e7a",
+                "inputBorder": "#0000003b",
+                "inputErrorText": "#f44336",
+                "inputBorderError": "#f44336",
+                "inputBorderHover": "#00000042",
+                "inputLabelFocused": "#ff375a",
+                "inputTextDisabled": "#00000061",
+                "inputBorderFocused": "#ff375a",
+                "inputLabelDisabled": "#00000061",
+                "inputBorderDisabled": "#00000042"
+              },
+              "icons": {
+                "cart": "#141c36",
+                "edit": "#546e7a",
+                "arrow": "#546e7a",
+                "delete": "#263238"
+              },
+              "navBar": {
+                "menu": "#ffffff",
+                "mainText": "#141c36",
+                "nameText": "#7057ff",
+                "activeMenu": "#ffffff",
+                "background": "#faf0e6",
+                "textSecondary": "#A2A6D2",
+                "budgetTextFull": "#ffffff",
+                "helpTextButton": "#ffffff",
+                "budgetTextEmpty": "#ffffff",
+                "budgetContainerFull": "#ff375a",
+                "helpContainerButton": "#7057ff",
+                "budgetContainerEmpty": "#ff375a"
+              },
+              "topBar": {
+                "nameText": "#ffffff",
+                "background": "#7057ff"
+              },
+              "defaults": {
+                "divider": "#0000001f",
+                "mainText": "#000000",
+                "redButton": "#E53935",
+                "blueButton": "#ff375a",
+                "grayButton": "#e0e0e0",
+                "headerText": "#263238",
+                "textButton": "#263238",
+                "breadCrumbs": "#546e7a",
+                "greenButton": "#4caf50",
+                "whiteButton": "#ffffff",
+                "redLabelText": "#d32f2f",
+                "tickCheckout": "#ffffff",
+                "redTextButton": "#ffffff",
+                "secondaryText": "#546E7A",
+                "blueTextButton": "#ffffff",
+                "grayButtonText": "#263238",
+                "greenLabelText": "#43a047",
+                "greenButtonText": "#ffffff",
+                "orangeLabelText": "#ffa000",
+                "whiteButtonText": "#263238",
+                "redLabelContainer": "#d32f2f14",
+                "breadCrumbHighlight": "#263238",
+                "greenLabelContainer": "#43a04714",
+                "orangeLabelContainer": "#ffa00014",
+                "checkoutSuccessMainText": "#263238",
+                "checkoutSuccessSecondaryText": "#263238"
+              },
+              "miniCart": {
+                "mainText": "#141c36",
+                "secondary": "#141c36",
+                "background": "#ffffff",
+                "mainButton": "#ff375a",
+                "mainButtonText": "#141c36",
+                "secondaryButton": "#e0e0e0",
+                "secondaryButtonText": "#141c36"
+              },
+              "background": {
+                "paper": "#ffffff",
+                "background": "#f4f6f8"
+              },
+              "profile_image": {
+                "url": "https://www.seekpng.com/png/small/143-1435868_headshot-silhouette-person-placeholder.png"
+              }
+            },
+            "created_at": "2024-05-30T13:23:41.000000Z",
+            "updated_at": "2024-06-28T14:57:46.000000Z"
+          },
+          "limits": [],
+          "created_at": "2024-05-30T13:23:41.000000Z",
+          "updated_at": "2026-01-15T10:10:27.000000Z",
+          "synced_asset": 1,
+          "countries": [],
+          "org_id": "org_U362wKmi1IKDJvJV",
+          "announcement": null,
+          "settings": [
+            {
+              "id": 7,
+              "name": "Cancel Product",
+              "slug": "cancel-product",
+              "description": ""
+            },
+            {
+              "id": 8,
+              "name": "Offboard Employee",
+              "slug": "offboard-employee",
+              "description": ""
+            },
+            {
+              "id": 9,
+              "name": "Generate Token",
+              "slug": "generate-token",
+              "description": ""
+            },
+            {
+              "id": 11,
+              "name": "Warehouse",
+              "slug": "warehouse",
+              "description": "Warehouse Features"
+            },
+            {
+              "id": 12,
+              "name": "Automations",
+              "slug": "automations",
+              "description": "This will enable automations like auto-off-boarding."
+            },
+            {
+              "id": 15,
+              "name": "Assets in Catalog",
+              "slug": "assets-in-catalog",
+              "description": "Allows assets in catalog feature"
+            }
+          ],
+          "total_orders": 832,
+          "account_type": "live",
+          "total_pending_requests": 0,
+          "should_override": false
+        },
+        "email": "vamshikrishna.dudyala@skillsoft.com",
+        "personal_email": null,
+        "created_at": "2024-11-07T15:12:35.000000Z",
+        "updated_at": "2025-03-07T12:19:56.000000Z",
+        "role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "original_role": {
+          "id": 4,
+          "display_name": "Employer Admin",
+          "name": "employer-admin"
+        },
+        "sub": null,
+        "read_privacy": 1,
+        "hasAsset": false,
+        "status": "Accepted",
+        "display_name": "Vamshikrishna Dudyala",
+        "is_deactivated": false
+      },
+      "address": {
+        "id": 1049133,
+        "city": "Nieuwegein",
+        "country": {
+          "id": 32,
+          "name": "Netherlands",
+          "code": "NL",
+          "requires_tin": false,
+          "invoice_currency": "EUR",
+          "is_offboardable": 1
+        },
+        "company_name": "SkillSoft",
+        "country_id": 32,
+        "province_id": null,
+        "address_line_1": "Iepenhoeve 5",
+        "address_line_2": "",
+        "region": null,
+        "postcode": "3438",
+        "postal_code": "3438",
+        "additional_address_line": null,
+        "name": null,
+        "first_name": null,
+        "last_name": null,
+        "email": null,
+        "phone_number": "+31 0631979160",
+        "is_verified": false
+      }
+    }
+  ],
+  "links": {
+    "first": "https://prod-back.goworkwize.com/api/public/offices?page=1",
+    "last": "https://prod-back.goworkwize.com/api/public/offices?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "page": null,
+        "active": false
+      },
+      {
+        "url": "https://prod-back.goworkwize.com/api/public/offices?page=1",
+        "label": "1",
+        "page": 1,
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "page": null,
+        "active": false
+      }
+    ],
+    "path": "https://prod-back.goworkwize.com/api/public/offices",
+    "per_page": 20,
+    "to": 5,
+    "total": 5
+  }
 }

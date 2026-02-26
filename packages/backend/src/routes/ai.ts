@@ -91,7 +91,7 @@ async function queryDatabase(query: string): Promise<any> {
 // Chat with AI assistant
 aiRouter.post('/chat', async (req, res) => {
   try {
-    const { message, history = [] } = req.body;
+    const { message, history = [], customPrompt } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -100,10 +100,8 @@ aiRouter.post('/chat', async (req, res) => {
     // Get database context
     const dbContext = await getDatabaseContext();
 
-    // Build conversation context
-    const systemMessage = {
-      role: 'system',
-      content: `You are a helpful AI assistant for the HAM Agent Workwize Management Platform. 
+    // Default system prompt
+    const defaultPrompt = `You are a helpful AI assistant for the HAM Agent Workwize Management Platform. 
 You have access to a database with cached data from Workwize API.
 
 IMPORTANT: All data in the database has been PII-scrubbed:
@@ -112,15 +110,20 @@ IMPORTANT: All data in the database has been PII-scrubbed:
 - Street addresses are removed (only city/state kept)
 - Asset notes have PII patterns removed
 
-${dbContext}
-
 When users ask questions:
 1. Analyze what data they need
 2. Let them know you'll query the database
 3. Provide insights based on the scrubbed data
 4. Remind them that names/emails are redacted for privacy
 
-Be helpful and conversational. If you need to query data, explain what you're looking for.`,
+Be helpful and conversational. If you need to query data, explain what you're looking for.`;
+
+    // Build conversation context with custom or default prompt
+    const systemMessage = {
+      role: 'system',
+      content: `${customPrompt || defaultPrompt}
+
+${dbContext}`,
     };
 
     // Query database if needed
