@@ -16,14 +16,16 @@ import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from dotenv import load_dotenv
 import urllib3
 
 # Suppress InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from project root
+project_root = Path(__file__).parent.parent
+load_dotenv(project_root / '.env')
 
 # Configuration
 WORKWIZE_KEY = os.getenv('WORKWIZE_KEY')
@@ -167,6 +169,26 @@ def transform_order(order):
     # Notes
     notes = order.get('notes') or order.get('description')
     
+    # New fields from API
+    po_number = order.get('po_number') or order.get('poNumber')
+    total_products = order.get('total_products') or order.get('totalProducts')
+    
+    # Receiver info
+    receiver = order.get('receiver')
+    # receiver_type already fetched above
+    
+    express_delivery = order.get('express_delivery', False) or order.get('expressDelivery', False)
+    
+    # Shipping info - store as JSON string
+    import json
+    shipping_info = None
+    if order.get('shipping_info') or order.get('shippingInfo'):
+        try:
+            shipping_data = order.get('shipping_info') or order.get('shippingInfo')
+            shipping_info = json.dumps(shipping_data)
+        except:
+            pass
+    
     # Timestamps
     created_at = order_date  # Use order date as created
     
@@ -190,6 +212,12 @@ def transform_order(order):
         employee_id,
         warehouse_id,
         notes,
+        po_number,
+        total_products,
+        receiver,
+        receiver_type,
+        express_delivery,
+        shipping_info,
         created_at,
         updated_at
     )
@@ -209,7 +237,9 @@ def populate_orders(orders):
             INSERT INTO orders (
                 id, "orderNumber", status, "orderDate", "deliveryDate",
                 "totalAmount", currency, "customerId", "employeeId",
-                "warehouseId", notes, "createdAt", "updatedAt"
+                "warehouseId", notes, "poNumber", "totalProducts",
+                receiver, "receiverType", "expressDelivery", "shippingInfo",
+                "createdAt", "updatedAt"
             ) VALUES %s
             ON CONFLICT (id) DO UPDATE SET
                 "orderNumber" = EXCLUDED."orderNumber",
@@ -222,6 +252,12 @@ def populate_orders(orders):
                 "employeeId" = EXCLUDED."employeeId",
                 "warehouseId" = EXCLUDED."warehouseId",
                 notes = EXCLUDED.notes,
+                "poNumber" = EXCLUDED."poNumber",
+                "totalProducts" = EXCLUDED."totalProducts",
+                receiver = EXCLUDED.receiver,
+                "receiverType" = EXCLUDED."receiverType",
+                "expressDelivery" = EXCLUDED."expressDelivery",
+                "shippingInfo" = EXCLUDED."shippingInfo",
                 "updatedAt" = EXCLUDED."updatedAt"
         """
         

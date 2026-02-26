@@ -11,14 +11,20 @@ generator client {
 model Order {
   id              String   @id
   orderNumber     String   @unique
+  poNumber        String?  // Purchase order number from API
   status          String
   orderDate       DateTime
   deliveryDate    DateTime?
   totalAmount     Decimal?
+  totalProducts   Int?     // Number of products in order
   currency        String?
   customerId      String?
   employeeId      String?
   warehouseId     String?
+  receiver        String?  // Receiver name from API
+  receiverType    String?  // employee, office, warehouse
+  expressDelivery Boolean  @default(false)
+  shippingInfo    Json?    // Complete shipping address as JSON
   notes           String?  @db.Text
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -52,27 +58,32 @@ model Product {
 
 // Employees table - PII SCRUBBED
 model Employee {
-  id              String   @id
-  firstName       String   // Scrubbed: "J***"
-  lastName        String   // Scrubbed: "D***"
-  email           String   // Scrubbed: "j***@company.com"
-  department      String?
-  role            String?
-  status          String?
-  jobTitle        String?
-  managerId       String?
-  officeId        String?
-  addressId       String?
-  startDate       DateTime?
-  endDate         DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                  String   @id
+  firstName           String   // Scrubbed: "J***"
+  lastName            String   // Scrubbed: "D***"
+  email               String   // Scrubbed: "j***@company.com"
+  team                String?  // Team name from API
+  foreignId           String?  // External system reference
+  registrationStatus  String?  // Uninvited, Invited, Registered, etc.
+  isDeactivated       Boolean  @default(false)
+  userId              String?  // Workwize user account ID
+  department          String?  // Department name (simplified from API object)
+  role                String?
+  status              String?
+  jobTitle            String?
+  managerId           String?
+  officeId            String?
+  addressId           String?
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
   
-  office          Office?  @relation(fields: [officeId], references: [id])
-  address         Address? @relation(fields: [addressId], references: [id])
-  assets          Asset[]
-  orders          Order[]
-  offboards       Offboard[]
+  office              Office?  @relation(fields: [officeId], references: [id])
+  address             Address? @relation(fields: [addressId], references: [id])
+  assets              Asset[]
+  orders              Order[]
+  offboards           Offboard[]
   
   @@map("employees")
 }
@@ -82,19 +93,23 @@ model Asset {
   id              String   @id
   assetTag        String   @unique
   name            String
-  category        String?
+  category        String?  // Simplified from API category object
   status          String?
-  serialNumber    String?
+  serialCode      String?  // Matches API: serial_code
   productId       String?
   assignedToId    String?  // Employee ID only, no name
   location        String?  // City/State only, no street address
   purchaseDate    DateTime?
-  purchasePrice   Decimal?
-  currency        String?
+  invoicePrice    Decimal? // Matches API: invoice_price
+  invoiceCurrency String?  // Matches API: invoice_currency
   warrantyExpires DateTime?
   notes           String?  @db.Text // Scrubbed: emails/phones/SSNs redacted
   officeId        String?
   warehouseId     String?
+  warehouseStatus String?  // available, in_repair, unknown
+  condition       String?  // new, used
+  tags            Json?    // Array of tag objects from API
+  externalReference String? // external_reference from API
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
@@ -111,6 +126,8 @@ model Office {
   id              String   @id
   name            String
   code            String?  @unique
+  employerId      String?  // Employer/company ID from API
+  managerId       String?  // Manager user ID from API
   addressId       String?
   phone           String?
   email           String?
@@ -128,19 +145,20 @@ model Office {
 
 // Warehouses table
 model Warehouse {
-  id              String   @id
-  name            String
-  code            String?  @unique
-  addressId       String?
-  capacity        Int?
-  status          String?
-  type            String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                String   @id
+  name              String
+  code              String?  @unique
+  warehouseProvider String?  // logistic_plus, etc.
+  addressId         String?
+  capacity          Int?
+  status            String?
+  type              String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   
-  address         Address? @relation(fields: [addressId], references: [id])
-  assets          Asset[]
-  orders          Order[]
+  address           Address? @relation(fields: [addressId], references: [id])
+  assets            Asset[]
+  orders            Order[]
   
   @@map("warehouses")
 }

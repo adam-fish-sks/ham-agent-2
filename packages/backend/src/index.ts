@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { employeesRouter } from './routes/employees';
 import { assetsRouter } from './routes/assets';
 import { ordersRouter } from './routes/orders';
@@ -12,7 +13,8 @@ import { addressesRouter } from './routes/addresses';
 import { syncRouter } from './routes/sync';
 import { aiRouter } from './routes/ai';
 
-dotenv.config();
+// Load .env from project root
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -44,6 +46,17 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ error: 'Internal server error' });
 });
 
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
+}).on('error', (error) => {
+  console.error('Server error:', error);
 });

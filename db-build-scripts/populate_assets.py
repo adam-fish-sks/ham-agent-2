@@ -16,6 +16,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from dotenv import load_dotenv
 import urllib3
 import time
@@ -24,8 +25,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Suppress InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from project root
+project_root = Path(__file__).parent.parent
+load_dotenv(project_root / '.env')
 
 # Configuration
 WORKWIZE_KEY = os.getenv('WORKWIZE_KEY')
@@ -176,7 +178,7 @@ def transform_asset(asset, detailed_location=None):
             category = str(asset['category'])
     
     status = asset.get('status')
-    serial_number = asset.get('serial_code') or asset.get('serial_number') or asset.get('serialNumber')
+    serial_code = asset.get('serial_code') or asset.get('serial_number') or asset.get('serialNumber')
     
     # Product ID
     product_id = None
@@ -236,14 +238,14 @@ def transform_asset(asset, detailed_location=None):
         except:
             pass
     
-    purchase_price = None
-    if asset.get('purchase_price') or asset.get('price'):
+    invoice_price = None
+    if asset.get('invoice_price') or asset.get('purchase_price') or asset.get('price'):
         try:
-            purchase_price = Decimal(str(asset.get('purchase_price') or asset.get('price')))
+            invoice_price = Decimal(str(asset.get('invoice_price') or asset.get('purchase_price') or asset.get('price')))
         except:
             pass
     
-    currency = asset.get('currency') or asset.get('invoice_currency')
+    invoice_currency = asset.get('invoice_currency') or asset.get('currency')
     
     warranty_expires = None
     if asset.get('warranty_expires') or asset.get('warrantyExpires'):
@@ -268,6 +270,21 @@ def transform_asset(asset, detailed_location=None):
         elif location_type == 'warehouse' and location_id:
             warehouse_id = str(location_id)
     
+    # New fields from API
+    warehouse_status = asset.get('warehouse_status')
+    condition = asset.get('condition')
+    
+    # Tags - store as JSON string if present
+    import json
+    tags = None
+    if asset.get('tags'):
+        try:
+            tags = json.dumps(asset.get('tags'))
+        except:
+            pass
+    
+    external_reference = asset.get('external_reference')
+    
     # Timestamps
     created_at = datetime.now()
     if asset.get('created_at') or asset.get('createdAt'):
@@ -291,17 +308,21 @@ def transform_asset(asset, detailed_location=None):
         name,
         category,
         status,
-        serial_number,
+        serial_code,
         product_id,
         assigned_to_id,
         location,
         purchase_date,
-        purchase_price,
-        currency,
+        invoice_price,
+        invoice_currency,
         warranty_expires,
         notes,
         office_id,
         warehouse_id,
+        warehouse_status,
+        condition,
+        tags,
+        external_reference,
         created_at,
         updated_at
     )
@@ -392,27 +413,32 @@ def populate_assets(assets):
         # Insert query with ON CONFLICT to handle duplicates
         insert_query = """
             INSERT INTO assets (
-                id, "assetTag", name, category, status, "serialNumber",
+                id, "assetTag", name, category, status, "serialCode",
                 "productId", "assignedToId", location, "purchaseDate",
-                "purchasePrice", currency, "warrantyExpires", notes,
-                "officeId", "warehouseId", "createdAt", "updatedAt"
+                "invoicePrice", "invoiceCurrency", "warrantyExpires", notes,
+                "officeId", "warehouseId", "warehouseStatus", condition,
+                tags, "externalReference", "createdAt", "updatedAt"
             ) VALUES %s
             ON CONFLICT (id) DO UPDATE SET
                 "assetTag" = EXCLUDED."assetTag",
                 name = EXCLUDED.name,
                 category = EXCLUDED.category,
                 status = EXCLUDED.status,
-                "serialNumber" = EXCLUDED."serialNumber",
+                "serialCode" = EXCLUDED."serialCode",
                 "productId" = EXCLUDED."productId",
                 "assignedToId" = EXCLUDED."assignedToId",
                 location = EXCLUDED.location,
                 "purchaseDate" = EXCLUDED."purchaseDate",
-                "purchasePrice" = EXCLUDED."purchasePrice",
-                currency = EXCLUDED.currency,
+                "invoicePrice" = EXCLUDED."invoicePrice",
+                "invoiceCurrency" = EXCLUDED."invoiceCurrency",
                 "warrantyExpires" = EXCLUDED."warrantyExpires",
                 notes = EXCLUDED.notes,
                 "officeId" = EXCLUDED."officeId",
                 "warehouseId" = EXCLUDED."warehouseId",
+                "warehouseStatus" = EXCLUDED."warehouseStatus",
+                condition = EXCLUDED.condition,
+                tags = EXCLUDED.tags,
+                "externalReference" = EXCLUDED."externalReference",
                 "updatedAt" = EXCLUDED."updatedAt"
         """
         

@@ -23,6 +23,7 @@ build/
 # PII data files
 employees_no_address.xlsx
 ~$*.xlsx
+data-samples/
 
 # Logs
 logs/

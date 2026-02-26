@@ -5,16 +5,15 @@ import axios from 'axios';
 
 interface Asset {
   id: string;
-  serialNumber: string | null;
+  serialCode: string | null;
   name: string;
   category: string | null;
   status: string | null;
-  serialNumber: string | null;
   assignedToId: string | null;
   location: string | null;
   purchaseDate: string | null;
-  purchasePrice: number | null;
-  currency: string | null;
+  invoicePrice: number | null;
+  invoiceCurrency: string | null;
   product?: {
     name: string;
     manufacturer: string | null;
@@ -131,7 +130,7 @@ export default function AssetsPage() {
                 {assets.map((asset) => (
                   <tr key={asset.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {asset.serialNumber || 'N/A'}
+                      {asset.serialCode || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {asset.name}

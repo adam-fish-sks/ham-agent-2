@@ -16,14 +16,16 @@ import requests
 import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
+from pathlib import Path
 from dotenv import load_dotenv
 import urllib3
 
 # Suppress InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from project root
+project_root = Path(__file__).parent.parent
+load_dotenv(project_root / '.env')
 
 # Configuration
 WORKWIZE_KEY = os.getenv('WORKWIZE_KEY')
@@ -110,16 +112,18 @@ def transform_office(office):
     code = office.get('code') or office.get('office_code')
     
     # Address ID - may need to look up from addresses table
+    # For now, set to None if address doesn't exist in DB
     address_id = None
-    if office.get('address'):
-        if isinstance(office['address'], dict):
-            addr_id = office['address'].get('id')
-            if addr_id:
-                address_id = str(addr_id)
-        else:
-            address_id = str(office['address'])
-    elif office.get('address_id'):
-        address_id = str(office['address_id'])
+    # TODO: Insert office addresses into addresses table first
+    # if office.get('address'):
+    #     if isinstance(office['address'], dict):
+    #         addr_id = office['address'].get('id')
+    #         if addr_id:
+    #             address_id = str(addr_id)
+    #     else:
+    #         address_id = str(office['address'])
+    # elif office.get('address_id'):
+    #     address_id = str(office['address_id'])
     
     # Contact info
     phone = office.get('phone') or office.get('phone_number')
@@ -145,6 +149,24 @@ def transform_office(office):
         except:
             pass
     
+    # New fields from API
+    employer_id = None
+    if office.get('employer_id'):
+        employer_id = str(office['employer_id'])
+    elif office.get('employerId'):
+        employer_id = str(office['employerId'])
+    
+    manager_id = None
+    if office.get('manager'):
+        if isinstance(office['manager'], dict):
+            mgr_id = office['manager'].get('id')
+            if mgr_id:
+                manager_id = str(mgr_id)
+    elif office.get('manager_id'):
+        manager_id = str(office['manager_id'])
+    elif office.get('managerId'):
+        manager_id = str(office['managerId'])
+    
     updated_at = datetime.now()
     if office.get('updated_at') or office.get('updatedAt'):
         date_str = office.get('updated_at') or office.get('updatedAt')
@@ -162,6 +184,8 @@ def transform_office(office):
         email,
         capacity,
         status,
+        employer_id,
+        manager_id,
         created_at,
         updated_at
     )
@@ -180,7 +204,8 @@ def populate_offices(offices):
         insert_query = """
             INSERT INTO offices (
                 id, name, code, "addressId", phone, email,
-                capacity, status, "createdAt", "updatedAt"
+                capacity, status, "employerId", "managerId",
+                "createdAt", "updatedAt"
             ) VALUES %s
             ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -190,6 +215,8 @@ def populate_offices(offices):
                 email = EXCLUDED.email,
                 capacity = EXCLUDED.capacity,
                 status = EXCLUDED.status,
+                "employerId" = EXCLUDED."employerId",
+                "managerId" = EXCLUDED."managerId",
                 "updatedAt" = EXCLUDED."updatedAt"
         """
         
