@@ -7,6 +7,10 @@ env/
 dist/
 build/
 
+# Next.js
+.next/
+out/
+
 # IDE
 .vscode/
 .idea/
@@ -24,6 +28,14 @@ build/
 employees_no_address.xlsx
 ~$*.xlsx
 data-samples/
+
+# Test/utility scripts
+check_*.py
+fetch_*.py
+find_*.py
+test_*.py
+query_*.py
+verify_*.py
 
 # Logs
 logs/
