@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '@ham-agent/database';
 import { logger } from '@ham-agent/shared';
-import { chat } from '../lib/azure-openai';
 
 export const aiRouter = Router();
 
@@ -145,7 +144,8 @@ Be helpful and conversational. If you need to query data, explain what you're lo
       { role: 'user', content: userMessage },
     ];
 
-    // Get AI response
+    // Get AI response - lazy load Azure OpenAI only when needed
+    const { chat } = await import('../lib/azure-openai');
     const aiResponse = await chat(messages);
 
     res.json({

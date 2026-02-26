@@ -20,14 +20,9 @@ build/
 .env.local
 .env.*.local
 
-# Data samples (contains real API data)
-data-samples/
+# PII data files
 employees_no_address.xlsx
 ~$*.xlsx
-
-# Build outputs
-.turbo/
-packages/frontend/.next/
 
 # Logs
 logs/
