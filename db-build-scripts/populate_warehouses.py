@@ -14,19 +14,26 @@ import requests
 import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime
+from pathlib import Path
 from dotenv import load_dotenv
 import urllib3
 
 # Suppress InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from project root
+project_root = Path(__file__).parent.parent
+load_dotenv(project_root / '.env')
 
 # Configuration
 WORKWIZE_KEY = os.getenv('WORKWIZE_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 WORKWIZE_BASE_URL = 'https://prod-back.goworkwize.com/api/public'
+
+# Check if API key loaded
+if not WORKWIZE_KEY:
+    print("ERROR: WORKWIZE_KEY not found in environment variables!")
+    sys.exit(1)
 
 
 def fetch_warehouses():
@@ -40,7 +47,7 @@ def fetch_warehouses():
     }
     
     while True:
-        url = f'{WORKWIZE_BASE_URL}/warehouses?page={page}'
+        url = f'{WORKWIZE_BASE_URL}/warehouses?page={page}&include=countries'
         print(f"Fetching page {page} from {url}...")
         
         response = requests.get(url, headers=headers, verify=False)
@@ -84,7 +91,7 @@ def fetch_warehouses():
     return all_warehouses
 
 
-def transform_warehouse(warehouse):
+def transform_warehouse(warehouse, cursor):
     """Transform API warehouse data to database format."""
     # Extract basic data
     warehouse_id = str(warehouse.get('id', ''))
@@ -95,17 +102,26 @@ def transform_warehouse(warehouse):
     # Warehouse code
     code = warehouse.get('code') or warehouse.get('warehouse_code')
     
-    # Address ID - may need to look up from addresses table
+    # Handle countries - use first country as primary address location
     address_id = None
-    if warehouse.get('address'):
-        if isinstance(warehouse['address'], dict):
-            addr_id = warehouse['address'].get('id')
-            if addr_id:
-                address_id = str(addr_id)
-        else:
-            address_id = str(warehouse['address'])
-    elif warehouse.get('address_id'):
-        address_id = str(warehouse['address_id'])
+    countries = warehouse.get('countries', [])
+    if countries and len(countries) > 0:
+        primary_country = countries[0]
+        country_name = primary_country.get('name')
+        country_code = primary_country.get('code')
+        
+        # Create an address record for this warehouse using warehouse code as identifier
+        address_id = f"warehouse_{warehouse_id}"
+        
+        # Insert/update address
+        cursor.execute("""
+            INSERT INTO addresses (id, country, "postalCode", "createdAt", "updatedAt")
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE SET
+                country = EXCLUDED.country,
+                "postalCode" = EXCLUDED."postalCode",
+                "updatedAt" = EXCLUDED."updatedAt"
+        """, (address_id, country_name, code, datetime.now(), datetime.now()))
     
     # Capacity
     capacity = warehouse.get('capacity') or warehouse.get('max_capacity')
@@ -130,6 +146,9 @@ def transform_warehouse(warehouse):
         except:
             pass
     
+    # New field from API
+    warehouse_provider = warehouse.get('warehouse_provider') or warehouse.get('warehouseProvider', 'logistic_plus')
+    
     updated_at = datetime.now()
     if warehouse.get('updated_at') or warehouse.get('updatedAt'):
         date_str = warehouse.get('updated_at') or warehouse.get('updatedAt')
@@ -146,6 +165,7 @@ def transform_warehouse(warehouse):
         capacity,
         status,
         warehouse_type,
+        warehouse_provider,
         created_at,
         updated_at
     )
@@ -158,13 +178,13 @@ def populate_warehouses(warehouses):
     
     try:
         # Transform all warehouses
-        warehouse_data = [transform_warehouse(warehouse) for warehouse in warehouses]
+        warehouse_data = [transform_warehouse(warehouse, cursor) for warehouse in warehouses]
         
         # Insert query with ON CONFLICT to handle duplicates
         insert_query = """
             INSERT INTO warehouses (
                 id, name, code, "addressId", capacity, status,
-                type, "createdAt", "updatedAt"
+                type, "warehouseProvider", "createdAt", "updatedAt"
             ) VALUES %s
             ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -173,6 +193,7 @@ def populate_warehouses(warehouses):
                 capacity = EXCLUDED.capacity,
                 status = EXCLUDED.status,
                 type = EXCLUDED.type,
+                "warehouseProvider" = EXCLUDED."warehouseProvider",
                 "updatedAt" = EXCLUDED."updatedAt"
         """
         
