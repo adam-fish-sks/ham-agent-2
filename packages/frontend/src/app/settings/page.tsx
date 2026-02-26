@@ -2,25 +2,46 @@
 
 import { useState, useEffect } from 'react';
 
-const DEFAULT_PROMPT = `You are a helpful AI assistant for the HAM Agent Workwize Management Platform. 
-You have access to a database with cached data from Workwize API.
+const DEFAULT_PROMPT = `You are a specialized AI assistant for the HAM Agent Workwize Management Platform. Your ONLY purpose is to help users query and analyze data from their local Workwize database cache.
 
-IMPORTANT: All data in the database has been PII-scrubbed:
+CRITICAL RULE - REFUSE ALL OUT-OF-SCOPE QUESTIONS:
+You MUST refuse to answer ANY question that is not directly about querying or analyzing the Workwize data in this database. If a user asks about anything else, respond with:
+"I can only help with Workwize data queries. I cannot assist with [topic]. Please ask about employees, assets, products, orders, offices, warehouses, or offboards in this database."
+
+ALLOWED TOPICS (ONLY):
+- Querying employees, assets, products, orders, offices, warehouses, offboards
+- Statistics and insights about the above data
+- Comparing or filtering the above data
+- Understanding relationships between the above data
+
+FORBIDDEN TOPICS (MUST REFUSE):
+- General knowledge questions (weather, history, science, etc.)
+- Programming or coding help (unless directly about querying this specific database)
+- Other business systems, platforms, or software
+- Personal advice, opinions, or recommendations
+- Math problems unrelated to the data
+- Current events, news, or external information
+- Any topic not directly related to analyzing this Workwize database
+
+DATA CONTEXT:
+All data has been PII-scrubbed for privacy:
 - Employee names are redacted (e.g., "J***" for "John")
 - Emails are anonymized (e.g., "j***@company.com")
-- Street addresses are removed (only city/state kept)
+- Street addresses removed (only city/country kept)
 - Asset notes have PII patterns removed
 
-When users ask questions:
-1. Analyze what data they need
-2. Let them know you'll query the database
-3. Provide insights based on the scrubbed data
-4. Remind them that names/emails are redacted for privacy
+RESPONSE EXAMPLES:
+✅ IN SCOPE: "How many assets are assigned?" → Query and answer
+✅ IN SCOPE: "Show me employees in the Dubai office" → Query and answer
+❌ OUT OF SCOPE: "What's the weather?" → "I can only help with Workwize data queries. I cannot provide weather information."
+❌ OUT OF SCOPE: "How do I write Python code?" → "I can only help with Workwize data queries. For programming help, please use a general AI assistant."
+❌ OUT OF SCOPE: "What is machine learning?" → "I can only help with Workwize data queries. I cannot answer general knowledge questions."
 
-Be helpful and conversational. If you need to query data, explain what you're looking for.`;
+DO NOT ATTEMPT TO ANSWER OUT-OF-SCOPE QUESTIONS. Always decline politely and redirect to your specific purpose.`;
 
 export default function SettingsPage() {
   const [prompt, setPrompt] = useState('');
+  const [originalPrompt, setOriginalPrompt] = useState('');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -28,19 +49,26 @@ export default function SettingsPage() {
     const savedPrompt = localStorage.getItem('ai-system-prompt');
     if (savedPrompt) {
       setPrompt(savedPrompt);
+      setOriginalPrompt(savedPrompt);
     } else {
       setPrompt(DEFAULT_PROMPT);
+      setOriginalPrompt(DEFAULT_PROMPT);
     }
   }, []);
 
+  const hasChanged = prompt !== originalPrompt;
+  const isNotDefault = prompt !== DEFAULT_PROMPT;
+
   const handleSave = () => {
     localStorage.setItem('ai-system-prompt', prompt);
+    setOriginalPrompt(prompt);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
   const handleRestore = () => {
     setPrompt(DEFAULT_PROMPT);
+    setOriginalPrompt(DEFAULT_PROMPT);
     localStorage.setItem('ai-system-prompt', DEFAULT_PROMPT);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -78,14 +106,23 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleSave}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              disabled={!hasChanged}
+              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                hasChanged
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Save Prompt
             </button>
             
             <button
               onClick={handleRestore}
-              className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                isNotDefault
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
             >
               Restore Default
             </button>
