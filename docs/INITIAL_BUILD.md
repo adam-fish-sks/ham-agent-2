@@ -217,6 +217,8 @@ WORKWIZE_APIS.md           # Complete endpoint reference with examples
 PII_SCRUBBING_GUIDELINES.md # Data handling rules
 SECURITY_GUIDELINES.md      # Best practices
 INITIAL_BUILD.md           # This file
+AI_ASSISTANT_FEATURES.md   # AI assistant implementation and usage
+CHANGELOG.md               # Version history and changes
 ```
 
 **API Documentation Must Include**:
@@ -264,6 +266,23 @@ import { AzureOpenAI } from '@azure/openai';
 const client = new AzureOpenAI({ /* config */ });
 ```
 
+**Development SSL Fix**:
+```typescript
+// Disable SSL verification for development environment
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+```
+
+⚠️ **Important**: Re-enable SSL verification for production deployments
+
+**AI Features** (v2.0.3+):
+- Persistent chat history with localStorage
+- Custom system prompt support via Settings page
+- Scope-limited default prompt (Workwize data only)
+- Clear History functionality
+- Dynamic database context injection
+
+📝 See [AI_ASSISTANT_FEATURES.md](AI_ASSISTANT_FEATURES.md) for complete documentation
+
 ---
 
 ## Quick Start Checklist
@@ -299,7 +318,7 @@ const client = new AzureOpenAI({ /* config */ });
 
 ---
 
-**Success Metrics
+**Success Metrics**:
 
 **Data Population**:
 - ✅ 1,632 employees populated with parallel processing
@@ -314,9 +333,18 @@ const client = new AzureOpenAI({ /* config */ });
 - ✅ Response format variations documented
 - ✅ Known data gaps documented
 - ✅ Schema migration v2.0 documented
+- ✅ AI assistant features fully documented
 
 **Developer Experience**:
 - ✅ Single command to populate database (`populate_db_main.py`)
 - ✅ Diagnostic scripts for troubleshooting
 - ✅ Clear separation of build vs check scripts
 - ✅ Comprehensive migration documentation
+
+**AI Features** (v2.0.3):
+- ✅ Persistent chat history across page navigation
+- ✅ Custom system prompt configuration
+- ✅ Settings page with smart UX states
+- ✅ Scope-limited default prompt (Workwize data only)
+- ✅ Clear History functionality
+- ✅ Dynamic database context injection

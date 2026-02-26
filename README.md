@@ -2,14 +2,18 @@
 
 A monorepo project for managing Workwize data with PII scrubbing, PostgreSQL caching, and AI assistance.
 
-## Features
+## ✨ Features
 
 - 🔐 PII scrubbing for all cached data
 - 📊 PostgreSQL database with Prisma ORM
 - 🚀 Next.js frontend with asset management
 - 🤖 AI assistant powered by Azure OpenAI
+  - **NEW**: Persistent chat history
+  - **NEW**: Custom system prompts
+  - **NEW**: Scope-limited default behavior
 - 🔄 Workwize API integration
 - 🐳 Podman/Docker PostgreSQL setup
+- ⚙️ Settings page for AI configuration
 
 ## Project Structure
 
@@ -56,6 +60,22 @@ ham-agent-2/
    npm run dev
    ```
 
+6. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:3001
+   - AI Assistant: http://localhost:3000/ai-assistant
+   - Settings: http://localhost:3000/settings
+
+## 📚 Documentation
+
+- [INITIAL_BUILD.md](docs/INITIAL_BUILD.md) - Project setup and architecture
+- [AI_ASSISTANT_FEATURES.md](docs/AI_ASSISTANT_FEATURES.md) - AI assistant guide (NEW)
+- [CHANGELOG.md](docs/CHANGELOG.md) - Version history and changes (NEW)
+- [RECENT_UPDATES.md](docs/RECENT_UPDATES.md) - Quick reference for latest updates (NEW)
+- [PII_SCRUBBING_GUIDELINES.md](docs/PII_SCRUBBING_GUIDELINES.md) - Data handling
+- [SECURITY_GUIDELINES.md](docs/SECURITY_GUIDELINES.md) - Security best practices
+- [WORKWIZE_APIS.md](docs/WORKWIZE_APIS.md) - API reference
+
 ## Database Tables
 
 - Orders
@@ -67,6 +87,31 @@ ham-agent-2/
 - Addresses (PII scrubbed)
 - Offboards
 
+**Current Data** (v2.0.3):
+- 1,632 employees (94% with addresses)
+- 1,699 assets
+- 1,550 addresses
+- 16 warehouses
+- 5 offices
+
+## 🤖 AI Assistant
+
+The platform includes an AI-powered assistant for natural language queries:
+
+**Features**:
+- Ask questions about Workwize data in plain English
+- Persistent chat history across page navigation
+- Customizable system prompts via Settings page
+- Scope-limited to Workwize data only (no general knowledge)
+- Clear History button for conversation reset
+
+**Example Queries**:
+- "How many laptops are assigned to employees in the UK?"
+- "Show me all offboarded employees from last quarter"
+- "Which warehouses serve Germany?"
+
+See [AI_ASSISTANT_FEATURES.md](docs/AI_ASSISTANT_FEATURES.md) for complete documentation.
+
 ## PII Scrubbing
 
 All personally identifiable information is scrubbed before caching. See [PII Scrubbing Guidelines](docs/PII_SCRUBBING_GUIDELINES.md) for details.
@@ -74,6 +119,21 @@ All personally identifiable information is scrubbed before caching. See [PII Scr
 ## Security
 
 See [Security Guidelines](docs/SECURITY_GUIDELINES.md) for security best practices.
+
+## Version
+
+**Current Version**: 2.0.3
+
+**Recent Updates** (February 26, 2026):
+- ✅ Persistent chat history with localStorage
+- ✅ Custom system prompt support
+- ✅ Settings page with smart UX
+- ✅ Scope-limited AI default prompt
+- ✅ Python script integration for data sync
+- ✅ Fixed Azure OpenAI SSL certificate issue
+- ✅ Repository cleanup (removed build artifacts)
+
+See [CHANGELOG.md](docs/CHANGELOG.md) for complete version history.
 
 ## License
 
