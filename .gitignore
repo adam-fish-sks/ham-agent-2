@@ -22,6 +22,7 @@ build/
 
 # Data samples (contains real API data)
 data-samples/
+employees_no_address.xlsx
 
 # Logs
 logs/
