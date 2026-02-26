@@ -52,7 +52,8 @@ X-Api-Key: {your_token}
 **Known API Response Inconsistencies**:
 - `GET /employees` → Returns array (no pagination wrapper)
 - `GET /employees/{id}` → Returns **direct object** (not wrapped)
-- `GET /employees/{id}/addresses` → Returns **wrapped** in `{code, success, data, ...}`
+- `GET /employees/{id}/addresses` → Returns **wrapped** in `{code, success, data, ...}` with full address including country object
+- `GET /warehouses?include=countries` → Returns warehouses with countries array
 - `GET /assets` → Returns paginated with `{data, links, meta}`
 - `GET /orders` → Returns paginated with `{data, links, meta}`
 
@@ -158,19 +159,28 @@ employees_no_address.xlsx
 .turbo/
 packages/frontend/.next/
 
+# Test scripts
+check_*.py
+test_*.py
+query_*.py
+verify_*.py
+*_sample.json
+
 # Environment
 .env
 
 # BUT KEEP: (track for team reference)
 data-samples/          # Team needs API structure examples
 db-build-scripts/      # Reproducible setup scripts
-check-scripts/         # Diagnostic tools
+docs/                  # All documentation including API reference
 ```
 
 **Rationale**: 
 - Excel reports with real employee data → Ignore
+- Test/diagnostic scripts → Ignore (ad-hoc debugging)
 - Sample JSON for development → Track (PII already in docs as "sanitize before prod")
 - Scripts for rebuilding environment → Track
+- Turbo cache logs → Ignore
 
 ### 6. Development Server Management
 
@@ -289,21 +299,24 @@ const client = new AzureOpenAI({ /* config */ });
 
 ---
 
-## Success Metrics
+**Success Metrics
 
 **Data Population**:
-- ✅ 1,500+ employees populated in < 3 minutes
-- ✅ 94%+ employees with addresses (6% gap is expected)
-- ✅ All assets with location details (employee/warehouse/office)
-- ✅ 14/14 warehouses with country mappings
+- ✅ 1,632 employees populated with parallel processing
+- ✅ 1,536/1,632 employees with addresses (94% - 6% gap is expected Workwize data issue)
+- ✅ Employee addresses include country, city, and postal code
+- ✅ 1,699 assets with location details (employee/warehouse/office)
+- ✅ 14/14 warehouses with addresses including country data
+- ✅ All addresses populated from API with full location information
 
 **Documentation**:
 - ✅ Complete API docs with cURL examples
 - ✅ Response format variations documented
 - ✅ Known data gaps documented
+- ✅ Schema migration v2.0 documented
 
 **Developer Experience**:
-- ✅ Single command to populate database
+- ✅ Single command to populate database (`populate_db_main.py`)
 - ✅ Diagnostic scripts for troubleshooting
 - ✅ Clear separation of build vs check scripts
-- ✅ Development servers restart reliably
+- ✅ Comprehensive migration documentation

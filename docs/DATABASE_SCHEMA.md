@@ -5,9 +5,11 @@
 This document describes the PostgreSQL database schema for the Workwize Management Platform. Data is sourced from the Workwize API (`https://prod-back.goworkwize.com/api/public`) and stored locally with PII scrubbing applied.
 
 **Key Facts**:
-- 9 tables (7 from API + 1 lookup table)
-- ~1,630 employees, ~3,600 assets, ~140 orders populated
+- 9 tables (7 from API + 1 lookup table + addresses)
+- 1,632 employees, 1,699 assets, 1,197 orders, 14 warehouses populated
 - **94% of employees have addresses** (96 employees lack addresses in Workwize API - this is expected)
+- **100% of warehouses have addresses with country data**
+- All addresses include country information fetched from API
 - All timestamps include `createdAt` and `updatedAt` fields
 
 ---
@@ -190,32 +192,43 @@ This document describes the PostgreSQL database schema for the Workwize Manageme
 - ← Offboard (many offboard records)
 
 ### Address
-**Source**: `GET /employees/{id}/addresses`
-**Population**: 1,534 addresses (94% of employees), 14 warehouse addresses (100%)
+**Source**: 
+- Employee addresses: `GET /employees/{id}/addresses` 
+- Warehouse addresses: `GET /warehouses?include=countries`
+
+**Population**: 1,550 total addresses
+- 1,536 employee addresses (94% of 1,632 employees)
+- 14 warehouse addresses (100% of warehouses)
 
 | Field | Type | Nullable | Notes |
 |-------|------|----------|-------|
-| id | String | No | UUID |
+| id | String | No | UUID for employees, "warehouse_{id}" for warehouses |
 | city | String | Yes | City name |
 | region | String | Yes | State/Province |
-| country | String | Yes | Country name |
+| country | String | Yes | Country name (populated from API for all addresses) |
 | postalCode | String | Yes | ZIP/Postal code |
 | latitude | Float | Yes | GPS coordinate |
 | longitude | Float | Yes | GPS coordinate |
 
-**Important**:
-- ⚠️ **NO street addresses stored** (PII protection)
+**Address Data**:
+- **Employee addresses**: Fetched individually via `/employees/{id}/addresses` API
+  - Returns full address object with nested country: `{id, city, country: {name, code}, postal_code, ...}`
+  - 96 employees (6%) have no address in Workwize (404 response)
+- **Warehouse addresses**: Fetched via `/warehouses?include=countries` parameter
+  - Countries array returned in warehouse object
+  - Address created with first country from array
+  - Postal code set to warehouse code
 
 **Important**:
 - ⚠️ **NO street addresses stored** (PII protection)
 - API field `address_line_1`, `address_line_2` are **NOT stored**
 - Only general location data (city/region/country) retained
-- 404 response expected for 6% of employees (no address in Workwize)
+- **Country field populated for all addresses** - critical for location display
 
 **Relations**:
-- ← Employee (many employees)
+- ← Employee (many employees can reference same address)
 - ← Office (many offices)
-- ← Warehouse (many warehouses)
+- ← Warehouse (each warehouse has unique address)
 
 ### Asset
 **Source**: `GET /assets`, `GET /assets/{id}`
