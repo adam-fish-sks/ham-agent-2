@@ -70,16 +70,17 @@
 
 ### Minimum Coverage
 
-| Type | Target | Critical Paths |
-|------|--------|----------------|
-| **Services/Utils** | 80% | 90%+ |
-| **API Endpoints** | 75% | 90%+ |
-| **Components** | 60% | 80%+ |
-| **Overall** | 70% | - |
+| Type               | Target | Critical Paths |
+| ------------------ | ------ | -------------- |
+| **Services/Utils** | 80%    | 90%+           |
+| **API Endpoints**  | 75%    | 90%+           |
+| **Components**     | 60%    | 80%+           |
+| **Overall**        | 70%    | -              |
 
 ### What Must Be Tested
 
 **Always test:**
+
 - ✅ Business logic
 - ✅ Data transformations
 - ✅ Validation logic
@@ -88,6 +89,7 @@
 - ✅ Critical user paths
 
 **Can skip:**
+
 - ❌ Third-party libraries
 - ❌ Simple getters/setters
 - ❌ Generated code (Prisma client)
@@ -100,6 +102,7 @@
 ### What to Unit Test
 
 **Test individual functions/methods in isolation:**
+
 - Pure functions
 - Business logic
 - Utilities
@@ -144,13 +147,10 @@ vi.mock('./emailService');
 describe('createUser', () => {
   it('sends welcome email after user creation', async () => {
     const mockSendEmail = vi.mocked(sendEmail);
-    
+
     await createUser({ name: 'John', email: 'john@example.com' });
-    
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      'john@example.com',
-      'Welcome to our platform'
-    );
+
+    expect(mockSendEmail).toHaveBeenCalledWith('john@example.com', 'Welcome to our platform');
   });
 });
 ```
@@ -161,7 +161,7 @@ describe('createUser', () => {
 describe('fetchUser', () => {
   it('returns user data when successful', async () => {
     const user = await fetchUser('123');
-    
+
     expect(user).toMatchObject({
       id: '123',
       name: expect.any(String),
@@ -182,6 +182,7 @@ describe('fetchUser', () => {
 ### What to Integration Test
 
 **Test interactions between components:**
+
 - API endpoints with database
 - Service layer with database
 - External API integrations
@@ -236,12 +237,10 @@ describe('POST /api/users', () => {
 
   it('returns 409 for duplicate email', async () => {
     // Create first user
-    await request(app)
-      .post('/api/users')
-      .send({
-        name: 'John Doe',
-        email: 'john@example.com',
-      });
+    await request(app).post('/api/users').send({
+      name: 'John Doe',
+      email: 'john@example.com',
+    });
 
     // Try to create duplicate
     const res = await request(app)
@@ -273,7 +272,7 @@ describe('UserService', () => {
       });
 
       expect(user.id).toBeDefined();
-      
+
       const dbUser = await prisma.user.findUnique({
         where: { id: user.id },
       });
@@ -290,7 +289,7 @@ describe('UserService', () => {
       const dbUser = await prisma.user.findUnique({
         where: { id: user.id },
       });
-      
+
       // Password should be hashed, not plain text
       expect(dbUser.password).not.toBe('password123');
       expect(dbUser.password.startsWith('$2')).toBe(true);
@@ -306,6 +305,7 @@ describe('UserService', () => {
 ### What to E2E Test
 
 **Test critical user journeys:**
+
 - User registration/login
 - Core workflows
 - Payment processing
@@ -371,6 +371,7 @@ describe('MyComponent', () => {
 ```
 
 **Why Vitest:**
+
 - Fast (Vite-powered)
 - Jest-compatible API
 - Native TypeScript support
@@ -539,7 +540,7 @@ import { UserCard } from './UserCard';
 describe('UserCard', () => {
   it('displays user name and email', () => {
     render(<UserCard user={{ name: 'John', email: 'john@example.com' }} />);
-    
+
     expect(screen.getByText('John')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
   });
@@ -547,21 +548,21 @@ describe('UserCard', () => {
   it('calls onEdit when edit button clicked', () => {
     const handleEdit = vi.fn();
     render(<UserCard user={{ name: 'John' }} onEdit={handleEdit} />);
-    
+
     fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-    
+
     expect(handleEdit).toHaveBeenCalledTimes(1);
   });
 
   it('expands details when clicked', async () => {
     render(<UserCard user={{ name: 'John', bio: 'Developer' }} />);
-    
+
     // Details hidden initially
     expect(screen.queryByText('Developer')).not.toBeInTheDocument();
-    
+
     // Click to expand
     fireEvent.click(screen.getByText('John'));
-    
+
     // Details now visible
     await waitFor(() => {
       expect(screen.getByText('Developer')).toBeInTheDocument();
@@ -602,7 +603,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16
@@ -611,23 +612,23 @@ jobs:
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: pnpm/action-setup@v2
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-      
+
       - run: pnpm install
-      
+
       - run: pnpm turbo test
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
@@ -668,7 +669,7 @@ export const options = {
   duration: '30s',
 };
 
-export default function() {
+export default function () {
   const res = http.get('https://api.example.com/users');
   check(res, {
     'status is 200': (r) => r.status === 200,
@@ -710,12 +711,12 @@ it('resolves with user data', () => {
 it('calls function after delay', () => {
   vi.useFakeTimers();
   const callback = vi.fn();
-  
+
   setTimeout(callback, 1000);
-  
+
   vi.advanceTimersByTime(1000);
   expect(callback).toHaveBeenCalled();
-  
+
   vi.useRealTimers();
 });
 ```
@@ -725,6 +726,7 @@ it('calls function after delay', () => {
 ## What Not to Test
 
 **Don't test:**
+
 - Framework code (React, Next.js)
 - Third-party libraries
 - Constants/configuration
@@ -733,6 +735,7 @@ it('calls function after delay', () => {
 - Auto-generated code
 
 **Do test:**
+
 - Your business logic
 - Edge cases
 - Error handling
@@ -746,6 +749,7 @@ it('calls function after delay', () => {
 ### Flaky Tests
 
 **Common causes:**
+
 - Timing issues (use `waitFor`)
 - Test interdependence (isolate tests)
 - External dependencies (mock them)
@@ -754,6 +758,7 @@ it('calls function after delay', () => {
 ### Slow Tests
 
 **Solutions:**
+
 - Mock external calls
 - Use test database
 - Parallelize tests
@@ -762,6 +767,7 @@ it('calls function after delay', () => {
 ### Hard to Test
 
 **Refactor for testability:**
+
 - Extract functions
 - Inject dependencies
 - Use pure functions
@@ -772,6 +778,7 @@ it('calls function after delay', () => {
 ## Summary
 
 **Good tests:**
+
 - ✅ Fast and reliable
 - ✅ Test behavior, not implementation
 - ✅ Easy to understand
@@ -779,6 +786,7 @@ it('calls function after delay', () => {
 - ✅ Give confidence to refactor
 
 **Remember:**
+
 - Tests are code too (maintain them)
 - Coverage is a guide, not a goal
 - Write tests you would want to debug

@@ -43,11 +43,26 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+dev-output.log
 .turbo/
 
 # Cache
 .cache/
 *.pyc
+
+# Testing
+coverage/
+.vitest/
+
+# Build outputs
+*.tsbuildinfo
+
+# Lock files (keep pnpm-lock.yaml only)
+package-lock.json
+yarn.lock
+
+# Husky
+.husky/_/
 __pycache__/
 .pytest_cache/
 .mypy_cache/

@@ -22,7 +22,7 @@ offboardsRouter.post('/sync', async (req, res) => {
   try {
     const response = await workwizeClient.getOffboards();
     const offboards = response.data || [];
-    
+
     let synced = 0;
     for (const offboard of offboards) {
       await prisma.offboard.upsert({
@@ -49,7 +49,7 @@ offboardsRouter.post('/sync', async (req, res) => {
       });
       synced++;
     }
-    
+
     res.json({ synced, total: offboards.length });
   } catch (error) {
     logger.error('Offboard sync failed', error);

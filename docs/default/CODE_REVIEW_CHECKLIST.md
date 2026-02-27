@@ -354,18 +354,21 @@ Use this checklist when reviewing pull requests. Not every item applies to every
 ### Writing Comments
 
 **Be constructive:**
+
 ```
 ✅ "Consider extracting this into a helper function for reusability"
 ❌ "This is bad"
 ```
 
 **Be specific:**
+
 ```
 ✅ "This could cause a race condition if user clicks twice. Add debouncing."
 ❌ "Fix this"
 ```
 
 **Use prefixes:**
+
 - `MUST:` - Blocking, must fix
 - `SHOULD:` - Strong suggestion
 - `COULD:` - Nice to have
@@ -376,12 +379,14 @@ Use this checklist when reviewing pull requests. Not every item applies to every
 ### Approval Guidelines
 
 **Approve when:**
+
 - All MUST items resolved
 - Functionality works
 - Tests pass
 - No major concerns
 
 **Request changes when:**
+
 - MUST items unresolved
 - Functionality broken
 - Tests failing
@@ -389,6 +394,7 @@ Use this checklist when reviewing pull requests. Not every item applies to every
 - Breaking standards
 
 **Comment (no approval) when:**
+
 - Minor suggestions only
 - Questions for clarification
 - Waiting on discussion
@@ -427,6 +433,7 @@ Use this checklist when reviewing pull requests. Not every item applies to every
 ### Documentation-Only PRs
 
 Simplified review:
+
 - [ ] Accuracy
 - [ ] Clarity
 - [ ] Formatting
@@ -437,6 +444,7 @@ Can approve without full checklist.
 ### Dependency Updates
 
 Automated PRs (Dependabot):
+
 - [ ] CI passes
 - [ ] No breaking changes in CHANGELOG
 - [ ] Version bump appropriate
@@ -446,6 +454,7 @@ Can auto-merge if CI green.
 ### Hot Fixes
 
 Expedited review:
+
 - [ ] Fixes critical issue
 - [ ] Minimal changes
 - [ ] Tests included
@@ -456,6 +465,7 @@ Expedited review:
 ## When to Involve Others
 
 **Seek additional review for:**
+
 - Security-sensitive changes
 - Breaking changes
 - Architecture changes
@@ -464,6 +474,7 @@ Expedited review:
 - Unfamiliar territory
 
 **Tag specialists:**
+
 - Security: `@security-team`
 - Performance: `@performance-team`
 - Accessibility: `@a11y-team`
@@ -476,6 +487,7 @@ Expedited review:
 ### Automated Checks
 
 These run automatically in CI:
+
 - Prettier formatting
 - ESLint linting
 - TypeScript compilation
@@ -487,6 +499,7 @@ If these fail, **fix before requesting human review**.
 ### Manual Testing
 
 Test locally:
+
 ```bash
 # Pull PR branch
 gh pr checkout 123
@@ -506,12 +519,14 @@ pnpm dev
 ## Review Fatigue
 
 **For large PRs:**
+
 - Review in multiple sessions
 - Focus on high-risk areas first
 - Request PR be split if too large
 - Don't rubber-stamp
 
 **For reviewers:**
+
 - Limit to 2-3 reviews per session
 - Take breaks between reviews
 - Don't review when tired
@@ -522,6 +537,7 @@ pnpm dev
 ## Summary
 
 **Good code reviews:**
+
 - ✅ Catch bugs before production
 - ✅ Share knowledge
 - ✅ Maintain standards
@@ -529,6 +545,7 @@ pnpm dev
 - ✅ Mentor developers
 
 **Remember:**
+
 - Be kind and constructive
 - Focus on code, not person
 - Explain reasoning

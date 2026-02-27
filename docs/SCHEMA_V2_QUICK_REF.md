@@ -3,6 +3,7 @@
 ## What Changed?
 
 ### Employee (5 new fields)
+
 - `team` - Team name from API
 - `foreignId` - External system reference
 - `registrationStatus` - Uninvited, Invited, Registered
@@ -10,18 +11,22 @@
 - `userId` - Workwize user account ID
 
 ### Asset (3 renamed + 4 new)
+
 **⚠️ BREAKING CHANGES:**
+
 - `serialNumber` → `serialCode`
 - `purchasePrice` → `invoicePrice`
 - `currency` → `invoiceCurrency`
 
 **New:**
+
 - `warehouseStatus` - available, in_repair, unknown
 - `condition` - new, used
 - `tags` - JSON array of tag objects
 - `externalReference` - External reference ID
 
 ### Order (6 new fields)
+
 - `poNumber` - Purchase order number
 - `totalProducts` - Product count
 - `receiver` - Receiver name
@@ -30,10 +35,12 @@
 - `shippingInfo` - JSON shipping address
 
 ### Office (2 new fields)
+
 - `employerId` - Employer/company ID
 - `managerId` - Manager user ID
 
 ### Warehouse (1 new field)
+
 - `warehouseProvider` - Provider name (e.g., "logistic_plus")
 
 ---

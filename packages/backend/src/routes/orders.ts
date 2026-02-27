@@ -22,7 +22,7 @@ ordersRouter.post('/sync', async (req, res) => {
   try {
     const response = await workwizeClient.getOrders();
     const orders = response.data || [];
-    
+
     let synced = 0;
     for (const order of orders) {
       const scrubbed = scrubOrderForCache(order);
@@ -35,7 +35,7 @@ ordersRouter.post('/sync', async (req, res) => {
         synced++;
       }
     }
-    
+
     res.json({ synced, total: orders.length });
   } catch (error) {
     logger.error('Order sync failed', error);

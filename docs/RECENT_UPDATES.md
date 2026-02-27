@@ -1,6 +1,7 @@
 # Recent Development Updates - Quick Reference
 
 ## Overview
+
 This document provides a quick reference for recent changes made to the HAM Agent 2.0 platform (February 26, 2026).
 
 ---
@@ -12,24 +13,28 @@ This document provides a quick reference for recent changes made to the HAM Agen
 **What Changed**: AI assistant now has persistent chat history and customizable system prompts
 
 **Key Features**:
+
 - Chat history survives page navigation (localStorage-based)
 - Custom system prompts via Settings page
 - Clear History button for conversation reset
 - Scope-limited default prompt (Workwize data only)
 
 **Files Modified**:
+
 - [packages/frontend/src/app/ai-assistant/page.tsx](../packages/frontend/src/app/ai-assistant/page.tsx) - Added localStorage persistence
 - [packages/backend/src/routes/ai.ts](../packages/backend/src/routes/ai.ts) - Added customPrompt support
 - [packages/frontend/src/app/settings/page.tsx](../packages/frontend/src/app/settings/page.tsx) - NEW FILE (Settings page)
 - [packages/frontend/src/components/Navigation.tsx](../packages/frontend/src/components/Navigation.tsx) - Added settings icon
 
 **How to Use**:
+
 1. Open `/settings` page (gear icon in navigation)
 2. Edit system prompt in textarea
 3. Click "Save Changes"
 4. AI assistant will use custom prompt in all conversations
 
 **Testing**:
+
 ```bash
 # Visit settings page
 http://localhost:3000/settings
@@ -48,12 +53,14 @@ http://localhost:3000/settings
 **What Changed**: New settings page with intelligent button states
 
 **Features**:
+
 - Save button disabled when no changes made
 - Restore Default button blue when using custom prompt
 - Real-time change detection
 - Default prompt preview section
 
 **Implementation Details**:
+
 ```typescript
 // State tracking
 const [originalPrompt, setOriginalPrompt] = useState('');
@@ -75,25 +82,29 @@ const isNotDefault = currentPrompt.trim() !== DEFAULT_PROMPT.trim();
 
 **What Changed**: Sync page now calls Python population scripts instead of API routes
 
-**Why**: 
+**Why**:
+
 - More reliable than HTTP-based sync
 - Better error handling and output parsing
 - Consistent with original population workflow
 
 **Files Modified**:
+
 - [packages/backend/src/routes/sync.ts](../packages/backend/src/routes/sync.ts) - Complete rewrite
 - [packages/frontend/src/app/sync/page.tsx](../packages/frontend/src/app/sync/page.tsx) - UI updates
 
 **Key Functions**:
+
 ```typescript
 // Spawn Python process
-function runPythonScript(scriptPath: string): Promise<ScriptResult>
+function runPythonScript(scriptPath: string): Promise<ScriptResult>;
 
 // Parse script output
-function parseScriptOutput(output: string): { count: number, entity: string }
+function parseScriptOutput(output: string): { count: number; entity: string };
 ```
 
 **Testing**:
+
 ```bash
 # Visit sync page
 http://localhost:3000/sync
@@ -109,6 +120,7 @@ http://localhost:3000/sync
 **What Changed**: Default AI prompt now strictly enforces Workwize data scope
 
 **Prompt Sections**:
+
 1. **Purpose Statement**: "You are a specialized AI assistant for HAM Agent..."
 2. **STRICT SCOPE LIMITATION**: Must-decline rules for out-of-scope questions
 3. **AVAILABLE DATA**: Table descriptions and relationships
@@ -116,12 +128,14 @@ http://localhost:3000/sync
 5. **EXAMPLE RESPONSES**: In-scope vs out-of-scope demonstrations
 
 **Key Restrictions**:
+
 - Can ONLY answer questions about Workwize data
 - MUST decline general knowledge questions
 - MUST decline programming help (unrelated to data)
 - MUST decline questions about other systems
 
 **Enforcement Language**:
+
 ```
 STRICT SCOPE LIMITATION:
 - You can ONLY answer questions about the Workwize data in this database
@@ -130,6 +144,7 @@ STRICT SCOPE LIMITATION:
 ```
 
 **Testing**:
+
 ```bash
 # Test in-scope
 "How many employees are in the UK?"  # Should answer
@@ -148,6 +163,7 @@ STRICT SCOPE LIMITATION:
 **Issue**: Backend crashed with `UNABLE_TO_GET_ISSUER_CERT_LOCALLY`
 
 **Fix**: Disabled SSL verification for development
+
 ```typescript
 // packages/backend/src/lib/azure-openai.ts, Line 10
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -162,19 +178,21 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 **Issue**: Assets assigned to employees showed no country (e.g., serial GY5T5C4)
 
 **Fix**: Updated [db-build-scripts/populate_employees.py](../db-build-scripts/populate_employees.py)
+
 - Now fetches from `/employees/{id}/addresses` endpoint
 - Includes full address with country object
 - Result: 1,536/1,632 employees (94%) now have addresses
 
 **Verification**:
+
 ```sql
 -- Check employee addresses
 SELECT COUNT(*) FROM employees WHERE "addressId" IS NOT NULL;
 -- Result: 1536
 
 -- Check specific asset
-SELECT a."serialCode", addr.country 
-FROM assets a 
+SELECT a."serialCode", addr.country
+FROM assets a
 JOIN employees e ON a."assignedToId" = e.id
 JOIN addresses addr ON e."addressId" = addr.id
 WHERE a."serialCode" = 'GY5T5C4';
@@ -190,6 +208,7 @@ WHERE a."serialCode" = 'GY5T5C4';
 **Changed**: Updated [.gitignore](../.gitignore) with better patterns
 
 **Additions**:
+
 ```gitignore
 # Next.js builds
 .next/
@@ -205,6 +224,7 @@ verify_*.py
 ```
 
 **Cleanup Actions**:
+
 - Removed 79+ tracked build artifact files
 - Used `git rm --cached` for already-tracked files
 - Cleaned turbo log files from tracking
@@ -217,14 +237,15 @@ verify_*.py
 
 ### Keys Used by Frontend
 
-| Key | Type | Purpose |
-|-----|------|---------|
-| `ai-chat-history` | JSON Array | Persistent conversation history |
-| `ai-system-prompt` | String | Custom system prompt (overrides default) |
+| Key                | Type       | Purpose                                  |
+| ------------------ | ---------- | ---------------------------------------- |
+| `ai-chat-history`  | JSON Array | Persistent conversation history          |
+| `ai-system-prompt` | String     | Custom system prompt (overrides default) |
 
 ### Data Formats
 
 **ai-chat-history**:
+
 ```json
 [
   { "role": "user", "content": "How many employees?" },
@@ -233,6 +254,7 @@ verify_*.py
 ```
 
 **ai-system-prompt**:
+
 ```
 "You are a specialized AI assistant for the HAM Agent..."
 ```
@@ -248,6 +270,7 @@ verify_*.py
 **New Parameter**: `customPrompt` (optional)
 
 **Request Body**:
+
 ```typescript
 {
   message: string;
@@ -257,6 +280,7 @@ verify_*.py
 ```
 
 **Behavior**:
+
 - If `customPrompt` provided, uses it instead of default
 - Appends database context to system message
 - Returns AI response as before
@@ -270,6 +294,7 @@ verify_*.py
 No new environment variables required for AI features.
 
 **Existing Variables** (unchanged):
+
 ```bash
 AZURE_OPENAI_ENDPOINT=https://your-instance.openai.azure.com
 AZURE_OPENAI_KEY=your-api-key
@@ -355,6 +380,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Dev only
 No breaking changes from 2.0.2 → 2.0.3
 
 **Steps**:
+
 1. Pull latest code
 2. Run `npm install` (no new dependencies)
 3. Restart frontend/backend
@@ -368,11 +394,13 @@ No breaking changes from 2.0.2 → 2.0.3
 ## Performance Impact
 
 ### localStorage Usage
+
 - **Chat History**: ~10-50KB per conversation
 - **Custom Prompt**: ~2-5KB
 - **Total Impact**: Minimal (<100KB typical)
 
 ### Backend Impact
+
 - **AI Route**: No performance change (custom prompt adds ~1KB to request)
 - **Memory**: No server-side caching (stateless)
 - **Sync Route**: Improved reliability with Python scripts
@@ -410,14 +438,17 @@ No breaking changes from 2.0.2 → 2.0.3
 ### Quick Fixes
 
 **Chat history not persisting?**
+
 - Check browser console for localStorage errors
 - Verify `ai-chat-history` key exists in DevTools → Application → localStorage
 
 **Custom prompt not working?**
+
 - Check `ai-system-prompt` key in localStorage
 - Verify Network tab shows `customPrompt` in request body
 
 **Sync page errors?**
+
 - Ensure Python scripts exist in `db-build-scripts/`
 - Check backend console for script execution errors
 - Verify database connection is active
@@ -427,12 +458,14 @@ No breaking changes from 2.0.2 → 2.0.3
 ## Next Steps
 
 ### Immediate Actions
+
 1. Test all new features in browser
 2. Verify chat persistence works correctly
 3. Test custom prompts with various configurations
 4. Commit documentation updates
 
 ### Future Enhancements
+
 - Multi-user authentication
 - Settings page access control
 - Audit logging for prompt changes

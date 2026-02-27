@@ -21,7 +21,7 @@ productsRouter.post('/sync', async (req, res) => {
   try {
     const response = await workwizeClient.getProducts();
     const products = response.data || [];
-    
+
     let synced = 0;
     for (const product of products) {
       await prisma.product.upsert({
@@ -54,7 +54,7 @@ productsRouter.post('/sync', async (req, res) => {
       });
       synced++;
     }
-    
+
     res.json({ synced, total: products.length });
   } catch (error) {
     logger.error('Product sync failed', error);

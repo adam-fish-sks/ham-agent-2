@@ -16,13 +16,15 @@ This migration adds missing API fields and renames fields to match Workwize API 
 ### Employee Table
 
 **Added Fields:**
+
 - `team` (String?) - Team name from API
 - `foreignId` (String?) - External system reference
 - `registrationStatus` (String?) - User registration status (Uninvited, Invited, Registered)
 - `isDeactivated` (Boolean) - Active/inactive status (default: false)
 - `userId` (String?) - Workwize user account ID
 
-**Rationale**: 
+**Rationale**:
+
 - `team` is used throughout asset location details
 - `isDeactivated` is critical for filtering active employees
 - `registrationStatus` needed for onboarding tracking
@@ -31,17 +33,20 @@ This migration adds missing API fields and renames fields to match Workwize API 
 ### Asset Table
 
 **Renamed Fields:**
+
 - `serialNumber` → `serialCode` (matches API: `serial_code`)
 - `purchasePrice` → `invoicePrice` (matches API: `invoice_price`)
 - `currency` → `invoiceCurrency` (matches API: `invoice_currency`)
 
 **Added Fields:**
+
 - `warehouseStatus` (String?) - available, in_repair, unknown
 - `condition` (String?) - new, used
 - `tags` (Json?) - Array of tag objects from API
 - `externalReference` (String?) - External reference from API
 
-**Rationale**: 
+**Rationale**:
+
 - Field names now match API exactly for easier maintenance
 - `warehouseStatus` and `condition` are in every API response
 - `tags` enables asset tagging/categorization feature
@@ -50,6 +55,7 @@ This migration adds missing API fields and renames fields to match Workwize API 
 ### Order Table
 
 **Added Fields:**
+
 - `poNumber` (String?) - Purchase order number
 - `totalProducts` (Int?) - Number of products in order
 - `receiver` (String?) - Receiver name
@@ -57,7 +63,8 @@ This migration adds missing API fields and renames fields to match Workwize API 
 - `expressDelivery` (Boolean) - Express shipping flag (default: false)
 - `shippingInfo` (Json?) - Complete shipping address as JSON
 
-**Rationale**: 
+**Rationale**:
+
 - API provides rich order metadata not previously captured
 - `shippingInfo` preserves complete address for order tracking
 - `receiver` and `receiverType` clarify order destination
@@ -65,19 +72,23 @@ This migration adds missing API fields and renames fields to match Workwize API 
 ### Office Table
 
 **Added Fields:**
+
 - `employerId` (String?) - Employer/company ID
 - `managerId` (String?) - Manager user ID
 
-**Rationale**: 
+**Rationale**:
+
 - Links office to employer organization
 - Tracks office manager for reporting
 
 ### Warehouse Table
 
 **Added Fields:**
+
 - `warehouseProvider` (String?) - Provider name (e.g., "logistic_plus")
 
-**Rationale**: 
+**Rationale**:
+
 - All warehouses have a provider in API
 - Useful for logistics tracking
 
@@ -86,6 +97,7 @@ This migration adds missing API fields and renames fields to match Workwize API 
 ## Migration Strategy
 
 ### Phase 1: Add New Fields (Non-Breaking)
+
 ```bash
 # Generate migration for new fields
 npx prisma migrate dev --name add_api_fields
@@ -103,6 +115,7 @@ ALTER TABLE assets RENAME COLUMN "currency" TO "invoiceCurrency";
 ```
 
 **Affected Components:**
+
 1. `populate_assets.py` - Update field names
 2. Frontend Assets page - Update column references
 3. Any queries using old field names
@@ -110,6 +123,7 @@ ALTER TABLE assets RENAME COLUMN "currency" TO "invoiceCurrency";
 ### Phase 3: Populate New Fields
 
 **Employee Fields:**
+
 ```python
 # populate_employees.py updates needed
 employee_data = {
@@ -122,6 +136,7 @@ employee_data = {
 ```
 
 **Asset Fields:**
+
 ```python
 # populate_assets.py updates needed
 asset_data = {
@@ -171,14 +186,17 @@ ALTER TABLE employees DROP COLUMN "foreignId";
 ## Impact Assessment
 
 **Low Risk:**
+
 - All new fields are nullable (except isDeactivated with default)
 - No data loss from additions
 
 **Medium Risk:**
+
 - Field renames require code updates
 - 3 files need immediate updates (populate scripts, frontend)
 
 **High Risk:**
+
 - None - all changes are additive or renames with clear migration path
 
 ---

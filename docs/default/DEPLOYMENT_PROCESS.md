@@ -26,21 +26,23 @@
 
 We use three environments:
 
-| Environment | Purpose | Auto-Deploy | URL |
-|------------|---------|-------------|-----|
-| **Development** | Local development | No | localhost |
-| **Staging** | Pre-production testing | Yes (on merge to main) | staging.example.com |
-| **Production** | Live users | Yes (on git tag) | app.example.com |
+| Environment     | Purpose                | Auto-Deploy            | URL                 |
+| --------------- | ---------------------- | ---------------------- | ------------------- |
+| **Development** | Local development      | No                     | localhost           |
+| **Staging**     | Pre-production testing | Yes (on merge to main) | staging.example.com |
+| **Production**  | Live users             | Yes (on git tag)       | app.example.com     |
 
 ### Environment Configuration
 
 **Development:**
+
 - Local Docker Compose
 - Local PostgreSQL, Redis
 - Azure Storage Emulator (Azurite)
 - `.env.local` for configuration
 
 **Staging:**
+
 - Azure Container Apps (minimal SKU)
 - Azure PostgreSQL (Burstable tier)
 - Azure Redis (Basic tier)
@@ -48,6 +50,7 @@ We use three environments:
 - Test data only
 
 **Production:**
+
 - Azure Container Apps (scaled)
 - Azure PostgreSQL (General Purpose)
 - Azure Redis (Standard tier)
@@ -78,7 +81,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      
+
       - run: pnpm install
       - run: pnpm turbo lint
       - run: pnpm turbo typecheck
@@ -105,20 +108,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Build Docker images
         run: |
           docker build -t acr.azurecr.io/app-web:${{ github.sha }} ./apps/web
           docker build -t acr.azurecr.io/app-api:${{ github.sha }} ./apps/api
           docker build -t acr.azurecr.io/app-worker:${{ github.sha }} ./apps/worker
-      
+
       - name: Push to ACR
         run: |
           echo ${{ secrets.ACR_PASSWORD }} | docker login acr.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
           docker push acr.azurecr.io/app-web:${{ github.sha }}
           docker push acr.azurecr.io/app-api:${{ github.sha }}
           docker push acr.azurecr.io/app-worker:${{ github.sha }}
-      
+
       - name: Deploy to Azure
         uses: azure/CLI@v1
         with:
@@ -171,12 +174,14 @@ jobs:
 ### Communication
 
 **For major releases:**
+
 1. Notify team 24 hours in advance
 2. Post in team channel
 3. Email stakeholders
 4. Update status page (if downtime expected)
 
 **Template:**
+
 ```
 📦 Production Deployment Scheduled
 
@@ -313,6 +318,7 @@ curl https://app.example.com
 ### Communication
 
 **Post deployment:**
+
 ```
 ✅ Production Deployment Complete
 
@@ -335,6 +341,7 @@ Issues: None
 ### When to Rollback
 
 **Immediate rollback if:**
+
 - Critical functionality broken
 - Security vulnerability introduced
 - Data corruption detected
@@ -344,6 +351,7 @@ Issues: None
 ### Rollback Steps
 
 **1. Decision:**
+
 - Incident commander decides
 - Communicate decision to team
 - Document reason
@@ -376,11 +384,13 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ```
 
 **4. Verify rollback:**
+
 - Health checks pass
 - Error rate drops
 - Functionality restored
 
 **5. Post-mortem:**
+
 - What went wrong?
 - How to prevent?
 - Update tests/procedures
@@ -408,6 +418,7 @@ npx prisma migrate deploy
 ### Migration Guidelines
 
 **1. Migrations are forward-only:**
+
 - No rollback capability
 - Plan carefully
 - Test thoroughly
@@ -432,6 +443,7 @@ ALTER TABLE users DROP COLUMN email;
 ```
 
 **3. Always add, never remove:**
+
 - Add new columns (nullable or with default)
 - Deprecate old columns
 - Remove in later release
@@ -476,6 +488,7 @@ DATABASE_URL=$PROD_DB_URL npx prisma migrate deploy
 ### When to Use Feature Flags
 
 **Use feature flags for:**
+
 - Large features (phased rollout)
 - Risky changes
 - A/B testing
@@ -545,7 +558,7 @@ if (isFeatureEnabledForUser('newDashboard', user.id, 10)) {
 // Error rate
 requests
 | where timestamp > ago(1h)
-| summarize 
+| summarize
     Total = count(),
     Errors = countif(success == false),
     ErrorRate = 100.0 * countif(success == false) / count()
@@ -571,6 +584,7 @@ requests
 - Failed deployments
 
 **Alert channels:**
+
 - Team Slack channel
 - Email to on-call
 - PagerDuty (critical only)
@@ -578,6 +592,7 @@ requests
 ### Dashboards
 
 **Create dashboards for:**
+
 - Real-time metrics
 - Deployment history
 - Error tracking
@@ -591,11 +606,13 @@ requests
 ### Regular Deployments
 
 **Recommended schedule:**
+
 - **Staging:** Multiple times daily (on merge)
 - **Production:** 2-3 times per week
 - **Hot fixes:** As needed
 
 **Preferred times:**
+
 - Weekdays, business hours
 - Avoid Friday afternoons
 - Avoid late nights
@@ -604,12 +621,14 @@ requests
 ### Deployment Freeze
 
 **Freeze periods (no deployments):**
+
 - Major holidays
 - Critical business periods
 - Major events
 - After major incidents (24-48 hours)
 
 **Exceptions:**
+
 - Security fixes (always allowed)
 - Critical bug fixes (with approval)
 
@@ -620,6 +639,7 @@ requests
 ### Common Issues
 
 **1. Deployment fails - health check timeout**
+
 ```bash
 # Check logs
 az containerapp logs show \
@@ -632,6 +652,7 @@ curl https://app.example.com/api/health -v
 ```
 
 **2. Database migration fails**
+
 ```bash
 # Check migration status
 npx prisma migrate status
@@ -644,6 +665,7 @@ npx prisma migrate deploy
 ```
 
 **3. High error rate after deployment**
+
 ```bash
 # Check Application Insights for errors
 # Rollback immediately if critical
@@ -652,6 +674,7 @@ npx prisma migrate deploy
 ```
 
 **4. Slow deployment**
+
 ```bash
 # Check image size
 docker images | grep app-web
@@ -671,8 +694,9 @@ az containerapp show \
 ## Deployment Checklist - v1.2.3
 
 ### Pre-Deployment
+
 - [ ] CI checks pass
-- [ ] Code review approved  
+- [ ] Code review approved
 - [ ] Tested in staging
 - [ ] Database migrations reviewed
 - [ ] Breaking changes documented
@@ -680,12 +704,14 @@ az containerapp show \
 - [ ] Team notified
 
 ### Deployment
+
 - [ ] Tag created and pushed
 - [ ] CI/CD pipeline triggered
 - [ ] Database migrations run
 - [ ] Health checks pass
 
 ### Post-Deployment
+
 - [ ] Smoke tests pass
 - [ ] Error rate normal
 - [ ] Response times normal
@@ -693,9 +719,11 @@ az containerapp show \
 - [ ] Team notified of completion
 
 ### Issues
+
 - None
 
 ### Rollback
+
 - Not needed
 ```
 
@@ -706,12 +734,14 @@ az containerapp show \
 ### On-Call Rotation
 
 **On-call responsibilities:**
+
 - Monitor alerts
 - Respond to incidents
 - Execute rollbacks
 - Escalate if needed
 
 **On-call schedule:**
+
 - Weekly rotation
 - Backup on-call available
 - Escalation path defined
@@ -719,21 +749,25 @@ az containerapp show \
 ### Incident Response
 
 **1. Alert received**
+
 - Acknowledge alert
 - Assess severity
 - Notify team
 
 **2. Investigate**
+
 - Check logs
 - Check metrics
 - Identify root cause
 
 **3. Mitigate**
+
 - Rollback if needed
 - Apply hotfix
 - Monitor
 
 **4. Post-mortem**
+
 - Document incident
 - Identify improvements
 - Update runbooks

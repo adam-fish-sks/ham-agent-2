@@ -37,6 +37,7 @@ ham-agent-2/
 ## Getting Started
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -46,16 +47,19 @@ ham-agent-2/
    - Add your Workwize API key and Azure OpenAI credentials
 
 3. **Start PostgreSQL database**
+
    ```bash
    podman-compose up -d
    ```
 
 4. **Initialize database**
+
    ```bash
    npm run db:push
    ```
 
 5. **Start development servers**
+
    ```bash
    npm run dev
    ```
@@ -88,6 +92,7 @@ ham-agent-2/
 - Offboards
 
 **Current Data** (v2.0.3):
+
 - 1,632 employees (94% with addresses)
 - 1,699 assets
 - 1,550 addresses
@@ -99,6 +104,7 @@ ham-agent-2/
 The platform includes an AI-powered assistant for natural language queries:
 
 **Features**:
+
 - Ask questions about Workwize data in plain English
 - Persistent chat history across page navigation
 - Customizable system prompts via Settings page
@@ -106,6 +112,7 @@ The platform includes an AI-powered assistant for natural language queries:
 - Clear History button for conversation reset
 
 **Example Queries**:
+
 - "How many laptops are assigned to employees in the UK?"
 - "Show me all offboarded employees from last quarter"
 - "Which warehouses serve Germany?"
@@ -125,6 +132,7 @@ See [Security Guidelines](docs/SECURITY_GUIDELINES.md) for security best practic
 **Current Version**: 2.0.3
 
 **Recent Updates** (February 26, 2026):
+
 - ✅ Persistent chat history with localStorage
 - ✅ Custom system prompt support
 - ✅ Settings page with smart UX

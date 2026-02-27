@@ -1,40 +1,29 @@
 /**
- * Simple logger utility
+ * Pino-based structured logger
  */
 
-type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+import pino from 'pino';
 
-class Logger {
-  private shouldLog(level: LogLevel): boolean {
-    if (process.env.NODE_ENV === 'production' && level === 'debug') {
-      return false;
-    }
-    return true;
-  }
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
-  info(message: string, meta?: any) {
-    if (this.shouldLog('info')) {
-      console.log(`[INFO] ${message}`, meta || '');
-    }
-  }
+export const logger = pino({
+  level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
+  transport: isDevelopment
+    ? {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname',
+          translateTime: 'SYS:standard',
+        },
+      }
+    : undefined,
+  // Redact sensitive fields
+  redact: {
+    paths: ['password', 'apiKey', 'token', 'secret', 'authorization'],
+    remove: true,
+  },
+});
 
-  warn(message: string, meta?: any) {
-    if (this.shouldLog('warn')) {
-      console.warn(`[WARN] ${message}`, meta || '');
-    }
-  }
-
-  error(message: string, meta?: any) {
-    if (this.shouldLog('error')) {
-      console.error(`[ERROR] ${message}`, meta || '');
-    }
-  }
-
-  debug(message: string, meta?: any) {
-    if (this.shouldLog('debug')) {
-      console.debug(`[DEBUG] ${message}`, meta || '');
-    }
-  }
-}
-
-export const logger = new Logger();
+// Export types for convenience
+export type Logger = pino.Logger;

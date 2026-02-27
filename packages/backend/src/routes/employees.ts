@@ -28,11 +28,11 @@ employeesRouter.get('/:id', async (req, res) => {
         assets: true,
       },
     });
-    
+
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found' });
     }
-    
+
     res.json(employee);
   } catch (error) {
     logger.error('Failed to fetch employee', error);
@@ -44,39 +44,39 @@ employeesRouter.get('/:id', async (req, res) => {
 employeesRouter.post('/sync', async (req, res) => {
   try {
     logger.info('Starting employee sync from Workwize');
-    
+
     const response = await workwizeClient.getEmployees();
     const employees = response.data || [];
-    
+
     let synced = 0;
     let failed = 0;
-    
+
     for (const employee of employees) {
       try {
         // Scrub PII before caching
         const scrubbed = scrubEmployeeForCache(employee);
-        
+
         // Validate scrubbing
         if (!validateScrubbed(scrubbed)) {
           logger.error('PII validation failed for employee', { id: employee.id });
           failed++;
           continue;
         }
-        
+
         // Cache scrubbed data
         await prisma.employee.upsert({
           where: { id: scrubbed.id },
           create: scrubbed,
           update: scrubbed,
         });
-        
+
         synced++;
       } catch (error) {
         logger.error('Failed to sync employee', { id: employee.id, error });
         failed++;
       }
     }
-    
+
     logger.info('Employee sync complete', { synced, failed, total: employees.length });
     res.json({ synced, failed, total: employees.length });
   } catch (error) {

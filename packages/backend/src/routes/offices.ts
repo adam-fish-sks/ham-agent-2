@@ -22,7 +22,7 @@ officesRouter.post('/sync', async (req, res) => {
   try {
     const response = await workwizeClient.getOffices();
     const offices = response.data || [];
-    
+
     let synced = 0;
     for (const office of offices) {
       await prisma.office.upsert({
@@ -49,7 +49,7 @@ officesRouter.post('/sync', async (req, res) => {
       });
       synced++;
     }
-    
+
     res.json({ synced, total: offices.length });
   } catch (error) {
     logger.error('Office sync failed', error);

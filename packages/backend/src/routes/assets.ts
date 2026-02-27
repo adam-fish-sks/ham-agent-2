@@ -60,11 +60,11 @@ assetsRouter.get('/:id', async (req, res) => {
         },
       },
     });
-    
+
     if (!asset) {
       return res.status(404).json({ error: 'Asset not found' });
     }
-    
+
     res.json(asset);
   } catch (error) {
     logger.error('Failed to fetch asset', error);
@@ -76,39 +76,39 @@ assetsRouter.get('/:id', async (req, res) => {
 assetsRouter.post('/sync', async (req, res) => {
   try {
     logger.info('Starting asset sync from Workwize');
-    
+
     const response = await workwizeClient.getAssets();
     const assets = response.data || [];
-    
+
     let synced = 0;
     let failed = 0;
-    
+
     for (const asset of assets) {
       try {
         // Scrub PII before caching
         const scrubbed = scrubAssetForCache(asset);
-        
+
         // Validate scrubbing
         if (!validateScrubbed(scrubbed)) {
           logger.error('PII validation failed for asset', { id: asset.id });
           failed++;
           continue;
         }
-        
+
         // Cache scrubbed data
         await prisma.asset.upsert({
           where: { id: scrubbed.id },
           create: scrubbed,
           update: scrubbed,
         });
-        
+
         synced++;
       } catch (error) {
         logger.error('Failed to sync asset', { id: asset.id, error });
         failed++;
       }
     }
-    
+
     logger.info('Asset sync complete', { synced, failed, total: assets.length });
     res.json({ synced, failed, total: assets.length });
   } catch (error) {

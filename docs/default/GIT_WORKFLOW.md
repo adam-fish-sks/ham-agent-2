@@ -27,12 +27,14 @@ We use a **simplified trunk-based development** workflow with short-lived featur
 ### Main Branches
 
 **`main`** - Production-ready code
+
 - Always deployable
 - Protected branch (requires PR + review)
 - Automatically deploys to production
 - Never commit directly to main
 
 **`develop`** (optional) - Integration branch
+
 - Use only if you need a staging environment
 - Merges to main trigger production deploys
 - We recommend **not using develop** - prefer trunk-based
@@ -40,6 +42,7 @@ We use a **simplified trunk-based development** workflow with short-lived featur
 ### Feature Branches
 
 **Short-lived branches** for all changes:
+
 - Branch from `main`
 - Merge back to `main` via PR
 - Delete after merge
@@ -227,9 +230,11 @@ feat(api): add user authentication endpoint
 
 ```markdown
 ## Description
+
 Brief description of changes.
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
@@ -238,11 +243,13 @@ Brief description of changes.
 - [ ] Performance improvement
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -252,24 +259,29 @@ Brief description of changes.
 - [ ] Dependent changes merged
 
 ## Related Issues
+
 Closes #123
 Relates to #456
 
 ## Screenshots (if applicable)
+
 [Add screenshots]
 
 ## Additional Notes
+
 Any additional context.
 ```
 
 ### 3. PR Size Guidelines
 
 **Keep PRs small:**
+
 - **Ideal:** < 200 lines changed
 - **Max:** < 500 lines changed
 - **If larger:** Break into multiple PRs
 
 **Why:**
+
 - Faster reviews
 - Fewer bugs
 - Easier to revert
@@ -278,6 +290,7 @@ Any additional context.
 ### 4. Draft PRs
 
 Use draft PRs for:
+
 - Work in progress
 - Early feedback
 - Showing approach
@@ -295,6 +308,7 @@ Convert to ready when complete.
 ### Reviewer Responsibilities
 
 **Review for:**
+
 1. **Correctness** - Does it work? Any bugs?
 2. **Design** - Is the approach sound?
 3. **Readability** - Easy to understand?
@@ -316,7 +330,7 @@ Convert to ready when complete.
 
 ```
 ✅ Good
-"Consider extracting this logic into a separate function for 
+"Consider extracting this logic into a separate function for
 reusability and testing. Something like `calculateDiscount(price, rate)`"
 
 ❌ Bad
@@ -353,10 +367,12 @@ PRAISE: Great test coverage! Love the edge case handling.
 ### Approval Process
 
 **Required approvals:**
+
 - **1 approval** minimum
 - **2 approvals** for critical changes (security, breaking changes)
 
 **Auto-approve (no review needed):**
+
 - Documentation-only changes
 - Dependency updates (if CI passes)
 - Auto-generated code
@@ -370,6 +386,7 @@ PRAISE: Great test coverage! Love the edge case handling.
 **Squash and Merge (Recommended)**
 
 Benefits:
+
 - Clean, linear history
 - One commit per PR
 - Easy to revert
@@ -383,6 +400,7 @@ Benefits:
 **Alternative: Rebase and Merge**
 
 Use when:
+
 - Preserving commit history is important
 - Commits are already well-crafted
 
@@ -450,24 +468,30 @@ git push origin v1.2.4
 
 ```markdown
 ## 🚀 Features
+
 - Add user authentication (#123)
 - Add dark mode support (#125)
 
 ## 🐛 Bug Fixes
+
 - Fix email validation (#124)
 - Correct timezone handling (#126)
 
 ## 🔧 Improvements
+
 - Improve page load performance (#127)
 - Update dependencies (#128)
 
 ## 📚 Documentation
+
 - Update API documentation (#129)
 
 ## ⚠️ Breaking Changes
+
 - Change user API response format (#130)
 
 ## 🙏 Contributors
+
 Thanks to @user1, @user2 for contributions!
 ```
 
@@ -773,6 +797,7 @@ git checkout -b recovered-branch
 ## Questions?
 
 If anything is unclear:
+
 1. Ask in team chat
 2. Check GitHub documentation
 3. Propose changes to this document via PR

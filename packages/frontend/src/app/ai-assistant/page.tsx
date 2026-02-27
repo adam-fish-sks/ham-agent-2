@@ -26,7 +26,8 @@ export default function AIAssistantPage() {
         setMessages([
           {
             role: 'assistant',
-            content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+            content:
+              "Hello! I'm your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?",
           },
         ]);
       }
@@ -35,7 +36,8 @@ export default function AIAssistantPage() {
       setMessages([
         {
           role: 'assistant',
-          content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+          content:
+            "Hello! I'm your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?",
         },
       ]);
     }
@@ -67,7 +69,7 @@ export default function AIAssistantPage() {
     try {
       // Load custom prompt from localStorage if available
       const customPrompt = localStorage.getItem('ai-system-prompt') || undefined;
-      
+
       const response = await axios.post('http://localhost:3001/api/ai/chat', {
         message: input,
         history: messages,
@@ -101,7 +103,8 @@ export default function AIAssistantPage() {
   const clearHistory = () => {
     const defaultMessage: Message = {
       role: 'assistant',
-      content: 'Hello! I\'m your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?',
+      content:
+        "Hello! I'm your AI assistant for the Workwize management platform. I can help you query and analyze your cached data. What would you like to know?",
     };
     setMessages([defaultMessage]);
     localStorage.setItem('ai-chat-history', JSON.stringify([defaultMessage]));
@@ -139,9 +142,7 @@ export default function AIAssistantPage() {
             >
               <div
                 className={`max-w-[80%] rounded-lg p-4 ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                  message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
                 }`}
               >
                 <div className="text-sm whitespace-pre-wrap">{message.content}</div>
@@ -153,8 +154,14 @@ export default function AIAssistantPage() {
               <div className="bg-gray-100 rounded-lg p-4">
                 <div className="flex space-x-2">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: '0.1s' }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: '0.2s' }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -195,8 +202,8 @@ export default function AIAssistantPage() {
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h3 className="text-yellow-900 font-semibold mb-2">🔒 Privacy Note:</h3>
         <p className="text-yellow-800 text-sm">
-          The AI assistant only has access to PII-scrubbed cached data. All employee names, 
-          emails, and sensitive information have been redacted before storage.
+          The AI assistant only has access to PII-scrubbed cached data. All employee names, emails,
+          and sensitive information have been redacted before storage.
         </p>
       </div>
     </div>

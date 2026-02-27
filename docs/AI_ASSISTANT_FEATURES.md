@@ -11,18 +11,21 @@ The HAM Agent 2.0 platform includes an AI-powered assistant that provides natura
 ### Components
 
 **Frontend** (`packages/frontend/src/app/ai-assistant/`):
+
 - Chat interface with persistent conversation history
 - Real-time message streaming
 - localStorage-based persistence
 - Custom system prompt support
 
 **Backend** (`packages/backend/src/routes/ai.ts`):
+
 - Azure OpenAI integration
 - Dynamic database context injection
 - Custom prompt handling
 - Conversation history management
 
 **Settings** (`packages/frontend/src/app/settings/`):
+
 - System prompt customization interface
 - Save/restore functionality
 - Smart button UX states
@@ -34,11 +37,13 @@ The HAM Agent 2.0 platform includes an AI-powered assistant that provides natura
 ### 1. Persistent Chat History
 
 **Implementation**: localStorage-based persistence
+
 - Chat history survives page navigation
 - Automatically loads previous conversations on mount
 - Saves after each message exchange
 
 **Technical Details**:
+
 ```typescript
 // Load history on component mount
 useEffect(() => {
@@ -59,11 +64,13 @@ useEffect(() => {
 ### 2. Clear History Feature
 
 **Location**: AI Assistant page header
+
 - Red "Clear History" button for easy conversation reset
 - Clears both UI state and localStorage
 - Retains custom system prompt settings
 
 **Use Cases**:
+
 - Starting fresh conversation context
 - Testing prompt changes
 - Removing sensitive queries from history
@@ -72,15 +79,17 @@ useEffect(() => {
 
 **Feature**: Full customization of AI assistant behavior through editable system prompts
 
-**Storage**: 
+**Storage**:
+
 - Key: `ai-system-prompt`
 - Format: Plain text string
 - Sent with every chat request
 
 **Default Prompt** (Scope-Limited):
+
 ```
-You are a specialized AI assistant for the HAM Agent Workwize Management Platform. 
-Your ONLY purpose is to help users query and analyze data from their local Workwize 
+You are a specialized AI assistant for the HAM Agent Workwize Management Platform.
+Your ONLY purpose is to help users query and analyze data from their local Workwize
 database cache.
 
 STRICT SCOPE LIMITATION:
@@ -116,11 +125,12 @@ In-scope question: "How many laptops are assigned to employees in the UK?"
 ✓ Response: Query the database and provide the count with details.
 
 Out-of-scope question: "What's the weather like today?"
-✗ Response: "I can only help with Workwize data queries. Please ask about employees, 
+✗ Response: "I can only help with Workwize data queries. Please ask about employees,
 assets, products, orders, or related information from the database."
 ```
 
 **Prompt Design Principles**:
+
 1. **Explicit Scope Declaration**: Clear statement of purpose and limitations
 2. **Rejection Instructions**: Specific directives for handling out-of-scope queries
 3. **Data Context**: Description of available tables and relationships
@@ -132,6 +142,7 @@ assets, products, orders, or related information from the database."
 **Location**: `/settings` (accessible via gear icon in navigation)
 
 **Features**:
+
 - **Editable System Prompt**: Large textarea for prompt customization
 - **Smart Button States**:
   - Save: Disabled when no changes, blue when modified
@@ -140,6 +151,7 @@ assets, products, orders, or related information from the database."
 - **Default Prompt Preview**: Shows the original scope-limited prompt
 
 **UX Implementation**:
+
 ```typescript
 // Track original prompt for change detection
 const [originalPrompt, setOriginalPrompt] = useState('');
@@ -149,7 +161,7 @@ const hasChanged = currentPrompt.trim() !== originalPrompt.trim();
 const isNotDefault = currentPrompt.trim() !== DEFAULT_PROMPT.trim();
 
 // Button styling
-<button 
+<button
   disabled={!hasChanged}
   className={!hasChanged ? 'bg-gray-400' : 'bg-blue-600'}
 >
@@ -164,6 +176,7 @@ const isNotDefault = currentPrompt.trim() !== DEFAULT_PROMPT.trim();
 ```
 
 **Prompt Persistence**:
+
 - Saved to localStorage immediately on "Save Changes"
 - Loaded on page mount
 - Sent with every chat request via `customPrompt` parameter
@@ -177,6 +190,7 @@ const isNotDefault = currentPrompt.trim() !== DEFAULT_PROMPT.trim();
 **Route**: `POST /api/ai/chat`
 
 **Request Body**:
+
 ```typescript
 {
   message: string;           // User's question
@@ -186,20 +200,22 @@ const isNotDefault = currentPrompt.trim() !== DEFAULT_PROMPT.trim();
 ```
 
 **System Message Construction**:
+
 ```typescript
 const defaultPrompt = `You are a specialized AI assistant...`; // Full default
 
 const systemMessage = {
-  role: "system",
+  role: 'system',
   content: `${customPrompt || defaultPrompt}
 
 DATABASE CONTEXT:
 ${databaseContext}  // Dynamic table counts and relationships
-`
+`,
 };
 ```
 
 **Database Context** (Auto-injected):
+
 ```
 Current database contents:
 - 1,632 employees
@@ -219,6 +235,7 @@ Relationships:
 ### Azure OpenAI Configuration
 
 **Development Environment**:
+
 ```typescript
 // Disable SSL verification for development
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -227,11 +244,12 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 ⚠️ **Security Note**: SSL verification disabled for dev only. Re-enable for production.
 
 **Client Configuration**:
+
 ```typescript
 const client = new AzureOpenAI({
   endpoint: process.env.AZURE_OPENAI_ENDPOINT,
   apiKey: process.env.AZURE_OPENAI_KEY,
-  apiVersion: "2024-02-15-preview"
+  apiVersion: '2024-02-15-preview',
 });
 ```
 
@@ -244,12 +262,14 @@ const client = new AzureOpenAI({
 ### For End Users
 
 **Best Practices**:
+
 1. **Ask Specific Questions**: "How many MacBook Pros are in London?" vs "Tell me about laptops"
 2. **Use Data Fields**: Reference employee names, asset serial codes, locations
 3. **Request Formatting**: Ask for tables, summaries, or specific formats
 4. **Iterate**: Refine questions based on initial answers
 
 **Example Queries**:
+
 - "Show me all assets assigned to John Smith"
 - "Which warehouses serve the United Kingdom?"
 - "How many employees don't have assigned laptops?"
@@ -257,6 +277,7 @@ const client = new AzureOpenAI({
 - "What's the most common laptop model in our inventory?"
 
 **Limitations**:
+
 - AI can only access cached Workwize data (no external information)
 - Data is snapshot from last sync (not real-time)
 - Complex joins may require multiple queries
@@ -267,12 +288,14 @@ const client = new AzureOpenAI({
 **Customizing System Prompt**:
 
 **When to Customize**:
+
 - Adding company-specific terminology
 - Enforcing response formats (e.g., always use tables)
 - Restricting to specific data subsets
 - Adding compliance requirements
 
 **Prompt Engineering Tips**:
+
 1. **Start with Scope**: Define what the AI should/shouldn't do
 2. **Be Explicit**: Use imperatives (MUST, NEVER, ALWAYS)
 3. **Provide Examples**: Show desired behavior for edge cases
@@ -280,6 +303,7 @@ const client = new AzureOpenAI({
 5. **Set Standards**: Define response quality expectations
 
 **Testing Prompt Changes**:
+
 1. Save custom prompt in Settings
 2. Clear chat history for fresh context
 3. Test edge cases (in-scope, out-of-scope, ambiguous)
@@ -304,21 +328,22 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Disable SSL verification (dev only)
 
 ### localStorage Keys (Frontend)
 
-| Key | Type | Purpose |
-|-----|------|---------|
-| `ai-chat-history` | JSON Array | Persistent conversation history |
-| `ai-system-prompt` | String | Custom system prompt (overrides default) |
+| Key                | Type       | Purpose                                  |
+| ------------------ | ---------- | ---------------------------------------- |
+| `ai-chat-history`  | JSON Array | Persistent conversation history          |
+| `ai-system-prompt` | String     | Custom system prompt (overrides default) |
 
 **Data Formats**:
+
 ```typescript
 // ai-chat-history
 [
-  { role: "user", content: "How many employees?" },
-  { role: "assistant", content: "There are 1,632 employees..." }
-]
+  { role: 'user', content: 'How many employees?' },
+  { role: 'assistant', content: 'There are 1,632 employees...' },
+];
 
 // ai-system-prompt
-"You are a specialized assistant for..."  // Plain text
+('You are a specialized assistant for...'); // Plain text
 ```
 
 ---
@@ -326,30 +351,38 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Disable SSL verification (dev only)
 ## Troubleshooting
 
 ### Issue: Chat history resets on page navigation
+
 **Cause**: localStorage not properly loaded
 **Solution**: Check browser console for localStorage errors, ensure `ai-chat-history` key exists
 
 ### Issue: AI provides out-of-scope answers
+
 **Cause**: System prompt not enforcing scope limitations
-**Solution**: 
+**Solution**:
+
 1. Go to Settings page
 2. Click "Restore Default" to use scope-limited prompt
 3. Test with known out-of-scope questions
 
 ### Issue: Backend returns 500 error
+
 **Causes**:
+
 - Azure OpenAI credentials missing/invalid
 - SSL certificate verification failing
 - Database connection issues
 
 **Solutions**:
+
 - Verify environment variables in `.env`
 - Check `NODE_TLS_REJECT_UNAUTHORIZED=0` for dev
 - Confirm database is running and accessible
 
 ### Issue: Custom prompt not being used
+
 **Cause**: Prompt not saved to localStorage or not sent with requests
 **Solution**:
+
 1. Open browser DevTools → Application → localStorage
 2. Verify `ai-system-prompt` exists and contains custom prompt
 3. Check Network tab for `/api/ai/chat` requests - should include `customPrompt` field
@@ -359,6 +392,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Disable SSL verification (dev only)
 ## Future Enhancements
 
 **Planned Features**:
+
 - [ ] Conversation export/import
 - [ ] Multiple saved prompt templates
 - [ ] Token usage tracking and limits
@@ -369,6 +403,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Disable SSL verification (dev only)
 - [ ] Audit logging for queries
 
 **Under Consideration**:
+
 - Vector embeddings for semantic search
 - Custom function calling for specific queries
 - Integration with Excel export
@@ -399,6 +434,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0  # Disable SSL verification (dev only)
 ### Database Context Generation
 
 **Dynamic Context Injection** (`packages/backend/src/routes/ai.ts`):
+
 ```typescript
 // Query counts from database
 const employeeCount = await prisma.employee.count();
@@ -421,12 +457,13 @@ Relationships:
 
 // Append to system message
 const systemMessage = {
-  role: "system",
-  content: `${customPrompt || defaultPrompt}\n\nDATABASE CONTEXT:\n${databaseContext}`
+  role: 'system',
+  content: `${customPrompt || defaultPrompt}\n\nDATABASE CONTEXT:\n${databaseContext}`,
 };
 ```
 
 **Benefits**:
+
 - AI always has current data statistics
 - Prevents hallucination about data availability
 - Enables accurate scoping of responses
@@ -437,24 +474,28 @@ const systemMessage = {
 ## Security Considerations
 
 ### Data Access
+
 - ✅ AI has read-only access to database
 - ✅ No write operations possible through AI interface
 - ✅ No access to Workwize API credentials
 - ✅ Cannot access files outside database
 
 ### PII Handling
+
 - ⚠️ AI can query employee names, emails, addresses (as needed for platform functionality)
 - ⚠️ Chat history stored in browser localStorage (client-side only)
 - ✅ No chat history sent to external services (except Azure OpenAI for processing)
 - ✅ No persistent server-side logging of conversations
 
 ### Prompt Injection
+
 - ⚠️ Users can customize system prompt (intentional feature for administrators)
 - ⚠️ No built-in prompt injection protection (trust-based model)
 - ✅ Database access limited to SELECT queries only
 - ✅ Prisma ORM prevents SQL injection
 
 **Recommendations**:
+
 1. Restrict Settings page access to administrators only (future feature)
 2. Implement audit logging for prompt changes
 3. Consider prompt validation to prevent malicious instructions
@@ -465,17 +506,20 @@ const systemMessage = {
 ## Performance Metrics
 
 **Response Times** (typical):
+
 - Simple queries (e.g., counts): 2-4 seconds
 - Complex queries (e.g., multi-table joins): 4-8 seconds
 - Streaming starts: ~1 second
 - Database context generation: <100ms
 
 **Resource Usage**:
+
 - localStorage: ~10-50KB per conversation (varies with length)
 - Azure OpenAI tokens: ~500-2000 per chat exchange
 - Backend memory: Minimal (no conversation caching)
 
 **Optimization Tips**:
+
 - Clear old conversations to reduce localStorage size
 - Use specific queries to reduce token usage
 - Limit conversation history depth for faster responses
@@ -485,6 +529,7 @@ const systemMessage = {
 ## Version History
 
 **v2.0** (Current) - February 2026
+
 - ✅ Persistent chat history with localStorage
 - ✅ Custom system prompt support
 - ✅ Settings page with smart button UX
@@ -494,6 +539,7 @@ const systemMessage = {
 - ✅ Azure OpenAI integration with SSL fix
 
 **v1.0** (Initial) - January 2026
+
 - Basic chat interface
 - Fixed system prompt
 - No conversation persistence
@@ -504,12 +550,14 @@ const systemMessage = {
 ## Support and Feedback
 
 **For Issues**:
+
 1. Check browser console for errors
 2. Verify backend is running (`http://localhost:3001/health`)
 3. Confirm Azure OpenAI credentials are valid
 4. Test with default prompt before reporting issues
 
 **Feature Requests**:
+
 - Document desired functionality
 - Provide use cases and examples
 - Consider security and performance implications

@@ -32,6 +32,7 @@
 Turborepo provides high-performance build system with intelligent caching, parallel execution, and task orchestration across multiple packages. It enables fast, incremental builds and simplified dependency management.
 
 **Justification:**
+
 - **Performance:** Caches build outputs locally and remotely, reducing build times by 80%+
 - **Scalability:** Handles multiple apps/packages efficiently as project grows
 - **Developer Experience:** Simple configuration, works with existing tools
@@ -39,6 +40,7 @@ Turborepo provides high-performance build system with intelligent caching, paral
 - **Remote Caching:** Teams share build artifacts via cloud cache
 
 **Use Cases:**
+
 - Building all apps/packages with single command
 - Running tests across entire monorepo
 - Managing dependencies between workspace packages
@@ -57,6 +59,7 @@ Turborepo provides high-performance build system with intelligent caching, paral
 pnpm is a fast, disk-space efficient package manager that uses hard links and symlinks to save disk space. Workspaces enable sharing code between multiple packages in a monorepo.
 
 **Justification:**
+
 - **Efficiency:** Uses ~33% less disk space than npm/yarn through content-addressable storage
 - **Speed:** 2x faster than npm, competitive with yarn
 - **Strict:** Prevents phantom dependencies by default
@@ -64,6 +67,7 @@ pnpm is a fast, disk-space efficient package manager that uses hard links and sy
 - **Security:** Better handling of package integrity
 
 **Structure:**
+
 ```
 ├── apps/
 │   ├── web/          # Next.js application
@@ -90,6 +94,7 @@ pnpm is a fast, disk-space efficient package manager that uses hard links and sy
 React-based framework with server-side rendering (SSR), static site generation (SSG), API routes, and App Router with React Server Components.
 
 **Justification:**
+
 - **Performance:** Automatic code splitting, image optimization, font optimization
 - **SEO:** Server-side rendering improves search engine visibility
 - **Developer Experience:** File-based routing, hot module replacement, TypeScript support
@@ -98,6 +103,7 @@ React-based framework with server-side rendering (SSR), static site generation (
 - **Server Actions:** Type-safe server mutations without API routes
 
 **Key Features Used:**
+
 - App Router with Server Components
 - Server Actions for mutations
 - Standalone output for containerization
@@ -116,6 +122,7 @@ React-based framework with server-side rendering (SSR), static site generation (
 JavaScript library for building user interfaces with component-based architecture, hooks, and concurrent features.
 
 **Justification:**
+
 - **Industry Standard:** Most popular UI library with massive ecosystem
 - **Concurrent Features:** Automatic batching, transitions, suspense
 - **Hooks:** Modern state management and side effects
@@ -133,6 +140,7 @@ JavaScript library for building user interfaces with component-based architectur
 Strongly typed superset of JavaScript that compiles to plain JavaScript, providing static type checking and enhanced IDE support.
 
 **Justification:**
+
 - **Safety:** Catches errors at compile-time before runtime
 - **Maintainability:** Self-documenting code through type definitions
 - **Refactoring:** Confident large-scale refactors with type safety
@@ -153,6 +161,7 @@ Strongly typed superset of JavaScript that compiles to plain JavaScript, providi
 CSS framework that provides low-level utility classes for building custom designs directly in markup.
 
 **Justification:**
+
 - **Productivity:** Rapid UI development without context switching
 - **Consistency:** Design system enforced through configuration
 - **Performance:** Purges unused CSS automatically, minimal bundle size
@@ -161,6 +170,7 @@ CSS framework that provides low-level utility classes for building custom design
 - **Customization:** Highly configurable via `tailwind.config.js`
 
 **Extensions:**
+
 - `tailwindcss-animate`: Animation utilities
 - Custom color palette (Uplift brand + Microsoft 365 colors)
 
@@ -175,6 +185,7 @@ CSS framework that provides low-level utility classes for building custom design
 Unstyled, accessible UI components that provide behavior and accessibility while giving full control over styling.
 
 **Justification:**
+
 - **Accessibility:** WCAG compliant, keyboard navigation, screen reader support
 - **Unstyled:** Complete styling control via Tailwind/CSS
 - **Composability:** Build complex components from primitives
@@ -182,6 +193,7 @@ Unstyled, accessible UI components that provide behavior and accessibility while
 - **Type Safety:** Full TypeScript support
 
 **Components Used:**
+
 - Dialog, Dropdown Menu, Popover, Tooltip
 - Select, Radio Group, Checkbox, Switch, Slider
 - Tabs, Collapsible, Accordion
@@ -197,6 +209,7 @@ Unstyled, accessible UI components that provide behavior and accessibility while
 Collection of re-usable components built on Radix UI and Tailwind CSS that can be copied into projects and customized.
 
 **Justification:**
+
 - **Ownership:** Components live in your codebase, not node_modules
 - **Customization:** Full control to modify components
 - **Quality:** Production-ready, accessible components
@@ -216,6 +229,7 @@ Collection of re-usable components built on Radix UI and Tailwind CSS that can b
 React Hook Form provides performant form handling with minimal re-renders. Zod provides TypeScript-first schema validation.
 
 **Justification:**
+
 - **Performance:** Minimal re-renders, uncontrolled components
 - **DX:** Simple API, TypeScript integration via @hookform/resolvers
 - **Validation:** Zod schemas provide runtime + compile-time type safety
@@ -235,6 +249,7 @@ React Hook Form provides performant form handling with minimal re-renders. Zod p
 Lightweight state management library using hooks with minimal boilerplate.
 
 **Justification:**
+
 - **Simplicity:** No providers, no Context API boilerplate
 - **Performance:** Selective subscriptions prevent unnecessary re-renders
 - **Size:** 1KB gzipped vs Redux (3KB+)
@@ -253,6 +268,7 @@ Lightweight state management library using hooks with minimal boilerplate.
 Framework for building lightweight desktop applications using web technologies for UI and Rust for backend. Alternative to Electron with significantly smaller bundle sizes.
 
 **Justification:**
+
 - **Performance:** Native Rust backend, 10x smaller than Electron
 - **Security:** Process isolation, capability-based security model
 - **System Access:** Native OS integrations (notifications, tray, deep links)
@@ -261,6 +277,7 @@ Framework for building lightweight desktop applications using web technologies f
 - **Updater:** Built-in auto-update mechanism
 
 **Common Plugins:**
+
 - `tauri-plugin-notification`: Native system notifications
 - `tauri-plugin-autostart`: Launch on login
 - `tauri-plugin-opener`: Open URLs in browser
@@ -283,6 +300,7 @@ Framework for building lightweight desktop applications using web technologies f
 Next-generation frontend build tool that leverages native ES modules for lightning-fast HMR and optimized production builds.
 
 **Justification:**
+
 - **Speed:** Instant HMR, fast cold starts
 - **Simplicity:** Minimal configuration needed
 - **Modern:** ESM-first approach
@@ -302,6 +320,7 @@ Next-generation frontend build tool that leverages native ES modules for lightni
 Event-driven JavaScript runtime built on Chrome's V8 engine for building scalable network applications.
 
 **Justification:**
+
 - **Full-Stack TypeScript:** Share code/types between frontend and backend
 - **Performance:** Non-blocking I/O suitable for I/O-heavy workloads
 - **Ecosystem:** npm/pnpm provides access to 2M+ packages
@@ -320,6 +339,7 @@ Event-driven JavaScript runtime built on Chrome's V8 engine for building scalabl
 Minimal and flexible Node.js web application framework providing robust features for web and mobile applications.
 
 **Justification:**
+
 - **Maturity:** Battle-tested, 13+ years of production use
 - **Simplicity:** Straightforward API, minimal learning curve
 - **Middleware:** Extensive middleware ecosystem
@@ -328,6 +348,7 @@ Minimal and flexible Node.js web application framework providing robust features
 - **Flexibility:** Unopinionated, allows architectural freedom
 
 **Middleware Used:**
+
 - `helmet`: Security headers
 - `cors`: Cross-origin resource sharing
 - `express-rate-limit`: Rate limiting
@@ -344,6 +365,7 @@ Minimal and flexible Node.js web application framework providing robust features
 Zero-config TypeScript bundler powered by esbuild for building libraries and Node.js applications.
 
 **Justification:**
+
 - **Speed:** 100x faster than tsc for bundling
 - **Simple:** Minimal configuration required
 - **Features:** Automatic entry detection, source maps, declaration files
@@ -363,6 +385,7 @@ Zero-config TypeScript bundler powered by esbuild for building libraries and Nod
 Very low overhead Node.js logger with fast JSON serialization.
 
 **Justification:**
+
 - **Performance:** 5x faster than Winston, minimal overhead
 - **Structured:** JSON logs for easy parsing and querying
 - **Integration:** Works with Application Insights, log aggregators
@@ -381,6 +404,7 @@ Very low overhead Node.js logger with fast JSON serialization.
 Redis-based queue for Node.js with advanced features like priorities, retries, rate limiting, and concurrency control.
 
 **Justification:**
+
 - **Reliability:** At-least-once delivery, job persistence
 - **Features:** Priorities, delays, repeatable jobs, job events
 - **Observability:** Built-in UI, progress tracking, metrics
@@ -389,6 +413,7 @@ Redis-based queue for Node.js with advanced features like priorities, retries, r
 - **Redis:** Leverages Redis for speed and reliability
 
 **Use Cases:**
+
 - Email delivery and notifications
 - Data synchronization with external systems
 - Report generation
@@ -409,6 +434,7 @@ Redis-based queue for Node.js with advanced features like priorities, retries, r
 Advanced open-source relational database with support for JSON, full-text search, and strong ACID compliance.
 
 **Justification:**
+
 - **Reliability:** 35+ years of development, proven at scale
 - **Features:** JSON/JSONB, full-text search, advanced indexing
 - **Performance:** Handles millions of rows efficiently
@@ -430,6 +456,7 @@ Advanced open-source relational database with support for JSON, full-text search
 Next-generation TypeScript ORM with type-safe database client, declarative migrations, and visual database browser.
 
 **Justification:**
+
 - **Type Safety:** Auto-generated types matching exact schema
 - **Developer Experience:** Intuitive API, excellent error messages
 - **Migrations:** Declarative schema with automatic migration generation
@@ -439,6 +466,7 @@ Next-generation TypeScript ORM with type-safe database client, declarative migra
 - **Raw SQL:** Escape hatch for complex queries
 
 **Features Used:**
+
 - Schema definition in `schema.prisma`
 - Auto-generated TypeScript client
 - Migration management (`prisma migrate`)
@@ -456,6 +484,7 @@ Next-generation TypeScript ORM with type-safe database client, declarative migra
 In-memory data structure store used as cache, message broker, and session store with sub-millisecond latency.
 
 **Justification:**
+
 - **Speed:** In-memory storage, <1ms response times
 - **Features:** Pub/sub, sorted sets, geospatial, streams
 - **Persistence:** Snapshot + AOF for durability
@@ -464,6 +493,7 @@ In-memory data structure store used as cache, message broker, and session store 
 - **Azure Managed:** Fully managed via Azure Cache for Redis
 
 **Use Cases:**
+
 - Session storage (user sessions)
 - Application cache (frequently accessed data)
 - BullMQ job queue backend
@@ -483,6 +513,7 @@ In-memory data structure store used as cache, message broker, and session store 
 Fully managed serverless container platform that automatically scales based on HTTP traffic, events, or CPU/memory load.
 
 **Justification:**
+
 - **Serverless:** No VM management, auto-scaling to zero
 - **Cost-Effective:** Pay only for resources used
 - **Scaling:** Automatic horizontal scaling based on demand
@@ -491,6 +522,7 @@ Fully managed serverless container platform that automatically scales based on H
 - **Managed:** Built on Kubernetes without K8s complexity
 
 **Services Hosted:**
+
 - API server (Express)
 - Worker services (BullMQ processors)
 - Future microservices
@@ -507,6 +539,7 @@ Fully managed serverless container platform that automatically scales based on H
 Globally distributed static site hosting with integrated CI/CD, custom domains, and built-in authentication.
 
 **Justification:**
+
 - **Performance:** Global CDN distribution, <50ms latency
 - **Integration:** Native GitHub Actions integration
 - **Free Tier:** Generous free tier for development
@@ -526,6 +559,7 @@ Globally distributed static site hosting with integrated CI/CD, custom domains, 
 Fully managed PostgreSQL database service with zone-redundant high availability and flexible scaling.
 
 **Justification:**
+
 - **Managed:** Automatic backups, patching, monitoring
 - **High Availability:** Zone-redundant HA with auto-failover
 - **Performance:** Burstable to high-memory SKUs available
@@ -543,6 +577,7 @@ Fully managed PostgreSQL database service with zone-redundant high availability 
 Fully managed Redis cache with enterprise features and guaranteed SLA.
 
 **Justification:**
+
 - **Managed:** Automatic updates, backups, monitoring
 - **Availability:** Multi-zone replication, 99.9% SLA
 - **Performance:** Low latency, high throughput
@@ -559,6 +594,7 @@ Fully managed Redis cache with enterprise features and guaranteed SLA.
 Fully managed enterprise message broker with queues, topics, and reliable message delivery.
 
 **Justification:**
+
 - **Reliability:** At-least-once delivery, dead-letter queues
 - **Features:** Topics/subscriptions, sessions, scheduled messages
 - **Integration:** Native Azure SDK support across services
@@ -567,6 +603,7 @@ Fully managed enterprise message broker with queues, topics, and reliable messag
 - **Patterns:** Pub/sub, request-reply, message routing
 
 **Use Cases:**
+
 - Service-to-service communication
 - Event distribution
 - Decoupling microservices
@@ -584,6 +621,7 @@ Fully managed enterprise message broker with queues, topics, and reliable messag
 Massively scalable object storage for unstructured data with hot, cool, and archive tiers.
 
 **Justification:**
+
 - **Scalability:** Exabyte-scale storage capacity
 - **Cost Tiers:** Hot, cool, archive for cost optimization
 - **Integration:** Native SDK, CDN integration
@@ -592,6 +630,7 @@ Massively scalable object storage for unstructured data with hot, cool, and arch
 - **Performance:** Low latency, high throughput
 
 **Use Cases:**
+
 - User-uploaded images
 - Generated reports/exports
 - Static assets
@@ -609,6 +648,7 @@ Massively scalable object storage for unstructured data with hot, cool, and arch
 Cloud-based communication platform for email, SMS, voice, and video.
 
 **Justification:**
+
 - **Integrated:** Native Azure service, no third-party dependencies
 - **Compliance:** Enterprise-grade security and compliance
 - **Reliability:** High deliverability rates
@@ -616,6 +656,7 @@ Cloud-based communication platform for email, SMS, voice, and video.
 - **Features:** Email tracking, templates via Handlebars
 
 **Use Cases:**
+
 - Transactional emails
 - User notifications
 - System alerts
@@ -633,6 +674,7 @@ Cloud-based communication platform for email, SMS, voice, and video.
 Cloud service for securely storing and accessing secrets, keys, and certificates.
 
 **Justification:**
+
 - **Security:** Hardware security module (HSM) backed
 - **Access Control:** Azure AD RBAC, audit logging
 - **Integration:** Native SDK integration across Azure services
@@ -641,6 +683,7 @@ Cloud service for securely storing and accessing secrets, keys, and certificates
 - **Automation:** Bicep/ARM integration for IaC
 
 **Stored Secrets:**
+
 - Database connection strings
 - API keys for third-party services
 - Azure AD client secrets
@@ -659,6 +702,7 @@ Cloud service for securely storing and accessing secrets, keys, and certificates
 Application monitoring service with distributed tracing, metrics, and log analytics.
 
 **Justification:**
+
 - **Observability:** End-to-end request tracing across services
 - **Integration:** Native Node.js SDK, auto-instrumentation
 - **Analytics:** Kusto Query Language (KQL) for log analysis
@@ -678,6 +722,7 @@ Application monitoring service with distributed tracing, metrics, and log analyt
 Private Docker registry service for storing and managing container images.
 
 **Justification:**
+
 - **Private:** Secure, private image storage
 - **Integration:** Native Azure service, RBAC integration
 - **Geo-Replication:** Multi-region replication for availability
@@ -695,6 +740,7 @@ Private Docker registry service for storing and managing container images.
 Managed service providing access to OpenAI models (GPT-4, embeddings) with enterprise security. Include only when AI capabilities are required.
 
 **Justification:**
+
 - **Enterprise:** Data privacy, compliance, dedicated capacity
 - **Models:** GPT-4 Turbo, GPT-3.5, embeddings
 - **Security:** Private endpoints, Azure AD auth, data residency
@@ -702,6 +748,7 @@ Managed service providing access to OpenAI models (GPT-4, embeddings) with enter
 - **Cost Control:** Token-based pricing with usage limits
 
 **Potential Use Cases:**
+
 - Content generation
 - Intelligent assistance
 - Data analysis
@@ -721,6 +768,7 @@ Managed service providing access to OpenAI models (GPT-4, embeddings) with enter
 Global, scalable entry point with CDN, WAF, and SSL offloading.
 
 **Justification:**
+
 - **Performance:** Anycast routing, <50ms latency globally
 - **Security:** Web Application Firewall (WAF), DDoS protection
 - **Features:** SSL termination, URL rewriting, caching
@@ -737,6 +785,7 @@ Global, scalable entry point with CDN, WAF, and SSL offloading.
 Cloud-based identity service providing authentication, authorization, and application management.
 
 **Justification:**
+
 - **Enterprise SSO:** Single sign-on for all apps
 - **Security:** MFA, conditional access, identity protection
 - **Integration:** Native Microsoft 365 integration
@@ -745,6 +794,7 @@ Cloud-based identity service providing authentication, authorization, and applic
 - **Compliance:** SOC 2, ISO 27001, GDPR compliant
 
 **Features Used:**
+
 - App registrations for MSAL authentication
 - Microsoft Graph API access
 - User/group synchronization
@@ -764,6 +814,7 @@ Cloud-based identity service providing authentication, authorization, and applic
 Platform for developing, shipping, and running applications in containers.
 
 **Justification:**
+
 - **Consistency:** Identical environments across dev/staging/prod
 - **Portability:** Run anywhere Docker is supported
 - **Efficiency:** Lightweight vs VMs, fast startup
@@ -771,6 +822,7 @@ Platform for developing, shipping, and running applications in containers.
 - **Ecosystem:** Standard for cloud-native applications
 
 **Files:**
+
 - `Dockerfile` per application (api, web, worker)
 - Multi-stage builds for optimization
 - `docker-compose.yml` for local development
@@ -785,6 +837,7 @@ Platform for developing, shipping, and running applications in containers.
 Tool for defining and running multi-container Docker applications using YAML configuration.
 
 **Justification:**
+
 - **Local Development:** Matches production environment locally
 - **Simplicity:** Single command to start all services
 - **Configuration:** Infrastructure as code for dev environment
@@ -792,6 +845,7 @@ Tool for defining and running multi-container Docker applications using YAML con
 - **Networking:** Automatic service discovery via container names
 
 **Services Defined:**
+
 - PostgreSQL database
 - Redis cache
 - Azurite (local Azure Storage emulator)
@@ -807,6 +861,7 @@ Tool for defining and running multi-container Docker applications using YAML con
 Cloud-based Git repository hosting with issue tracking, code review, and project management.
 
 **Justification:**
+
 - **Collaboration:** Pull requests, code review, discussions
 - **Integration:** GitHub Actions, third-party integrations
 - **Security:** Secret scanning, Dependabot, security advisories
@@ -824,6 +879,7 @@ Cloud-based Git repository hosting with issue tracking, code review, and project
 Native CI/CD platform integrated with GitHub for automated workflows.
 
 **Justification:**
+
 - **Integration:** Native GitHub integration, no external service
 - **Matrix Builds:** Test across multiple Node.js versions, OS
 - **Caching:** Action caching for faster builds (pnpm, Turbo)
@@ -832,6 +888,7 @@ Native CI/CD platform integrated with GitHub for automated workflows.
 - **Marketplace:** Extensive action library
 
 **Typical Workflows:**
+
 - **CI:** Lint, typecheck, test on PR
 - **Build:** Build all apps via Turbo on push to main
 - **Deploy:** Build Docker images, push to ACR, deploy to Azure
@@ -839,6 +896,7 @@ Native CI/CD platform integrated with GitHub for automated workflows.
 - **Desktop:** Build and sign desktop apps for all platforms
 
 **Example Pipeline:**
+
 ```yaml
 name: CI/CD
 
@@ -876,6 +934,7 @@ jobs:
 Domain-specific language (DSL) for deploying Azure resources declaratively.
 
 **Justification:**
+
 - **Azure-Native:** First-class Azure support vs Terraform
 - **Simplicity:** Cleaner syntax than ARM JSON templates
 - **Type Safety:** Strong typing, IntelliSense support
@@ -884,6 +943,7 @@ Domain-specific language (DSL) for deploying Azure resources declaratively.
 - **Validation:** What-if deployments, linting
 
 **Structure:**
+
 ```
 infra/bicep/
 ├── main.bicep              # Main deployment
@@ -898,6 +958,7 @@ infra/bicep/
 ```
 
 **Deployment:**
+
 ```bash
 az deployment sub create \
   --location eastus \
@@ -918,6 +979,7 @@ az deployment sub create \
 Opinionated code formatter supporting JavaScript, TypeScript, JSON, Markdown, and more.
 
 **Justification:**
+
 - **Consistency:** Enforces uniform code style across team
 - **Automation:** Format on save, pre-commit hooks
 - **Configuration:** Minimal setup, smart defaults
@@ -934,6 +996,7 @@ Opinionated code formatter supporting JavaScript, TypeScript, JSON, Markdown, an
 Pluggable linting utility for JavaScript and TypeScript.
 
 **Justification:**
+
 - **Quality:** Catch bugs and anti-patterns early
 - **Consistency:** Enforce coding standards
 - **TypeScript:** Full TypeScript support via plugins
@@ -941,6 +1004,7 @@ Pluggable linting utility for JavaScript and TypeScript.
 - **Auto-fix:** Many issues auto-fixable
 
 **Configs Used:**
+
 - `eslint-config-next`: Next.js specific rules
 
 ---
@@ -954,6 +1018,7 @@ Pluggable linting utility for JavaScript and TypeScript.
 Fast unit test framework powered by Vite with Jest-compatible API.
 
 **Justification:**
+
 - **Speed:** Faster than Jest, uses Vite's transform pipeline
 - **Compatibility:** Jest-compatible API, easy migration
 - **TypeScript:** Native TypeScript support
@@ -971,6 +1036,7 @@ Fast unit test framework powered by Vite with Jest-compatible API.
 TypeScript execution environment for Node.js with fast compilation.
 
 **Justification:**
+
 - **Development:** Run .ts files directly without compilation
 - **Watch Mode:** Auto-restart on file changes
 - **Speed:** Faster than ts-node
@@ -991,6 +1057,7 @@ TypeScript execution environment for Node.js with fast compilation.
 Official Microsoft library for authenticating users via Azure AD/Entra ID using OAuth 2.0 and OpenID Connect.
 
 **Justification:**
+
 - **Official:** Microsoft-maintained library
 - **Features:** SSO, MFA, conditional access support
 - **Token Management:** Automatic token refresh, caching
@@ -999,6 +1066,7 @@ Official Microsoft library for authenticating users via Azure AD/Entra ID using 
 - **React Integration:** Hooks, context providers
 
 **Flow:**
+
 1. User signs in via Azure AD
 2. Acquire access token
 3. Call Microsoft Graph API
@@ -1015,6 +1083,7 @@ Official Microsoft library for authenticating users via Azure AD/Entra ID using 
 Express middleware that sets various HTTP headers to secure applications.
 
 **Justification:**
+
 - **Security:** Protects against common vulnerabilities
 - **Headers Set:**
   - Content Security Policy (CSP)
@@ -1034,6 +1103,7 @@ Express middleware that sets various HTTP headers to secure applications.
 Rate limiting middleware for Express to prevent abuse.
 
 **Justification:**
+
 - **Protection:** Prevent brute force, DoS attacks
 - **Flexible:** Per-endpoint, per-user rate limits
 - **Storage:** Redis-backed for distributed rate limiting
@@ -1050,6 +1120,7 @@ Rate limiting middleware for Express to prevent abuse.
 Implementation of JSON Web Tokens for secure information exchange.
 
 **Justification:**
+
 - **Stateless:** No server-side session storage needed
 - **Secure:** Cryptographically signed tokens
 - **Standard:** Industry standard (RFC 7519)
@@ -1068,6 +1139,7 @@ Implementation of JSON Web Tokens for secure information exchange.
 Node.js SDK for Azure Application Insights providing automatic instrumentation.
 
 **Justification:**
+
 - **Auto-Instrumentation:** Automatic HTTP, database, Redis tracking
 - **Distributed Tracing:** Correlation across services
 - **Custom Events:** Track business metrics
@@ -1075,10 +1147,12 @@ Node.js SDK for Azure Application Insights providing automatic instrumentation.
 - **Integration:** Works with Winston, Pino logs
 
 **Setup:**
+
 ```typescript
 import appInsights from 'applicationinsights';
 
-appInsights.setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+appInsights
+  .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   .setAutoCollectRequests(true)
   .setAutoCollectPerformance(true)
   .setAutoCollectExceptions(true)
@@ -1097,6 +1171,7 @@ appInsights.setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
 Pretty printer for Pino logs during development.
 
 **Justification:**
+
 - **Readability:** Human-readable logs in dev
 - **Production:** Disabled in production for performance
 - **Customization:** Configurable formatting
@@ -1115,6 +1190,7 @@ Pretty printer for Pino logs during development.
 WebSocket client and server implementation for Node.js.
 
 **Justification:**
+
 - **Real-Time:** Low-latency bidirectional communication
 - **Performance:** Efficient binary/text messaging
 - **Standard:** WebSocket protocol (RFC 6455)
@@ -1122,6 +1198,7 @@ WebSocket client and server implementation for Node.js.
 - **Compatibility:** Works with modern browsers
 
 **Use Cases:**
+
 - Real-time notifications
 - Live status updates
 - Progress tracking
@@ -1139,6 +1216,7 @@ WebSocket client and server implementation for Node.js.
 Simple templating language for generating HTML emails.
 
 **Justification:**
+
 - **Simplicity:** Easy-to-learn syntax
 - **Security:** Auto-escaping prevents XSS
 - **Reusability:** Partials, helpers for DRY templates
@@ -1146,6 +1224,7 @@ Simple templating language for generating HTML emails.
 - **Industry Standard:** Popular email template engine
 
 **Use Cases:**
+
 - Email templates
 - Notification emails
 - Report generation
@@ -1164,6 +1243,7 @@ Simple templating language for generating HTML emails.
 High-performance Node.js image processing library using libvips.
 
 **Justification:**
+
 - **Performance:** 4-5x faster than ImageMagick
 - **Features:** Resize, crop, rotate, format conversion
 - **Memory:** Low memory usage
@@ -1180,6 +1260,7 @@ High-performance Node.js image processing library using libvips.
 Modern JavaScript date utility library.
 
 **Justification:**
+
 - **Immutable:** Pure functions, no mutations
 - **Tree-Shakeable:** Import only what you need
 - **TypeScript:** Full type definitions
@@ -1196,6 +1277,7 @@ Modern JavaScript date utility library.
 Tiny, secure, URL-friendly unique string ID generator.
 
 **Justification:**
+
 - **Security:** Cryptographically strong random
 - **Size:** 130 bytes, no dependencies
 - **Collision-Safe:** 1% probability only after ~36M IDs
@@ -1212,6 +1294,7 @@ Tiny, secure, URL-friendly unique string ID generator.
 Production-ready animation library for React.
 
 **Justification:**
+
 - **Declarative:** Simple, declarative API
 - **Performance:** GPU-accelerated animations
 - **Gestures:** Drag, hover, tap interactions
@@ -1229,6 +1312,7 @@ Production-ready animation library for React.
 Composable charting library built on React components.
 
 **Justification:**
+
 - **React-Native:** Built for React
 - **Composable:** Build custom charts from components
 - **Responsive:** Automatic responsive sizing
@@ -1240,38 +1324,45 @@ Composable charting library built on React components.
 ## Technology Selection Principles
 
 ### 1. **Type Safety First**
+
 - TypeScript across entire stack
 - Runtime validation with Zod
 - Prisma for type-safe database access
 
 ### 2. **Developer Experience**
+
 - Fast feedback loops (Vite, tsx, Turbo)
 - Minimal configuration
 - Comprehensive tooling (Prettier, ESLint, TypeScript)
 
 ### 3. **Performance**
+
 - Optimized bundling (Next.js standalone, tsup)
 - Caching strategies (Turbo, Redis, CDN)
 - Efficient runtimes (Node 20, Tauri vs Electron)
 
 ### 4. **Cloud-Native**
+
 - Containerization (Docker)
 - Infrastructure as Code (Bicep)
 - Managed services (Azure PaaS)
 
 ### 5. **Enterprise-Ready**
+
 - Security (MSAL, Helmet, rate limiting)
 - Monitoring (Application Insights)
 - Compliance (Azure certifications)
 - Scalability (auto-scaling, load balancing)
 
 ### 6. **Cost Optimization**
+
 - Serverless where appropriate (Container Apps)
 - Right-sized SKUs (burstable PostgreSQL for dev)
 - Caching to reduce compute (Redis)
 - Storage tiers (hot/cool/archive)
 
 ### 7. **Maintainability**
+
 - Monorepo for code sharing
 - Shared packages (@uplift/shared, @uplift/database)
 - Consistent patterns across services
@@ -1282,6 +1373,7 @@ Composable charting library built on React components.
 ## Cost Estimate (Monthly)
 
 ### Development Environment
+
 - **GitHub:** Free (public repos) or $4/user (private)
 - **Azure Dev Resources:** ~$100-200
   - PostgreSQL (Burstable B1ms): $15
@@ -1291,6 +1383,7 @@ Composable charting library built on React components.
   - Service Bus: $10
 
 ### Production Environment (Small)
+
 - **Azure Resources:** ~$500-800/month
   - PostgreSQL (General Purpose D2s_v3): $180
   - Redis (Standard C1): $76
@@ -1300,6 +1393,7 @@ Composable charting library built on React components.
   - Service Bus (Standard): $10
 
 ### Scaling
+
 - Costs scale linearly with usage
 - Auto-scaling prevents over-provisioning
 - Optimize using reserved instances (30-70% savings)
@@ -1320,6 +1414,7 @@ This technology stack provides:
 **Recommendation:** Use this stack as the foundation for all new internal enterprise applications. The architecture, tooling, and patterns are broadly applicable across various use cases.
 
 **Project-Specific Considerations:**
+
 - Select only the components needed for your specific project
 - Desktop applications (Tauri) are optional
 - AI capabilities (Azure AI Foundry) only when required

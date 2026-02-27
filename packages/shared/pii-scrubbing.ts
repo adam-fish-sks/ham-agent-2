@@ -1,6 +1,6 @@
 /**
  * PII Scrubbing Utilities
- * 
+ *
  * These functions scrub Personally Identifiable Information (PII) before caching data.
  * ALL cached data from Workwize API must be scrubbed before storage.
  */
@@ -11,10 +11,10 @@
  */
 export function anonymizeEmail(email: string): string {
   if (!email) return '';
-  
+
   const [localPart, domain] = email.split('@');
   if (!domain) return email;
-  
+
   const anonymized = localPart.charAt(0) + '***';
   return `${anonymized}@${domain}`;
 }
@@ -41,11 +41,11 @@ export function scrubAddress(address: {
   country?: string;
 }): string {
   if (!address) return '';
-  
+
   const parts = [];
   if (address.city) parts.push(address.city);
   if (address.region) parts.push(address.region);
-  
+
   return parts.join(', ');
 }
 
@@ -55,33 +55,27 @@ export function scrubAddress(address: {
  */
 export function scrubText(text: string): string {
   if (!text) return '';
-  
+
   let scrubbed = text;
-  
+
   // Email pattern
   scrubbed = scrubbed.replace(
     /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
     '[EMAIL_REDACTED]'
   );
-  
+
   // Phone number patterns (various formats)
   scrubbed = scrubbed.replace(
     /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g,
     '[PHONE_REDACTED]'
   );
-  
+
   // SSN pattern (xxx-xx-xxxx)
-  scrubbed = scrubbed.replace(
-    /\b\d{3}-\d{2}-\d{4}\b/g,
-    '[SSN_REDACTED]'
-  );
-  
+  scrubbed = scrubbed.replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[SSN_REDACTED]');
+
   // Credit card pattern (16 digits with optional separators)
-  scrubbed = scrubbed.replace(
-    /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
-    '[CARD_REDACTED]'
-  );
-  
+  scrubbed = scrubbed.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '[CARD_REDACTED]');
+
   return scrubbed;
 }
 
@@ -92,7 +86,7 @@ export function scrubText(text: string): string {
  */
 export function scrubEmployeeForCache(employee: any): any {
   if (!employee) return null;
-  
+
   return {
     id: employee.id,
     firstName: redactName(employee.firstName || employee.first_name || ''),
@@ -117,7 +111,7 @@ export function scrubEmployeeForCache(employee: any): any {
  */
 export function scrubAssetForCache(asset: any): any {
   if (!asset) return null;
-  
+
   return {
     id: asset.id,
     assetTag: asset.assetTag || asset.asset_tag,
@@ -127,7 +121,9 @@ export function scrubAssetForCache(asset: any): any {
     serialNumber: asset.serialNumber || asset.serial_number,
     productId: asset.productId || asset.product_id,
     assignedToId: asset.assignedToId || asset.assigned_to_id || asset.assignedTo?.id,
-    location: asset.location ? scrubAddress({ city: asset.location.city, region: asset.location.region }) : null,
+    location: asset.location
+      ? scrubAddress({ city: asset.location.city, region: asset.location.region })
+      : null,
     purchaseDate: asset.purchaseDate || asset.purchase_date,
     purchasePrice: asset.purchasePrice || asset.purchase_price,
     currency: asset.currency,
@@ -143,7 +139,7 @@ export function scrubAssetForCache(asset: any): any {
  */
 export function scrubOrderForCache(order: any): any {
   if (!order) return null;
-  
+
   return {
     id: order.id,
     orderNumber: order.orderNumber || order.order_number,
@@ -165,7 +161,7 @@ export function scrubOrderForCache(order: any): any {
  */
 export function scrubAddressForCache(address: any): any {
   if (!address) return null;
-  
+
   return {
     id: address.id,
     city: address.city,
@@ -183,32 +179,32 @@ export function scrubAddressForCache(address: any): any {
  */
 export function validateScrubbed(data: any): boolean {
   if (!data) return true;
-  
+
   const jsonString = JSON.stringify(data);
-  
+
   // Check for email patterns (should be anonymized or redacted)
   const emailPattern = /\b[A-Za-z0-9._%+-]{2,}@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
   if (emailPattern.test(jsonString) && !jsonString.includes('***@')) {
     return false;
   }
-  
+
   // Check for phone number patterns
   const phonePattern = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
   if (phonePattern.test(jsonString)) {
     return false;
   }
-  
+
   // Check for SSN pattern
   const ssnPattern = /\b\d{3}-\d{2}-\d{4}\b/;
   if (ssnPattern.test(jsonString)) {
     return false;
   }
-  
+
   // Check for credit card pattern
   const cardPattern = /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/;
   if (cardPattern.test(jsonString)) {
     return false;
   }
-  
+
   return true;
 }

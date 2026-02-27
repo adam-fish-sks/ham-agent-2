@@ -22,7 +22,7 @@ warehousesRouter.post('/sync', async (req, res) => {
   try {
     const response = await workwizeClient.getWarehouses();
     const warehouses = response.data || [];
-    
+
     let synced = 0;
     for (const warehouse of warehouses) {
       await prisma.warehouse.upsert({
@@ -47,7 +47,7 @@ warehousesRouter.post('/sync', async (req, res) => {
       });
       synced++;
     }
-    
+
     res.json({ synced, total: warehouses.length });
   } catch (error) {
     logger.error('Warehouse sync failed', error);

@@ -1,12 +1,15 @@
 # Workwize Public API Documentation
 
 ## Base URL
+
 ```
 https://prod-back.goworkwize.com/api/public
 ```
 
 ## Authentication
+
 All API requests must be authenticated using a Bearer token in the Authorization header:
+
 ```
 Authorization: Bearer {your_token}
 ```
@@ -16,21 +19,26 @@ Authorization: Bearer {your_token}
 ### Employees
 
 #### Get All Employees
+
 ```
 GET /employees
 ```
+
 Returns an array of all employees with their details including department, registration status, and asset information.
 
 **Query Parameters:**
+
 - None required (no pagination on this endpoint)
 
 **Example Request:**
+
 ```bash
 curl --location '/employees' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -72,32 +80,40 @@ curl --location '/employees' \
 ```
 
 #### Get Single Employee
+
 ```
 GET /employees/{id}
 ```
+
 Returns details for a specific employee by ID.
 
 **Path Parameters:**
+
 - `id` (required) - Employee ID
 
 **Response:** Returns direct object (not wrapped) - same structure as individual employee object from Get All Employees
 
 #### Get Employee Addresses
+
 ```
 GET /employees/{id}/addresses
 ```
+
 Returns address information for a specific employee.
 
 **Path Parameters:**
+
 - `id` (required) - Employee ID
 
 **Example Request:**
+
 ```bash
 curl --location '/employees/137077/addresses' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "code": 200,
@@ -135,6 +151,7 @@ curl --location '/employees/137077/addresses' \
 ```
 
 **Notes:**
+
 - Response is wrapped in `{code, success, status, message, data, links, meta, errors, redirect}` format (unlike GET /employees/{id} which returns direct object)
 - Returns 404 if employee has no address
 - Both `postcode` and `postal_code` fields are present with same value
@@ -143,22 +160,27 @@ curl --location '/employees/137077/addresses' \
 ### Assets
 
 #### Get All Assets
+
 ```
 GET /assets
 ```
+
 Returns a paginated list of all assets with full location details including employee, warehouse, or office information.
 
 **Query Parameters:**
+
 - `page` (integer, optional) - Page number for pagination (default: 1)
 - `per_page` (integer, optional) - Number of items per page (default: 200)
 
 **Example Request:**
+
 ```bash
 curl --location '/assets' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -270,17 +292,21 @@ curl --location '/assets' \
 ```
 
 **Location Types:**
+
 - `employee` - Asset assigned to an employee (includes employee name, address, team)
 - `warehouse` - Asset located in a warehouse (includes warehouse name)
 - `office` - Asset located in an office (includes office name and address)
 
 #### Get Single Asset
+
 ```
 GET /assets/{id}
 ```
+
 Returns details for a specific asset including location information.
 
 **Path Parameters:**
+
 - `id` (required) - Asset ID
 
 **Response:** Same structure as individual asset object from Get All Assets
@@ -288,23 +314,28 @@ Returns details for a specific asset including location information.
 ### Products
 
 #### Get All Products
+
 ```
 GET /products
 ```
+
 Returns a paginated list of all products with full details including availability by country and department.
 
 **Query Parameters:**
+
 - `page` (integer, optional) - Page number for pagination (default: 1)
 - `include` (string, optional) - Comma-separated relationships to include (e.g., `countries,departments`)
 - `filter[country_availability]` (string, optional) - Comma-separated country codes to filter by availability (e.g., `US,NL`)
 
 **Example Request:**
+
 ```bash
 curl --location -g '/products?include=countries%2Cdepartments&filter[country_availability]=US%2CNL' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -343,11 +374,7 @@ curl --location -g '/products?include=countries%2Cdepartments&filter[country_ava
           "code": "NL"
         }
       ],
-      "department_ids": [
-        19448,
-        19449,
-        19450
-      ]
+      "department_ids": [19448, 19449, 19450]
     }
   ],
   "links": {
@@ -370,22 +397,27 @@ curl --location -g '/products?include=countries%2Cdepartments&filter[country_ava
 ### Orders
 
 #### Get All Orders
+
 ```
 GET /orders
 ```
+
 Returns a paginated list of all orders with full details including products, shipments, and tracking information.
 
 **Query Parameters:**
+
 - `page` (integer, optional) - Page number for pagination (default: 1)
 - `filter[employee_foreign_id]` (string, optional) - Filter orders by employee foreign ID
 
 **Example Request:**
+
 ```bash
 curl --location -g '/orders?filter[employee_foreign_id]=5678-EFGH' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -494,21 +526,26 @@ curl --location -g '/orders?filter[employee_foreign_id]=5678-EFGH' \
 ```
 
 #### Get Order Products
+
 ```
 GET /orders/{order_number}/products
 ```
+
 Returns detailed product information for a specific order.
 
 **Path Parameters:**
+
 - `order_number` (required) - Order number (e.g., "tYFPPHJ1DMX")
 
 **Example Request:**
+
 ```bash
 curl --location -g '/orders/{{order_number}}/products' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -562,18 +599,22 @@ curl --location -g '/orders/{{order_number}}/products' \
 ### Offices
 
 #### Get All Offices
+
 ```
 GET /offices
 ```
+
 Returns a paginated list of all office locations with their addresses and manager information.
 
 **Example Request:**
+
 ```bash
 curl --location '/offices' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -672,6 +713,7 @@ curl --location '/offices' \
 ```
 
 **Notes:**
+
 - Default pagination: 20 items per page
 - Each office includes nested manager and address objects
 - Address includes full country information with country code
@@ -680,21 +722,26 @@ curl --location '/offices' \
 ### Warehouses
 
 #### Get All Warehouses
+
 ```
 GET /warehouses
 ```
+
 Get a list of warehouses available as an offboard destination.
 
 **Query Parameters:**
+
 - `include` (string, optional) - Comma-separated list of relationships to include (e.g., `countries`)
 
 **Example Request:**
+
 ```bash
 curl --location '/warehouses?include=countries' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -864,6 +911,7 @@ curl --location '/warehouses?include=countries' \
 ```
 
 **Notes:**
+
 - Returns a flat array (no pagination)
 - Warehouse codes: LDW (UK), ER3 (US), VEW (Europe), LPB (India), LBZ (Brazil), YYZ (Canada), SYD (Australia), LPP (Philippines), MXW (Mexico)
 - VEW warehouse serves 26 European countries (truncated in example for brevity)
@@ -873,21 +921,26 @@ curl --location '/warehouses?include=countries' \
 ### Offboards
 
 #### Get All Offboards
+
 ```
 GET /offboards
 ```
+
 Returns a paginated list of all offboarding records with employee information, assets, and destination details.
 
 **Query Parameters:**
+
 - `page` (integer, optional) - Page number for pagination
 
 **Example Request:**
+
 ```bash
 curl --location '/offboards' \
   --header 'Authorization: Bearer {token}'
 ```
 
 **Response:**
+
 ```json
 {
   "code": 200,
@@ -1009,6 +1062,7 @@ curl --location '/offboards' \
 ```
 
 **Notes:**
+
 - Response wrapped in `{code, success, status, message, data, links, meta, errors, redirect}` format
 - Default pagination: 15 items per page
 - Status values include: `in_transit_to_warehouse`, `details_confirmed`, and others
@@ -1021,49 +1075,61 @@ curl --location '/offboards' \
 ### Users
 
 #### Get All Users
+
 ```
 GET /users
 ```
+
 Returns a list of all users in the system.
 
 ### Addresses
 
 #### Get All Addresses
+
 ```
 GET /addresses
 ```
+
 Returns a list of all addresses.
 
 ### Categories
 
 #### Get All Categories
+
 ```
 GET /categories
 ```
+
 Returns a list of all asset/product categories.
 
 ### Invites
 
 #### Get All Invites
+
 ```
 GET /invites
 ```
+
 Returns a list of all pending invitations.
 
 ### Tags
 
 #### Get All Tags
+
 ```
 GET /tags
 ```
+
 Returns a list of all tags used in the system.
 
 ### Departments
 
 #### Get All Departments
+
 ```
 GET /departments
 ```
+
 Returns a list of all departments.
 
 ## Notes
@@ -1072,7 +1138,7 @@ Returns a list of all departments.
 
 1. **Employee Endpoint Response Format**: The `/employees/{id}` endpoint returns data directly (not wrapped in a `success`/`data` object), while `/employees/{id}/addresses` uses the wrapped format.
 
-2. **Asset Location Data**: 
+2. **Asset Location Data**:
    - Bulk `/assets` endpoint does NOT include warehouse/office location data
    - Individual `/assets/{id}` endpoint INCLUDES location data with `location_type` and `location_id`
 

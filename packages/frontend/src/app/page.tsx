@@ -8,7 +8,7 @@ export default function Home() {
         <p className="text-lg text-gray-600 mb-6">
           Hardware Asset Management with AI assistance and PII-scrubbed data caching
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-2">🔒 PII Scrubbed</h2>
@@ -16,19 +16,15 @@ export default function Home() {
               All cached data is automatically scrubbed of personally identifiable information
             </p>
           </div>
-          
+
           <div className="border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-2">📊 Asset Management</h2>
-            <p className="text-gray-600">
-              Track employees, assets, orders, and more from Workwize
-            </p>
+            <p className="text-gray-600">Track employees, assets, orders, and more from Workwize</p>
           </div>
-          
+
           <div className="border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-2">🤖 AI Assistant</h2>
-            <p className="text-gray-600">
-              Chat with AI to query and analyze your data
-            </p>
+            <p className="text-gray-600">Chat with AI to query and analyze your data</p>
           </div>
         </div>
       </div>
@@ -48,5 +44,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -30,16 +30,19 @@ DATABASE_URL=postgresql://ham_agent:ham_agent_password@localhost:5432/ham_agent_
 ### 3. Start PostgreSQL Database
 
 Using Podman:
+
 ```bash
 podman-compose up -d
 ```
 
 Or using Docker:
+
 ```bash
 docker-compose up -d
 ```
 
 Verify the database is running:
+
 ```bash
 podman ps
 # or
@@ -66,6 +69,7 @@ npm run dev
 ```
 
 This will start both:
+
 - Backend API server on http://localhost:3001
 - Frontend Next.js app on http://localhost:3000
 
@@ -106,6 +110,7 @@ ham-agent-2/
 ## Available Commands
 
 ### Root Level
+
 - `npm run dev` - Start all dev servers
 - `npm run build` - Build all packages
 - `npm run db:generate` - Generate Prisma client
@@ -113,17 +118,21 @@ ham-agent-2/
 - `npm run db:studio` - Open Prisma Studio
 
 ### Backend (packages/backend)
+
 - `npm run dev` - Start backend server
 - `npm run build` - Build backend
 
 ### Frontend (packages/frontend)
+
 - `npm run dev` - Start Next.js dev server
 - `npm run build` - Build frontend
 
 ## Important Notes
 
 ### PII Scrubbing
+
 All data cached from Workwize is automatically scrubbed of PII:
+
 - Employee names → `J***` (initial only)
 - Emails → `j***@company.com` (anonymized)
 - Street addresses → Removed (only city/state kept)
@@ -132,6 +141,7 @@ All data cached from Workwize is automatically scrubbed of PII:
 See [docs/PII_SCRUBBING_GUIDELINES.md](docs/PII_SCRUBBING_GUIDELINES.md) for details.
 
 ### Database
+
 - PostgreSQL runs in a Podman/Docker container
 - Data persists in a Docker volume
 - To reset: `podman-compose down -v` (or `docker-compose down -v`)
@@ -139,6 +149,7 @@ See [docs/PII_SCRUBBING_GUIDELINES.md](docs/PII_SCRUBBING_GUIDELINES.md) for det
 ### API Endpoints
 
 Backend API (http://localhost:3001):
+
 - `GET /api/employees` - List employees
 - `POST /api/employees/sync` - Sync from Workwize
 - `GET /api/assets` - List assets
@@ -150,11 +161,13 @@ Backend API (http://localhost:3001):
 ## Troubleshooting
 
 ### Database Connection Issues
+
 1. Verify Podman/Docker container is running: `podman ps`
 2. Check logs: `podman logs ham-agent-postgres`
 3. Verify DATABASE_URL in `.env`
 
 ### Prisma Issues
+
 ```bash
 # Regenerate Prisma client
 npm run db:generate
@@ -166,11 +179,13 @@ npm run db:push
 ```
 
 ### Port Already in Use
+
 - Backend uses port 3001
 - Frontend uses port 3000
 - PostgreSQL uses port 5432
 
 Change ports in:
+
 - Backend: `packages/backend/src/index.ts`
 - Frontend: `packages/frontend/package.json` (dev script)
 - PostgreSQL: `docker-compose.yml` or `podman-compose.yml`
@@ -186,6 +201,7 @@ Change ports in:
 ## Support
 
 For questions or issues, refer to:
+
 - [Workwize API Docs](https://docs.goworkwize.com/)
 - [Prisma Docs](https://www.prisma.io/docs/)
 - [Next.js Docs](https://nextjs.org/docs)

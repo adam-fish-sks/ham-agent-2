@@ -6,21 +6,15 @@ export const aiRouter = Router();
 
 // Get database schema information for AI context
 async function getDatabaseContext(): Promise<string> {
-  const [
-    employeeCount,
-    assetCount,
-    productCount,
-    orderCount,
-    officeCount,
-    warehouseCount,
-  ] = await Promise.all([
-    prisma.employee.count(),
-    prisma.asset.count(),
-    prisma.product.count(),
-    prisma.order.count(),
-    prisma.office.count(),
-    prisma.warehouse.count(),
-  ]);
+  const [employeeCount, assetCount, productCount, orderCount, officeCount, warehouseCount] =
+    await Promise.all([
+      prisma.employee.count(),
+      prisma.asset.count(),
+      prisma.product.count(),
+      prisma.order.count(),
+      prisma.office.count(),
+      prisma.warehouse.count(),
+    ]);
 
   return `
 Database Information:
@@ -142,10 +136,12 @@ ${dbContext}`,
 
     // Query database if needed
     let queryResult = null;
-    if (message.toLowerCase().includes('show') || 
-        message.toLowerCase().includes('list') || 
-        message.toLowerCase().includes('find') ||
-        message.toLowerCase().includes('how many')) {
+    if (
+      message.toLowerCase().includes('show') ||
+      message.toLowerCase().includes('list') ||
+      message.toLowerCase().includes('find') ||
+      message.toLowerCase().includes('how many')
+    ) {
       queryResult = await queryDatabase(message);
     }
 
@@ -155,11 +151,7 @@ ${dbContext}`,
       userMessage += `\n\n[Database Query Results]: ${JSON.stringify(queryResult, null, 2)}`;
     }
 
-    const messages = [
-      systemMessage,
-      ...history,
-      { role: 'user', content: userMessage },
-    ];
+    const messages = [systemMessage, ...history, { role: 'user', content: userMessage }];
 
     // Get AI response - lazy load Azure OpenAI only when needed
     const { chat } = await import('../lib/azure-openai');

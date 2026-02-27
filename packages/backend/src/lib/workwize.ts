@@ -13,8 +13,8 @@ export class WorkwizeClient {
     try {
       const response = await axios.get(`${WORKWIZE_API_BASE}${endpoint}`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+          Accept: 'application/json',
         },
         params,
       });

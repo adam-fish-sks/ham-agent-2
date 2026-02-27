@@ -26,6 +26,7 @@
 ### Defense in Depth
 
 **Layer security controls:**
+
 - Assume any layer can be breached
 - Multiple layers of protection
 - No single point of failure
@@ -33,6 +34,7 @@
 ### Least Privilege
 
 **Grant minimum necessary access:**
+
 - Users: Only what they need
 - Services: Scoped permissions
 - Tokens: Limited scope and duration
@@ -40,6 +42,7 @@
 ### Secure by Default
 
 **Security is not optional:**
+
 - All routes require auth (opt-out, not opt-in)
 - All inputs are validated
 - All outputs are sanitized
@@ -48,6 +51,7 @@
 ### Fail Securely
 
 **Errors should not expose information:**
+
 - Generic error messages to users
 - Detailed logs internally only
 - Fail closed, not open
@@ -83,7 +87,7 @@ import jwt from 'jsonwebtoken';
 
 export function authenticate(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  
+
   if (!token) {
     return res.status(401).json({ error: 'No token provided' });
   }
@@ -124,6 +128,7 @@ router.delete('/users/:id', authenticate, requireRole('admin'), deleteUser);
 ### Session Management
 
 **Secure session handling:**
+
 - Use httpOnly cookies for session tokens
 - Set secure flag (HTTPS only)
 - Set SameSite=Strict to prevent CSRF
@@ -146,6 +151,7 @@ res.cookie('sessionToken', token, {
 ### NEVER Commit Secrets
 
 **Never commit to Git:**
+
 - ❌ Passwords
 - ❌ API keys
 - ❌ Private keys
@@ -184,10 +190,7 @@ import { SecretClient } from '@azure/keyvault-secrets';
 import { DefaultAzureCredential } from '@azure/identity';
 
 const credential = new DefaultAzureCredential();
-const client = new SecretClient(
-  process.env.AZURE_KEYVAULT_URI!,
-  credential
-);
+const client = new SecretClient(process.env.AZURE_KEYVAULT_URI!, credential);
 
 // Retrieve secret
 const secret = await client.getSecret('database-password');
@@ -209,6 +212,7 @@ ENCRYPTION_KEY="32-character-key-for-aes-256"
 ### Secrets in CI/CD
 
 **Use GitHub Secrets:**
+
 - Settings → Secrets → Actions
 - Access as: `${{ secrets.SECRET_NAME }}`
 - Never print secrets in logs
@@ -233,7 +237,7 @@ const createUserSchema = z.object({
 
 router.post('/users', async (req, res) => {
   const result = createUserSchema.safeParse(req.body);
-  
+
   if (!result.success) {
     return res.status(400).json({
       error: 'Validation failed',
@@ -299,11 +303,11 @@ function validateFile(file: File) {
   if (!allowedTypes.includes(file.type)) {
     throw new Error('Invalid file type');
   }
-  
+
   if (file.size > maxSize) {
     throw new Error('File too large');
   }
-  
+
   return true;
 }
 ```
@@ -328,6 +332,7 @@ await sharp(userFile).toFile('output.png');
 ### Encryption at Rest
 
 **Sensitive data must be encrypted:**
+
 - Database: Azure PostgreSQL (automatic encryption)
 - Storage: Azure Blob Storage (automatic encryption)
 - Backups: Encrypted by default
@@ -335,6 +340,7 @@ await sharp(userFile).toFile('output.png');
 ### Encryption in Transit
 
 **Always use HTTPS:**
+
 - Frontend: HTTPS only
 - API: HTTPS only
 - Websockets: WSS only
@@ -359,27 +365,27 @@ const key = Buffer.from(process.env.ENCRYPTION_KEY!, 'hex');
 export function encrypt(text: string): string {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, key, iv);
-  
+
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
-  
+
   const authTag = cipher.getAuthTag();
-  
+
   return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
 }
 
 export function decrypt(encrypted: string): string {
   const [ivHex, authTagHex, encryptedText] = encrypted.split(':');
-  
+
   const iv = Buffer.from(ivHex, 'hex');
   const authTag = Buffer.from(authTagHex, 'hex');
-  
+
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
   decipher.setAuthTag(authTag);
-  
+
   let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
-  
+
   return decrypted;
 }
 ```
@@ -397,10 +403,7 @@ export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
-export async function verifyPassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 
@@ -414,6 +417,7 @@ await prisma.user.create({
 ### PII Handling
 
 **Personally Identifiable Information (PII):**
+
 - Encrypt in database
 - Log only IDs, never PII
 - Mask in error messages
@@ -469,21 +473,20 @@ app.use('/api/auth/', authLimiter);
 ```typescript
 import cors from 'cors';
 
-const allowedOrigins = [
-  'https://app.example.com',
-  'https://admin.example.com',
-];
+const allowedOrigins = ['https://app.example.com', 'https://admin.example.com'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 ```
 
 ### Security Headers
@@ -493,28 +496,31 @@ app.use(cors({
 ```typescript
 import helmet from 'helmet';
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'", 'https://*.example.com'],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'https://*.example.com'],
+      },
     },
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true,
-  },
-}));
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  })
+);
 ```
 
 ### API Versioning
 
 **Never break existing clients:**
+
 - Version APIs (/v1, /v2)
 - Deprecate gracefully
 - Support old version for 6-12 months
@@ -539,7 +545,9 @@ const securityHeaders = [
       img-src 'self' data: https:;
       font-src 'self' data:;
       connect-src 'self' https://*.example.com;
-    `.replace(/\s{2,}/g, ' ').trim()
+    `
+      .replace(/\s{2,}/g, ' ')
+      .trim(),
   },
 ];
 
@@ -615,6 +623,7 @@ datasource db {
 ### Least Privilege Access
 
 **Database users have minimum permissions:**
+
 - Application user: CRUD only
 - Admin user: Schema changes
 - Read-only user: SELECT only
@@ -622,6 +631,7 @@ datasource db {
 ### Backup Security
 
 **Encrypt backups:**
+
 - Automated backups encrypted
 - Store in secure location (Azure Blob)
 - Test restore procedures
@@ -641,9 +651,9 @@ model AuditLog {
   changes   Json?
   ipAddress String?
   createdAt DateTime @default(now())
-  
+
   user      User     @relation(fields: [userId], references: [id])
-  
+
   @@index([userId])
   @@index([resource, resourceId])
 }
@@ -658,12 +668,14 @@ model AuditLog {
 **Enable all GitHub security features:**
 
 #### 1. Dependabot Alerts
+
 - Settings → Security & analysis → Dependabot alerts (Enable)
 - Automatically detects vulnerable dependencies
 - Creates security advisories
 - Provides upgrade recommendations
 
 #### 2. Dependabot Security Updates
+
 - Settings → Security & analysis → Dependabot security updates (Enable)
 - Auto-creates PRs to fix vulnerable dependencies
 - Review and merge promptly
@@ -673,21 +685,22 @@ model AuditLog {
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 10
     groups:
       production-dependencies:
         patterns:
-          - "*"
+          - '*'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
 ```
 
 #### 3. Code Scanning (CodeQL)
+
 - Settings → Security & analysis → Code scanning (Enable)
 - Automatic vulnerability detection in code
 - Scans for:
@@ -699,15 +712,15 @@ updates:
 - Configure in `.github/workflows/codeql.yml`:
 
 ```yaml
-name: "CodeQL"
+name: 'CodeQL'
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday
+    - cron: '0 0 * * 1' # Weekly on Monday
 
 jobs:
   analyze:
@@ -721,22 +734,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript', 'typescript' ]
+        language: ['javascript', 'typescript']
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
 ```
 
 #### 4. Secret Scanning
+
 - Settings → Security & analysis → Secret scanning (Enable)
 - Automatically detects committed secrets:
   - API keys
@@ -748,6 +762,7 @@ jobs:
 - Receive alerts when secrets are detected
 
 #### 5. Security Advisories
+
 - Repository → Security → Advisories
 - Private security reporting enabled
 - Create private security advisories for vulnerabilities
@@ -768,6 +783,7 @@ pnpm audit --fix
 ### Minimal Dependencies
 
 **Each dependency is a risk:**
+
 - Review before adding
 - Check maintenance status
 - Check licenses
@@ -777,6 +793,7 @@ pnpm audit --fix
 ### Lock File Integrity
 
 **Always commit lock files:**
+
 - `pnpm-lock.yaml` must be committed
 - Ensures reproducible builds
 - Prevents supply chain attacks
@@ -818,12 +835,14 @@ pnpm audit --fix
 ### Regular Tasks
 
 **Weekly:**
+
 - [ ] Review Dependabot PRs
 - [ ] Check CodeQL scan results
 - [ ] Review secret scanning alerts
 - [ ] Check audit logs for anomalies
 
 **Monthly:**
+
 - [ ] Review security advisories
 - [ ] Review access permissions
 - [ ] Test backup restore
@@ -831,6 +850,7 @@ pnpm audit --fix
 - [ ] Review GitHub security overview
 
 **Quarterly:**
+
 - [ ] Security audit
 - [ ] Penetration testing (if applicable)
 - [ ] Update security documentation
@@ -841,51 +861,61 @@ pnpm audit --fix
 ## OWASP Top 10 Protection
 
 ### 1. Broken Access Control
+
 - ✅ Authenticate all routes
 - ✅ Verify permissions before actions
 - ✅ Test authorization edge cases
 
 ### 2. Cryptographic Failures
+
 - ✅ Use HTTPS everywhere
 - ✅ Encrypt sensitive data
 - ✅ Use strong algorithms (AES-256, bcrypt)
 
 ### 3. Injection
+
 - ✅ Use Prisma (parameterized queries)
 - ✅ Validate all inputs (Zod)
 - ✅ Sanitize outputs
 
 ### 4. Insecure Design
+
 - ✅ Security requirements from start
 - ✅ Threat modeling
 - ✅ Secure defaults
 
 ### 5. Security Misconfiguration
+
 - ✅ Helmet for security headers
 - ✅ Remove default accounts
 - ✅ Error handling doesn't leak info
 
 ### 6. Vulnerable Components
+
 - ✅ Dependabot enabled
 - ✅ Regular updates
 - ✅ Minimal dependencies
 
 ### 7. Authentication Failures
+
 - ✅ Use Azure AD (MFA supported)
 - ✅ Rate limit auth endpoints
 - ✅ Secure session management
 
 ### 8. Software & Data Integrity
+
 - ✅ Lock file committed
 - ✅ Signed releases
 - ✅ Audit logging
 
 ### 9. Logging Failures
+
 - ✅ Log security events
 - ✅ Don't log PII
 - ✅ Monitor logs
 
 ### 10. Server-Side Request Forgery
+
 - ✅ Validate URLs
 - ✅ Whitelist allowed domains
 - ✅ Use allow lists, not deny lists
@@ -897,28 +927,33 @@ pnpm audit --fix
 ### If Security Issue Found
 
 **1. Assess severity:**
+
 - Critical: Immediate production risk
 - High: Significant risk, needs quick fix
 - Medium: Should fix soon
 - Low: Fix in regular cycle
 
 **2. Contain:**
+
 - Can we disable the vulnerable feature?
 - Hotfix needed?
 - Notify users?
 
 **3. Fix:**
+
 - Create hotfix branch
 - Minimal fix
 - Test thoroughly
 - Deploy immediately
 
 **4. Post-mortem:**
+
 - How did this happen?
 - How do we prevent similar issues?
 - Update security guidelines
 
 **5. Notify (if required):**
+
 - Affected users
 - Regulatory bodies
 - Public disclosure (responsible)
@@ -928,10 +963,12 @@ pnpm audit --fix
 ## Resources
 
 **Internal:**
+
 - [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md)
 - [CODE_REVIEW_CHECKLIST.md](./CODE_REVIEW_CHECKLIST.md)
 
 **External:**
+
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org/)
 - [Azure Security Best Practices](https://docs.microsoft.com/en-us/azure/security/)

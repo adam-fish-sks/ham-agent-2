@@ -16,6 +16,7 @@
 ## Step-by-Step Migration
 
 ### ✅ Phase 1: Schema Updates (COMPLETED)
+
 - [x] Update Employee model with 5 new fields
 - [x] Update Asset model with renamed + new fields
 - [x] Update Order model with 6 new fields
@@ -27,11 +28,13 @@
 ### ⚠️ Phase 2: Database Migration (PENDING)
 
 **Prerequisites**:
+
 1. Ensure `.env` file exists with DATABASE_URL
 2. Database is running and accessible
 3. Backup existing data (optional but recommended)
 
 **Commands**:
+
 ```bash
 # Navigate to database package
 cd packages/database
@@ -44,6 +47,7 @@ ls -la prisma/migrations
 ```
 
 **Expected Output**:
+
 ```
 ✔ Generated Prisma Client
 The following migration(s) have been created and applied:
@@ -56,6 +60,7 @@ migrations/
 ```
 
 **What This Does**:
+
 - Adds 19 new nullable columns
 - Renames 3 Asset columns
 - Updates Prisma Client types
@@ -70,6 +75,7 @@ migrations/
 #### 1. `db-build-scripts/populate_assets.py`
 
 **Field Name Changes** (BREAKING):
+
 ```python
 # OLD → NEW
 'serialNumber' → 'serialCode'
@@ -78,6 +84,7 @@ migrations/
 ```
 
 **Search & Replace**:
+
 ```python
 # Find all occurrences of:
 data['serialNumber'] = ...
@@ -91,6 +98,7 @@ data['invoiceCurrency'] = api_response.get('invoice_currency')
 ```
 
 **New Fields to Add**:
+
 ```python
 asset_data = {
     # ... existing fields ...
@@ -104,6 +112,7 @@ asset_data = {
 #### 2. `db-build-scripts/populate_employees.py`
 
 **New Fields to Add**:
+
 ```python
 employee_data = {
     # ... existing fields ...
@@ -118,6 +127,7 @@ employee_data = {
 #### 3. `db-build-scripts/populate_orders.py`
 
 **New Fields to Add**:
+
 ```python
 order_data = {
     # ... existing fields ...
@@ -133,6 +143,7 @@ order_data = {
 #### 4. `db-build-scripts/populate_warehouses.py`
 
 **New Field to Add**:
+
 ```python
 warehouse_data = {
     # ... existing fields ...
@@ -143,6 +154,7 @@ warehouse_data = {
 #### 5. `db-build-scripts/populate_offices.py`
 
 **New Fields to Add**:
+
 ```python
 office_data = {
     # ... existing fields ...
@@ -156,20 +168,24 @@ office_data = {
 ### ⚠️ Phase 4: Frontend Updates (BREAKING)
 
 **Files to Search**:
+
 - `packages/frontend/src/**/*.ts`
 - `packages/frontend/src/**/*.tsx`
 
 **Search Terms**:
+
 1. `serialNumber` (in Asset context)
 2. `purchasePrice` (in Asset context)
 3. `currency` (in Asset context - be careful not to change Order.currency)
 
 **Component Files Likely Affected**:
+
 - Asset list/table components
 - Asset detail pages
 - Any export/report components
 
 **Example Changes**:
+
 ```typescript
 // OLD
 <TableCell>{asset.serialNumber}</TableCell>
@@ -183,6 +199,7 @@ office_data = {
 ```
 
 **Search Commands**:
+
 ```bash
 # Find all references to old field names
 cd packages/frontend
@@ -196,19 +213,21 @@ grep -r "\.currency" src/  # Use \. to match asset.currency specifically
 ### ⚠️ Phase 5: Backend Updates (BREAKING)
 
 **Files to Search**:
+
 - `packages/backend/src/**/*.ts`
 
 **Same field renames apply** - Update all queries and API endpoints
 
 **Example Backend Query Update**:
+
 ```typescript
 // OLD
 const assets = await prisma.asset.findMany({
   select: {
     serialNumber: true,
     purchasePrice: true,
-    currency: true
-  }
+    currency: true,
+  },
 });
 
 // NEW
@@ -216,8 +235,8 @@ const assets = await prisma.asset.findMany({
   select: {
     serialCode: true,
     invoicePrice: true,
-    invoiceCurrency: true
-  }
+    invoiceCurrency: true,
+  },
 });
 ```
 
@@ -226,6 +245,7 @@ const assets = await prisma.asset.findMany({
 ### ⚠️ Phase 6: Testing
 
 **Test Checklist**:
+
 - [ ] Run all population scripts without errors
 - [ ] Verify new fields populated in database
 - [ ] Frontend Assets page loads correctly
@@ -238,9 +258,10 @@ const assets = await prisma.asset.findMany({
 - [ ] Order shipping info displays (if implemented)
 
 **SQL Verification Queries**:
+
 ```sql
 -- Check if new Employee fields populated
-SELECT 
+SELECT
   COUNT(*) as total,
   COUNT(team) as with_team,
   COUNT("foreignId") as with_foreign_id,
@@ -249,7 +270,7 @@ SELECT
 FROM employees;
 
 -- Check if Asset fields renamed
-SELECT 
+SELECT
   COUNT(*) as total,
   COUNT("serialCode") as with_serial_code,
   COUNT("invoicePrice") as with_invoice_price,
@@ -258,7 +279,7 @@ SELECT
 FROM assets;
 
 -- Check if Order fields populated
-SELECT 
+SELECT
   COUNT(*) as total,
   COUNT("poNumber") as with_po,
   COUNT("totalProducts") as with_products,
@@ -315,21 +336,22 @@ ALTER TABLE assets DROP COLUMN "externalReference";
 
 ## Migration Timeline Estimate
 
-| Phase | Time Estimate | Blocking? |
-|-------|---------------|-----------|
-| Phase 2: Database Migration | 2 minutes | Yes |
-| Phase 3: Population Scripts | 30-45 minutes | Yes |
-| Phase 4: Frontend Updates | 15-30 minutes | Yes |
-| Phase 5: Backend Updates | 15-20 minutes | Yes |
-| Phase 6: Testing | 30-60 minutes | No |
-| Phase 7: Documentation | 15 minutes | No |
-| **Total** | **~2-3 hours** | - |
+| Phase                       | Time Estimate  | Blocking? |
+| --------------------------- | -------------- | --------- |
+| Phase 2: Database Migration | 2 minutes      | Yes       |
+| Phase 3: Population Scripts | 30-45 minutes  | Yes       |
+| Phase 4: Frontend Updates   | 15-30 minutes  | Yes       |
+| Phase 5: Backend Updates    | 15-20 minutes  | Yes       |
+| Phase 6: Testing            | 30-60 minutes  | No        |
+| Phase 7: Documentation      | 15 minutes     | No        |
+| **Total**                   | **~2-3 hours** | -         |
 
 ---
 
 ## Success Criteria
 
 ✅ **Migration Successful When**:
+
 1. Database migration applied without errors
 2. All population scripts run successfully
 3. Frontend loads without console errors
@@ -343,7 +365,9 @@ ALTER TABLE assets DROP COLUMN "externalReference";
 ## Post-Migration Enhancements (Optional)
 
 **Consider Adding**:
+
 1. Indexes for commonly filtered fields:
+
    ```sql
    CREATE INDEX idx_employees_deactivated ON employees("isDeactivated");
    CREATE INDEX idx_employees_team ON employees(team);

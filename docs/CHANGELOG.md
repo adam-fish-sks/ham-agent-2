@@ -5,6 +5,7 @@
 ### Added
 
 #### AI Assistant Features
+
 - **Persistent Chat History**: Chat conversations now survive page navigation using localStorage persistence
   - Automatically loads previous conversations on mount
   - Saves after each message exchange
@@ -44,6 +45,7 @@
   - See: [AI_ASSISTANT_FEATURES.md](AI_ASSISTANT_FEATURES.md) for full prompt
 
 #### Sync Page Improvements
+
 - **Python Script Integration**: Updated sync page to call Python population scripts
   - Previously called API routes directly
   - Now spawns Python processes for data population
@@ -62,6 +64,7 @@
   - See: [packages/frontend/src/app/sync/page.tsx](../packages/frontend/src/app/sync/page.tsx)
 
 #### Documentation
+
 - **AI Assistant Features Guide**: Comprehensive documentation of AI system
   - File: [docs/AI_ASSISTANT_FEATURES.md](AI_ASSISTANT_FEATURES.md)
   - Covers: architecture, features, configuration, troubleshooting
@@ -78,12 +81,14 @@
 ### Fixed
 
 #### Backend
+
 - **Azure OpenAI SSL Certificate Error**: Resolved `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` error
   - Added `process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'` for development
   - Location: [packages/backend/src/lib/azure-openai.ts](../packages/backend/src/lib/azure-openai.ts), Line 10
   - ⚠️ Development only - re-enable SSL verification for production
 
 #### Data Population
+
 - **Employee Address Population**: Fixed missing country data for assigned assets
   - Updated [db-build-scripts/populate_employees.py](../db-build-scripts/populate_employees.py)
   - Now fetches full address data including country from `/employees/{id}/addresses`
@@ -93,6 +98,7 @@
 ### Changed
 
 #### Git Configuration
+
 - **Updated .gitignore**: Improved patterns for cleaner repository
   - Added `.next/` and `out/` for Next.js build artifacts
   - Added test script patterns: `check_*.py`, `fetch_*.py`, `find_*.py`, etc.
@@ -106,6 +112,7 @@
   - Repository now cleaner and faster to clone
 
 #### UX Improvements
+
 - **Settings Page Button States**: Implemented smart button logic
   - Save button: Disabled when no changes, blue when modified
   - Restore Default button: Blue when using custom prompt, gray when default
@@ -115,6 +122,7 @@
 ### Data Population Results
 
 **Final Database State**:
+
 - **Employees**: 1,632 total
   - 1,536 with addresses (94% coverage)
   - 96 without addresses (6% - Workwize data gap)
@@ -131,10 +139,12 @@
 ## [2.0.2] - February 20, 2026
 
 ### Added
+
 - Asset pagination (100 items per page)
 - Office data sample: [data-samples/offices.json](../data-samples/offices.json)
 
 ### Fixed
+
 - Backend port conflicts (manual restart required)
 
 ---
@@ -142,11 +152,13 @@
 ## [2.0.1] - February 15, 2026
 
 ### Added
+
 - Complete employee address population from Workwize API
 - Parallel processing in population scripts (10 workers)
 - Comprehensive API documentation
 
 ### Fixed
+
 - Schema v2.0 migration issues
 - Address field mapping (city/region/postalCode)
 
@@ -155,6 +167,7 @@
 ## [2.0.0] - February 10, 2026
 
 ### Added
+
 - Complete v2.0 schema migration
 - PostgreSQL database in Podman
 - Next.js frontend with Tailwind CSS
@@ -163,6 +176,7 @@
 - Initial AI assistant integration
 
 ### Documentation
+
 - [INITIAL_BUILD.md](INITIAL_BUILD.md) - Project setup guide
 - [SECURITY_GUIDELINES.md](SECURITY_GUIDELINES.md) - Security best practices
 - [PII_SCRUBBING_GUIDELINES.md](PII_SCRUBBING_GUIDELINES.md) - Data handling
@@ -186,6 +200,7 @@
 ## Upcoming Features
 
 ### Planned for 2.0.4
+
 - [ ] Settings page access control (admin only)
 - [ ] Audit logging for system prompt changes
 - [ ] Conversation export/import
@@ -193,6 +208,7 @@
 - [ ] Token usage tracking
 
 ### Planned for 2.1.0
+
 - [ ] Advanced query builder UI for AI assistant
 - [ ] Response regeneration
 - [ ] Conversation branching
@@ -200,6 +216,7 @@
 - [ ] Multi-user support with authentication
 
 ### Under Consideration
+
 - [ ] Vector embeddings for semantic search
 - [ ] Custom function calling for specific queries
 - [ ] Scheduled report generation
@@ -211,11 +228,13 @@
 ## Breaking Changes
 
 ### 2.0.0 → 2.0.3
+
 - None (backward compatible)
 - localStorage keys added (non-breaking)
 - API routes accept optional parameters (backward compatible)
 
 ### 1.0 → 2.0.0
+
 - Complete database schema redesign
 - Migration required from v1 schema
 - See: [SCHEMA_MIGRATION_v1_to_v2.md](SCHEMA_MIGRATION_v1_to_v2.md)

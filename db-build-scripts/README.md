@@ -5,6 +5,7 @@ Python scripts for populating the PostgreSQL database from the Workwize API.
 ## Setup
 
 1. **Install Python dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -21,11 +22,13 @@ Python scripts for populating the PostgreSQL database from the Workwize API.
 Fetches asset data from the Workwize API and populates the `assets` table with PII scrubbing applied.
 
 **Usage:**
+
 ```bash
 python populate_assets.py
 ```
 
 **Features:**
+
 - ✅ Fetches all assets from Workwize API
 - ✅ Applies PII scrubbing (emails, phones, SSNs, credit cards removed from notes)
 - ✅ Scrubs location data to city/state only (no street addresses)
@@ -34,11 +37,13 @@ python populate_assets.py
 - ✅ Shows summary statistics after completion
 
 **PII Scrubbing:**
+
 - `location` - Reduced to city/state only
 - `notes` - Emails, phone numbers, SSNs, credit cards redacted
 - `assignedToId` - Only ID stored, no employee names
 
 **Output:**
+
 ```
 Fetched 800+ assets
 ✅ Successfully inserted/updated 800 assets

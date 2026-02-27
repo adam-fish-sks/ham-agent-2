@@ -120,6 +120,7 @@ Better: /api/order-items/789/reviews
 ### GET - Retrieve Resources
 
 **Retrieve collection:**
+
 ```http
 GET /api/users
 Response: 200 OK
@@ -130,6 +131,7 @@ Response: 200 OK
 ```
 
 **Retrieve single resource:**
+
 ```http
 GET /api/users/123
 Response: 200 OK
@@ -137,6 +139,7 @@ Response: 200 OK
 ```
 
 **Rules:**
+
 - Must be safe (no side effects)
 - Must be idempotent
 - Can be cached
@@ -164,6 +167,7 @@ Location: /api/users/123
 ```
 
 **Rules:**
+
 - Return `201 Created` on success
 - Include `Location` header with new resource URL
 - Return created resource in body
@@ -192,6 +196,7 @@ Response: 200 OK
 ```
 
 **Rules:**
+
 - Replaces entire resource
 - Must be idempotent
 - Include all fields (missing fields set to null/default)
@@ -218,6 +223,7 @@ Response: 200 OK
 ```
 
 **Rules:**
+
 - Only include fields to update
 - Should be idempotent
 - Return full resource or just updated fields
@@ -232,6 +238,7 @@ Response: 204 No Content
 ```
 
 **Rules:**
+
 - Return `204 No Content` (no body)
 - Must be idempotent
 - Return `404` if already deleted
@@ -252,6 +259,7 @@ Content-Type: application/json
 ### Request Body Structure
 
 **Simple create/update:**
+
 ```json
 {
   "name": "John Doe",
@@ -261,6 +269,7 @@ Content-Type: application/json
 ```
 
 **Nested relationships:**
+
 ```json
 {
   "name": "John Doe",
@@ -274,6 +283,7 @@ Content-Type: application/json
 ```
 
 **Arrays:**
+
 ```json
 {
   "name": "Order #123",
@@ -317,10 +327,10 @@ Document which fields are required:
 ```typescript
 // API documentation
 interface CreateUserRequest {
-  name: string;        // required
-  email: string;       // required
-  phone?: string;      // optional
-  address?: Address;   // optional
+  name: string; // required
+  email: string; // required
+  phone?: string; // optional
+  address?: Address; // optional
 }
 ```
 
@@ -331,6 +341,7 @@ interface CreateUserRequest {
 ### Standard Response Envelope
 
 **Success response with data:**
+
 ```json
 {
   "data": {
@@ -341,6 +352,7 @@ interface CreateUserRequest {
 ```
 
 **Success response with collection:**
+
 ```json
 {
   "data": [
@@ -356,6 +368,7 @@ interface CreateUserRequest {
 ```
 
 **Success response with message:**
+
 ```json
 {
   "data": { "id": "123" },
@@ -431,10 +444,10 @@ interface CreateUserRequest {
 ```typescript
 interface ErrorResponse {
   error: {
-    code: string;           // Machine-readable error code
-    message: string;        // Human-readable message
+    code: string; // Machine-readable error code
+    message: string; // Human-readable message
     details?: ErrorDetail[]; // Optional field-level errors
-    requestId?: string;     // For debugging/support
+    requestId?: string; // For debugging/support
   };
 }
 
@@ -450,31 +463,32 @@ interface ErrorDetail {
 
 ```typescript
 // Authentication/Authorization
-'UNAUTHORIZED'          // 401 - Not authenticated
-'FORBIDDEN'            // 403 - Authenticated but no permission
-'TOKEN_EXPIRED'        // 401 - Auth token expired
+'UNAUTHORIZED'; // 401 - Not authenticated
+'FORBIDDEN'; // 403 - Authenticated but no permission
+'TOKEN_EXPIRED'; // 401 - Auth token expired
 
 // Validation
-'VALIDATION_ERROR'     // 400 - Input validation failed
-'MISSING_FIELD'        // 400 - Required field missing
-'INVALID_FORMAT'       // 400 - Field format invalid
+'VALIDATION_ERROR'; // 400 - Input validation failed
+'MISSING_FIELD'; // 400 - Required field missing
+'INVALID_FORMAT'; // 400 - Field format invalid
 
 // Resources
-'NOT_FOUND'           // 404 - Resource not found
-'ALREADY_EXISTS'      // 409 - Resource already exists
-'CONFLICT'            // 409 - State conflict
+'NOT_FOUND'; // 404 - Resource not found
+'ALREADY_EXISTS'; // 409 - Resource already exists
+'CONFLICT'; // 409 - State conflict
 
 // Server
-'INTERNAL_ERROR'      // 500 - Unexpected server error
-'SERVICE_UNAVAILABLE' // 503 - Temporary unavailability
+'INTERNAL_ERROR'; // 500 - Unexpected server error
+'SERVICE_UNAVAILABLE'; // 503 - Temporary unavailability
 
 // Rate Limiting
-'RATE_LIMIT_EXCEEDED' // 429 - Too many requests
+'RATE_LIMIT_EXCEEDED'; // 429 - Too many requests
 ```
 
 ### Examples
 
 **Validation error:**
+
 ```http
 POST /api/users
 {
@@ -501,6 +515,7 @@ Response: 400 Bad Request
 ```
 
 **Not found:**
+
 ```http
 GET /api/users/999
 
@@ -514,6 +529,7 @@ Response: 404 Not Found
 ```
 
 **Authorization error:**
+
 ```http
 DELETE /api/users/123
 
@@ -533,11 +549,13 @@ Response: 403 Forbidden
 ### Use Standard HTTP Status Codes
 
 **Success (2xx)**
+
 - `200 OK` - Request succeeded (GET, PUT, PATCH)
 - `201 Created` - Resource created (POST)
 - `204 No Content` - Success with no response body (DELETE)
 
 **Client Error (4xx)**
+
 - `400 Bad Request` - Invalid input/validation error
 - `401 Unauthorized` - Authentication required
 - `403 Forbidden` - Authenticated but no permission
@@ -547,6 +565,7 @@ Response: 403 Forbidden
 - `429 Too Many Requests` - Rate limit exceeded
 
 **Server Error (5xx)**
+
 - `500 Internal Server Error` - Unexpected server error
 - `502 Bad Gateway` - Upstream service error
 - `503 Service Unavailable` - Temporary unavailability
@@ -590,11 +609,13 @@ Request received
 ### Offset-Based Pagination (Simple)
 
 **Request:**
+
 ```http
 GET /api/users?page=2&pageSize=20
 ```
 
 **Response:**
+
 ```json
 {
   "data": [...],
@@ -608,17 +629,20 @@ GET /api/users?page=2&pageSize=20
 ```
 
 **Query Parameters:**
+
 - `page` - Page number (1-indexed)
 - `pageSize` or `limit` - Items per page (default: 20, max: 100)
 
 ### Cursor-Based Pagination (For large datasets)
 
 **Request:**
+
 ```http
 GET /api/users?cursor=eyJpZCI6MTIzfQ&limit=20
 ```
 
 **Response:**
+
 ```json
 {
   "data": [...],
@@ -630,6 +654,7 @@ GET /api/users?cursor=eyJpZCI6MTIzfQ&limit=20
 ```
 
 **When to use:**
+
 - Large datasets (10k+ records)
 - Real-time data (where total count changes)
 - Performance critical
@@ -644,7 +669,7 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
 // Apply even if not requested
-GET /api/users
+GET / api / users;
 // Automatically applies ?page=1&pageSize=20
 ```
 
@@ -697,11 +722,10 @@ GET /api/users?fields=id,name,email
 ```
 
 Response:
+
 ```json
 {
-  "data": [
-    { "id": "1", "name": "John", "email": "john@example.com" }
-  ]
+  "data": [{ "id": "1", "name": "John", "email": "john@example.com" }]
 }
 ```
 
@@ -717,11 +741,13 @@ https://api.example.com/v2/users
 ```
 
 **Pros:**
+
 - Clear and explicit
 - Easy to route
 - Supports multiple versions simultaneously
 
 **Guidelines:**
+
 - Start at `v1`
 - Increment for breaking changes only
 - Support previous version for 6-12 months
@@ -737,6 +763,7 @@ Link: </v2/users>; rel="successor-version"
 ### When to Version
 
 **Increment version for breaking changes:**
+
 - Removing fields
 - Renaming fields
 - Changing field types
@@ -744,6 +771,7 @@ Link: </v2/users>; rel="successor-version"
 - Changing authentication
 
 **Don't increment for:**
+
 - Adding optional fields
 - Adding new endpoints
 - Bug fixes
@@ -760,6 +788,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 ```
 
 **Use JWT tokens from Azure AD/Entra ID:**
+
 - Include in Authorization header
 - Validate signature
 - Check expiration
@@ -772,11 +801,13 @@ X-API-Key: sk_live_abc123def456
 ```
 
 **Only for:**
+
 - Server-to-server communication
 - Internal services
 - Webhooks
 
 **Never for:**
+
 - Browser/client apps (use OAuth)
 - Embedding in mobile apps
 
@@ -787,10 +818,12 @@ X-API-Key: sk_live_abc123def456
 ### Standard Rate Limits
 
 **Authenticated users:**
+
 - 1000 requests per hour per user
 - 60 requests per minute per user
 
 **Unauthenticated requests:**
+
 - 100 requests per hour per IP
 - 10 requests per minute per IP
 
@@ -852,6 +885,7 @@ paths:
 ### Endpoint Documentation Requirements
 
 Each endpoint must document:
+
 1. **Purpose** - What it does
 2. **Authentication** - Required or optional
 3. **Parameters** - Query params, path params, body
@@ -865,17 +899,17 @@ Each endpoint must document:
 ```typescript
 /**
  * GET /api/users
- * 
+ *
  * List all users with pagination
- * 
+ *
  * Authentication: Required (Bearer token)
- * 
+ *
  * Query Parameters:
  *   - page (number, default: 1): Page number
  *   - pageSize (number, default: 20, max: 100): Items per page
  *   - status (string, optional): Filter by status (active, inactive)
  *   - sort (string, optional): Sort field (e.g., 'name', '-createdAt')
- * 
+ *
  * Response: 200 OK
  * {
  *   "data": [
@@ -887,7 +921,7 @@ Each endpoint must document:
  *     "pageSize": 20
  *   }
  * }
- * 
+ *
  * Errors:
  *   - 401: Unauthorized (missing/invalid token)
  *   - 429: Rate limit exceeded
@@ -934,9 +968,7 @@ describe('GET /api/users/:id', () => {
   });
 
   it('returns 401 when not authenticated', async () => {
-    await request(app)
-      .get('/api/users/123')
-      .expect(401);
+    await request(app).get('/api/users/123').expect(401);
   });
 });
 ```

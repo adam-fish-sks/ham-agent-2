@@ -83,7 +83,7 @@ const message = "Hello world";
 ```
 apps/
   web/              # Next.js web application
-  api/              # Express API server  
+  api/              # Express API server
   worker/           # Background job processor
   desktop/          # Tauri desktop app (if needed)
 packages/
@@ -356,7 +356,8 @@ if (user !== null && user !== undefined) {
 }
 
 // ❌ Bad - Loose equality
-if (user != null) {} // Don't use != or ==
+if (user != null) {
+} // Don't use != or ==
 ```
 
 ---
@@ -443,6 +444,7 @@ function Counter() {
 ```
 
 **Rule:** Only use `'use client'` when you need:
+
 - React hooks (useState, useEffect, etc.)
 - Browser APIs (localStorage, etc.)
 - Event handlers (onClick, onChange, etc.)
@@ -452,10 +454,7 @@ function Counter() {
 
 ```typescript
 // ✅ Good - Reusable hook with proper typing
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, (value: T) => void] {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -613,10 +612,10 @@ model User {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   posts     Post[]
   profile   Profile?
-  
+
   @@index([email])
   @@map("users") // Maps to "users" table
 }
@@ -627,9 +626,9 @@ model Post {
   content   String?
   published Boolean  @default(false)
   authorId  String
-  
+
   author    User     @relation(fields: [authorId], references: [id])
-  
+
   @@index([authorId])
   @@map("posts")
 }
@@ -684,11 +683,11 @@ await prisma.$transaction(async (tx) => {
 async function fetchUser(id: string): Promise<User> {
   try {
     const response = await fetch(`/api/users/${id}`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch user: ${response.statusText}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     logger.error('Error fetching user', { userId: id, error });
@@ -840,7 +839,9 @@ function getUserById(id: string) {}
 
 // ❌ Bad - Outdated/wrong comment
 // Returns user object (actually returns array now)
-function getUsers() { return []; }
+function getUsers() {
+  return [];
+}
 ```
 
 ### JSDoc for Exported Functions
@@ -853,10 +854,7 @@ function getUsers() { return []; }
  * @returns Total price including tax
  * @throws {Error} If price or taxRate is negative
  */
-export function calculateTotalPrice(
-  price: number,
-  taxRate: number
-): number {
+export function calculateTotalPrice(price: number, taxRate: number): number {
   if (price < 0 || taxRate < 0) {
     throw new Error('Price and tax rate must be non-negative');
   }
@@ -954,6 +952,7 @@ describe('UserCard', () => {
 ### Test Coverage
 
 **Minimum coverage requirements:**
+
 - **Critical paths:** 90%+
 - **Services/utils:** 80%+
 - **UI components:** 60%+
@@ -982,6 +981,7 @@ See [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) for details.
 ### CI Checks
 
 **GitHub Actions must pass:**
+
 - ✅ Prettier formatting
 - ✅ ESLint
 - ✅ TypeScript compilation
@@ -991,6 +991,7 @@ See [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) for details.
 ### Code Review
 
 **Reviewers must verify:**
+
 - Follows naming conventions
 - Proper error handling
 - No sensitive data logged
@@ -1002,6 +1003,7 @@ See [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) for details.
 ## Questions?
 
 If anything is unclear or you think a standard should change:
+
 1. Discuss in team meeting
 2. Propose changes via PR to this document
 3. Document decision in [ARCHITECTURE_DECISION_RECORDS.md](./ARCHITECTURE_DECISION_RECORDS.md)

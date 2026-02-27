@@ -80,17 +80,15 @@ export default function SettingsPage() {
 
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">AI Assistant System Prompt</h2>
-        
+
         <p className="text-sm text-gray-600 mb-4">
-          Customize the system prompt that defines how the AI assistant behaves. 
-          This prompt is sent with every conversation to guide the AI's responses.
+          Customize the system prompt that defines how the AI assistant behaves. This prompt is sent
+          with every conversation to guide the AI's responses.
         </p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              System Prompt
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">System Prompt</label>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -115,7 +113,7 @@ export default function SettingsPage() {
             >
               Save Prompt
             </button>
-            
+
             <button
               onClick={handleRestore}
               className={`px-6 py-2 rounded-lg font-medium transition-colors ${
@@ -130,7 +128,11 @@ export default function SettingsPage() {
             {saved && (
               <span className="text-green-600 text-sm font-medium flex items-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 Saved!
               </span>
@@ -152,7 +154,7 @@ export default function SettingsPage() {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="text-blue-900 font-semibold mb-2">📝 Default Prompt Preview:</h3>
         <pre className="text-xs text-blue-800 whitespace-pre-wrap font-mono bg-white p-3 rounded border border-blue-200">
-{DEFAULT_PROMPT}
+          {DEFAULT_PROMPT}
         </pre>
       </div>
     </div>

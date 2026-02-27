@@ -7,6 +7,7 @@ Create a Workwize management platform. Data is to be pulled from the Workwize AP
 ## Core Requirements
 
 ### Database Tables
+
 - Orders
 - Products
 - Employees
@@ -17,6 +18,7 @@ Create a Workwize management platform. Data is to be pulled from the Workwize AP
 - Offboards
 
 ### Technology Stack
+
 - **Frontend**: Next.js with Tailwind CSS
 - **Backend**: Express.js with Prisma ORM
 - **Database**: PostgreSQL 16 in Podman
@@ -24,6 +26,7 @@ Create a Workwize management platform. Data is to be pulled from the Workwize AP
 - **Scripting**: Python for data population
 
 ### Key Features
+
 1. Frontend table view for Assets with navigation
 2. AI assistant with full data access
 3. API data population scripts
@@ -36,11 +39,13 @@ Create a Workwize management platform. Data is to be pulled from the Workwize AP
 ### 1. API Configuration
 
 **Base URL**:
+
 ```
 https://prod-back.goworkwize.com/api/public
 ```
 
 **Authentication** (⚠️ IMPORTANT):
+
 ```bash
 # ✅ CORRECT - Use Bearer token
 Authorization: Bearer {your_token}
@@ -50,6 +55,7 @@ X-Api-Key: {your_token}
 ```
 
 **Known API Response Inconsistencies**:
+
 - `GET /employees` → Returns array (no pagination wrapper)
 - `GET /employees/{id}` → Returns **direct object** (not wrapped)
 - `GET /employees/{id}/addresses` → Returns **wrapped** in `{code, success, data, ...}` with full address including country object
@@ -62,16 +68,18 @@ X-Api-Key: {your_token}
 ### 2. Data Samples Strategy
 
 Create `data-samples/` folder containing **real API responses**:
+
 - ✅ Fetch using actual API calls - DO NOT guess at responses
 - ✅ Keep as `.json` files (not markdown) for programmatic use
 - ✅ Include a `README.md` explaining each file and PII warnings
 - ✅ Add to `.gitignore` to prevent committing PII
 
 **Essential files**:
+
 ```
 data-samples/
   employees.json       # GET /employees
-  assets.json          # GET /assets  
+  assets.json          # GET /assets
   orders.json          # GET /orders
   products.json        # GET /products
   warehouses.json      # GET /warehouses
@@ -84,14 +92,15 @@ data-samples/
 ### 3. Database Schema Design
 
 **Address Fields** (⚠️ Match Workwize exactly):
+
 ```prisma
 model Address {
   id        String   @id @default(uuid())
   city      String?  // NOT "line1"
-  region    String?  // NOT "state"  
+  region    String?  // NOT "state"
   country   String?
   postalCode String? // NOT "postcode"
-  
+
   // ALWAYS include timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -99,6 +108,7 @@ model Address {
 ```
 
 **Employee-Address Relationship**:
+
 ```prisma
 model Employee {
   id        String   @id
@@ -108,6 +118,7 @@ model Employee {
 ```
 
 **Key Lessons**:
+
 - ⚠️ ~6% of employees have no address in Workwize API (returns 404)
 - Use nullable foreign keys
 - Match Workwize field names exactly (city/region/postalCode)
@@ -116,17 +127,19 @@ model Employee {
 ### 4. Population Scripts Best Practices
 
 **Performance** (`db-build-scripts/`):
+
 ```python
 from concurrent.futures import ThreadPoolExecutor
 
 # ✅ Use parallel processing for API calls
 with ThreadPoolExecutor(max_workers=10) as executor:
     futures = [executor.submit(fetch_data, id) for id in ids]
-    
+
 # Result: 4-5x speedup (2-3 min vs 10-11 min)
 ```
 
 **Error Handling**:
+
 ```python
 # ✅ Handle missing data gracefully
 try:
@@ -139,6 +152,7 @@ except requests.HTTPError as e:
 ```
 
 **SQL Timestamps**:
+
 ```python
 # ✅ Always set timestamps explicitly
 INSERT INTO addresses (city, region, "postalCode", "createdAt", "updatedAt")
@@ -150,6 +164,7 @@ VALUES (%s, %s, %s, NOW(), NOW())
 ### 5. Git Workflow Configuration
 
 **`.gitignore` Setup**:
+
 ```gitignore
 # PII Protection
 employees_no_address.xlsx
@@ -175,7 +190,8 @@ db-build-scripts/      # Reproducible setup scripts
 docs/                  # All documentation including API reference
 ```
 
-**Rationale**: 
+**Rationale**:
+
 - Excel reports with real employee data → Ignore
 - Test/diagnostic scripts → Ignore (ad-hoc debugging)
 - Sample JSON for development → Track (PII already in docs as "sanitize before prod")
@@ -185,6 +201,7 @@ docs/                  # All documentation including API reference
 ### 6. Development Server Management
 
 **Create `restart_dev.py`**:
+
 ```python
 # Restart both frontend and backend servers
 # Handle port conflicts, stale processes
@@ -192,6 +209,7 @@ docs/                  # All documentation including API reference
 ```
 
 **Known Issue**: Simple restart commands may not work - server may stay down
+
 - Use process management (check for running ports)
 - Kill stale Node/Python processes
 - Verify DATABASE_URL environment variable
@@ -199,11 +217,13 @@ docs/                  # All documentation including API reference
 ### 7. Data Quality Expectations
 
 **Known API Data Issues**:
+
 - 96/1,630 employees (~6%) have no addresses in Workwize
 - 83 of those 96 have laptops assigned
 - This is a **Workwize data completeness issue**, not system bug
 
 **Response Strategy**:
+
 1. Document expected data gaps
 2. Create Excel reports for manual follow-up
 3. Don't block on incomplete data - use nullable fields
@@ -212,6 +232,7 @@ docs/                  # All documentation including API reference
 ### 8. Documentation Requirements
 
 **Essential Documentation** (`docs/`):
+
 ```
 WORKWIZE_APIS.md           # Complete endpoint reference with examples
 PII_SCRUBBING_GUIDELINES.md # Data handling rules
@@ -222,6 +243,7 @@ CHANGELOG.md               # Version history and changes
 ```
 
 **API Documentation Must Include**:
+
 - cURL examples with Bearer token
 - Full request/response examples (not summarized)
 - Query parameters for each endpoint
@@ -234,7 +256,7 @@ CHANGELOG.md               # Version history and changes
 ```
 root/
   data-samples/           # Real API JSON responses
-  db-build-scripts/       # populate_*.py scripts  
+  db-build-scripts/       # populate_*.py scripts
   check-scripts/          # Diagnostic scripts (separate from build)
   docs/                   # All documentation
   packages/
@@ -244,6 +266,7 @@ root/
 ```
 
 **Why separate check-scripts**:
+
 - Build scripts = production setup
 - Check scripts = debugging/diagnostics
 - Clearer separation of concerns
@@ -251,22 +274,29 @@ root/
 ### 10. Azure OpenAI Integration
 
 **Use Lazy Loading**:
+
 ```typescript
 // ✅ Prevents startup crashes when credentials missing
 const getAzureOpenAI = async () => {
   const { AzureOpenAI } = await import('@azure/openai');
-  return new AzureOpenAI({ /* config */ });
+  return new AzureOpenAI({
+    /* config */
+  });
 };
 ```
 
 **Don't**:
+
 ```typescript
 // ❌ Crashes server if AZURE_OPENAI_KEY missing
 import { AzureOpenAI } from '@azure/openai';
-const client = new AzureOpenAI({ /* config */ });
+const client = new AzureOpenAI({
+  /* config */
+});
 ```
 
 **Development SSL Fix**:
+
 ```typescript
 // Disable SSL verification for development environment
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -275,6 +305,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 ⚠️ **Important**: Re-enable SSL verification for production deployments
 
 **AI Features** (v2.0.3+):
+
 - Persistent chat history with localStorage
 - Custom system prompt support via Settings page
 - Scope-limited default prompt (Workwize data only)
@@ -321,6 +352,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 **Success Metrics**:
 
 **Data Population**:
+
 - ✅ 1,632 employees populated with parallel processing
 - ✅ 1,536/1,632 employees with addresses (94% - 6% gap is expected Workwize data issue)
 - ✅ Employee addresses include country, city, and postal code
@@ -329,6 +361,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 - ✅ All addresses populated from API with full location information
 
 **Documentation**:
+
 - ✅ Complete API docs with cURL examples
 - ✅ Response format variations documented
 - ✅ Known data gaps documented
@@ -336,12 +369,14 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 - ✅ AI assistant features fully documented
 
 **Developer Experience**:
+
 - ✅ Single command to populate database (`populate_db_main.py`)
 - ✅ Diagnostic scripts for troubleshooting
 - ✅ Clear separation of build vs check scripts
 - ✅ Comprehensive migration documentation
 
 **AI Features** (v2.0.3):
+
 - ✅ Persistent chat history across page navigation
 - ✅ Custom system prompt configuration
 - ✅ Settings page with smart UX states
