@@ -15,6 +15,7 @@ import { offboardsRouter } from './routes/offboards';
 import { addressesRouter } from './routes/addresses';
 import { syncRouter } from './routes/sync';
 import { aiRouter } from './routes/ai';
+import { statusRouter } from './routes/status';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 
@@ -69,6 +70,7 @@ app.use('/api/offboards', offboardsRouter);
 app.use('/api/addresses', addressesRouter);
 app.use('/api/sync', syncRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/status', statusRouter);
 
 // 404 handler
 app.use(notFoundHandler);

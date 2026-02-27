@@ -47,6 +47,9 @@ export default function AssetsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterCountry, setFilterCountry] = useState<string>('');
+  const [filterStatus, setFilterStatus] = useState<string>('');
+  const [filterLocation, setFilterLocation] = useState<string>('');
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -66,11 +69,59 @@ export default function AssetsPage() {
     }
   };
 
+  // Apply filters
+  const filteredAssets = assets.filter((asset) => {
+    const country =
+      asset.assignedTo?.address?.country ||
+      asset.warehouse?.address?.country ||
+      asset.office?.address?.country ||
+      '';
+    const status = asset.status || '';
+    const location = asset.warehouse ? 'Warehouse' : asset.office ? 'Office' : asset.location || '';
+
+    const matchesCountry =
+      !filterCountry || country.toLowerCase().includes(filterCountry.toLowerCase());
+    const matchesStatus = !filterStatus || status.toLowerCase() === filterStatus.toLowerCase();
+    const matchesLocation =
+      !filterLocation || location.toLowerCase().includes(filterLocation.toLowerCase());
+
+    return matchesCountry && matchesStatus && matchesLocation;
+  });
+
+  // Get unique values for filter dropdowns
+  const uniqueCountries = Array.from(
+    new Set(
+      assets
+        .map(
+          (a) =>
+            a.assignedTo?.address?.country ||
+            a.warehouse?.address?.country ||
+            a.office?.address?.country
+        )
+        .filter((c) => c)
+    )
+  ).sort();
+
+  const uniqueStatuses = Array.from(new Set(assets.map((a) => a.status).filter((s) => s))).sort();
+
+  const uniqueLocations = Array.from(
+    new Set(
+      assets
+        .map((a) => (a.warehouse ? 'Warehouse' : a.office ? 'Office' : a.location || ''))
+        .filter((l) => l)
+    )
+  ).sort();
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterCountry, filterStatus, filterLocation]);
+
   // Calculate pagination
-  const totalPages = Math.ceil(assets.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentAssets = assets.slice(startIndex, endIndex);
+  const currentAssets = filteredAssets.slice(startIndex, endIndex);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -135,13 +186,106 @@ export default function AssetsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Assets</h1>
         <div className="text-sm text-gray-600">
-          {assets.length} asset{assets.length !== 1 ? 's' : ''} found
+          {filteredAssets.length} of {assets.length} asset{assets.length !== 1 ? 's' : ''}
           {totalPages > 1 && (
             <span className="ml-2">
               (Page {currentPage} of {totalPages})
             </span>
           )}
         </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label
+              htmlFor="filter-country"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Country
+            </label>
+            <select
+              id="filter-country"
+              value={filterCountry}
+              onChange={(e) => setFilterCountry(e.target.value)}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            >
+              <option value="">All Countries</option>
+              {uniqueCountries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="filter-status" className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              id="filter-status"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            >
+              <option value="">All Statuses</option>
+              {uniqueStatuses.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="filter-location"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Location
+            </label>
+            <select
+              id="filter-location"
+              value={filterLocation}
+              onChange={(e) => setFilterLocation(e.target.value)}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            >
+              <option value="">All Locations</option>
+              {uniqueLocations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {(filterCountry || filterStatus || filterLocation) && (
+          <div className="mt-3 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              {filteredAssets.length === 0 ? (
+                <span className="text-orange-600">No assets match the current filters</span>
+              ) : (
+                <span>
+                  Showing {filteredAssets.length} filtered result
+                  {filteredAssets.length !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setFilterCountry('');
+                setFilterStatus('');
+                setFilterLocation('');
+              }}
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {assets.length === 0 ? (
@@ -226,9 +370,9 @@ export default function AssetsPage() {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {asset.warehouse ? (
-                          <span className="text-blue-600">Warehouse - {asset.warehouse.name}</span>
+                          <span className="text-blue-600">Warehouse</span>
                         ) : asset.office ? (
-                          <span className="text-purple-600">Office - {asset.office.name}</span>
+                          <span className="text-purple-600">Office</span>
                         ) : (
                           asset.location || '-'
                         )}
@@ -271,8 +415,8 @@ export default function AssetsPage() {
                 <div>
                   <p className="text-sm text-gray-700">
                     Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                    <span className="font-medium">{Math.min(endIndex, assets.length)}</span> of{' '}
-                    <span className="font-medium">{assets.length}</span> results
+                    <span className="font-medium">{Math.min(endIndex, filteredAssets.length)}</span>{' '}
+                    of <span className="font-medium">{filteredAssets.length}</span> results
                   </p>
                 </div>
                 <div>

@@ -11,6 +11,7 @@ export default function Navigation() {
     { href: '/assets', label: 'Assets' },
     { href: '/ai-assistant', label: 'AI Assistant' },
     { href: '/sync', label: 'Sync Data' },
+    { href: '/status', label: 'API Status' },
   ];
 
   return (
