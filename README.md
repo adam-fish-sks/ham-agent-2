@@ -8,9 +8,11 @@ A monorepo project for managing Workwize data with PII scrubbing, PostgreSQL cac
 - 📊 PostgreSQL database with Prisma ORM
 - 🚀 Next.js frontend with asset management
 - 🤖 AI assistant powered by Azure OpenAI
-  - **NEW**: Persistent chat history
-  - **NEW**: Custom system prompts
-  - **NEW**: Scope-limited default behavior
+  - **Automatic query execution** - no code snippets, direct results
+  - **Intelligent device classification** - Enhanced/Standard Windows/Mac detection
+  - **Persistent chat history** - survives page navigation
+  - **Single system prompt** - configured in Settings, auto-migrates from old versions
+  - **Natural language filtering** - understands "in warehouse" vs "in Canada"
 - 🔄 Workwize API integration
 - 🐳 Podman/Docker PostgreSQL setup
 - ⚙️ Settings page for AI configuration

@@ -67,8 +67,19 @@ export default function AIAssistantPage() {
     setLoading(true);
 
     try {
-      // Load custom prompt from localStorage if available
-      const customPrompt = localStorage.getItem('ai-system-prompt') || undefined;
+      // Load custom prompt from localStorage - always required
+      let customPrompt = localStorage.getItem('ai-system-prompt');
+      
+      // If no prompt saved, user needs to configure it in settings
+      if (!customPrompt) {
+        const errorMessage: Message = {
+          role: 'assistant',
+          content: 'Please configure the AI system prompt in Settings before using the assistant.',
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+        setLoading(false);
+        return;
+      }
 
       const response = await axios.post('http://localhost:3001/api/ai/chat', {
         message: input,

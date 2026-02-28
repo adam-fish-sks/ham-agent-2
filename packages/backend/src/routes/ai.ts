@@ -34,48 +34,92 @@ Available operations:
 `.trim();
 }
 
-// Query database based on AI analysis
-async function queryDatabase(query: string): Promise<any> {
-  const lowerQuery = query.toLowerCase();
-
+// Query database based on explicit parameters from AI tool call
+export async function queryDatabase(params: {
+  country?: string;
+  deviceClass?: string;
+  warehouseOnly?: boolean;
+  availableOnly?: boolean;
+  assignedOnly?: boolean;
+  manufacturer?: string;
+}): Promise<any> {
   try {
-    // Asset queries
-    if (lowerQuery.includes('asset')) {
-      if (lowerQuery.includes('assigned')) {
-        return await prisma.asset.findMany({
-          where: { status: 'assigned' },
-          include: { product: true, assignedTo: true },
-          take: 10,
-        });
+    const assets = await prisma.asset.findMany({
+      include: {
+        assignedTo: {
+          include: { address: true },
+        },
+        warehouse: {
+          include: { address: true },
+        },
+      },
+    });
+
+    const { classifyDevice, parseDeviceSpecs } = await import('@ham-agent/shared');
+
+    let filtered = assets;
+
+    if (params.country) {
+      const countryToWarehouse: Record<string, string> = {
+        'Canada': '8',
+        'United States': '2',
+        'United Kingdom': '1',
+        'Netherlands': '4',
+        'Australia': '9',
+        'Singapore': '12',
+        'Japan': '15',
+        'United Arab Emirates': '16',
+        'South Africa': '13',
+        'India': '6',
+        'Brazil': '7',
+        'Mexico': '11',
+        'Philippines': '10',
+        'Costa Rica': '14',
+      };
+      const warehouseId = countryToWarehouse[params.country];
+      
+      if (params.warehouseOnly) {
+        filtered = filtered.filter(a => warehouseId && a.warehouseId?.toString() === warehouseId);
+      } else {
+        filtered = filtered.filter(a => 
+          a.assignedTo?.address?.country === params.country ||
+          (warehouseId && a.warehouseId?.toString() === warehouseId)
+        );
       }
-      return await prisma.asset.findMany({
-        include: { product: true, assignedTo: true },
-        take: 10,
-      });
     }
 
-    // Employee queries
-    if (lowerQuery.includes('employee')) {
-      return await prisma.employee.findMany({
-        include: { office: true },
-        take: 10,
-      });
+    if (params.availableOnly) {
+      filtered = filtered.filter(a => a.status === 'available');
     }
 
-    // Product queries
-    if (lowerQuery.includes('product')) {
-      return await prisma.product.findMany({ take: 10 });
+    if (params.assignedOnly) {
+      filtered = filtered.filter(a => a.assignedToId !== null);
     }
 
-    // Order queries
-    if (lowerQuery.includes('order')) {
-      return await prisma.order.findMany({
-        include: { employee: true, warehouse: true },
-        take: 10,
-      });
+    if (params.manufacturer) {
+      filtered = filtered.filter(a => a.name?.includes(params.manufacturer));
     }
 
-    return { message: 'No specific query matched. Please be more specific.' };
+    const results = filtered.map(asset => {
+      const deviceClass = classifyDevice(asset.name || '');
+      const specs = parseDeviceSpecs(asset.name || '');
+      return {
+        id: asset.id,
+        serialCode: asset.serialCode,
+        name: asset.name,
+        status: asset.status,
+        deviceClass,
+        specs,
+        country: asset.assignedTo?.address?.country,
+        warehouseId: asset.warehouseId,
+      };
+    }).filter(r => !params.deviceClass || r.deviceClass === params.deviceClass);
+
+    return {
+      params: params,
+      total: results.length,
+      results: results.slice(0, 50),
+    };
   } catch (error) {
     logger.error('Database query error', error);
     throw error;
@@ -94,72 +138,32 @@ aiRouter.post('/chat', async (req, res) => {
     // Get database context
     const dbContext = await getDatabaseContext();
 
-    // Default system prompt
-    const defaultPrompt = `You are a specialized AI assistant for the HAM Agent Workwize Management Platform. Your ONLY purpose is to help users query and analyze data from their local Workwize database cache.
+    // Use custom prompt from frontend (required)
+    if (!customPrompt) {
+      return res.status(400).json({ error: 'System prompt is required. Please configure it in Settings.' });
+    }
 
-STRICT SCOPE LIMITATION:
-- You can ONLY answer questions about the Workwize data in this database
-- You can ONLY query: employees, assets, products, orders, offices, warehouses, and offboards
-- You MUST decline any questions outside this scope, including:
-  - General knowledge questions
-  - Programming help unrelated to querying this data
-  - Other business systems or platforms
-  - Personal advice or opinions
-
-DATA CONTEXT:
-All data has been PII-scrubbed for privacy:
-- Employee names are redacted (e.g., "J***" for "John")
-- Emails are anonymized (e.g., "j***@company.com")
-- Street addresses removed (only city/country kept)
-- Asset notes have PII patterns removed
-
-YOUR RESPONSE STYLE:
-1. For in-scope questions: Analyze the request, explain what you're querying, and provide insights
-2. For out-of-scope questions: Politely decline and remind users of your specific purpose
-3. Always mention when data is redacted for privacy
-4. Be helpful and conversational within your scope
-
-Example responses:
-- IN SCOPE: "How many assets are assigned?" → Query database and provide answer
-- OUT OF SCOPE: "What's the weather?" → "I can only help with Workwize data queries. I cannot provide weather information."
-- OUT OF SCOPE: "How do I write a Python function?" → "I'm specialized for Workwize data analysis only. For programming help, please use a general AI assistant."
-
-Remember: Stay strictly within your scope of Workwize data analysis.`;
-
-    // Build conversation context with custom or default prompt
+    // Build conversation context with custom prompt
     const systemMessage = {
       role: 'system',
-      content: `${customPrompt || defaultPrompt}
+      content: `${customPrompt}
 
 ${dbContext}`,
     };
 
-    // Query database if needed
-    let queryResult = null;
-    if (
-      message.toLowerCase().includes('show') ||
-      message.toLowerCase().includes('list') ||
-      message.toLowerCase().includes('find') ||
-      message.toLowerCase().includes('how many')
-    ) {
-      queryResult = await queryDatabase(message);
-    }
+    const messages = [systemMessage, ...history, { role: 'user', content: message }];
 
-    // Add query results to context if available
-    let userMessage = message;
-    if (queryResult) {
-      userMessage += `\n\n[Database Query Results]: ${JSON.stringify(queryResult, null, 2)}`;
-    }
-
-    const messages = [systemMessage, ...history, { role: 'user', content: userMessage }];
-
-    // Get AI response - lazy load Azure OpenAI only when needed
+    // Get AI response with tool support - AI decides when and how to query
     const { chat } = await import('../lib/azure-openai');
-    const aiResponse = await chat(messages);
+    const { AI_TOOLS } = await import('../lib/ai-tools');
+    
+    const aiResponse = await chat(messages, {
+      tools: AI_TOOLS,
+      maxIterations: 5,
+    });
 
     res.json({
       response: aiResponse,
-      queryResults: queryResult,
     });
   } catch (error: any) {
     logger.error('AI chat error', error);

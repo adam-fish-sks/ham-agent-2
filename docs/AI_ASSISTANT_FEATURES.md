@@ -2,7 +2,15 @@
 
 ## Overview
 
-The HAM Agent 2.0 platform includes an AI-powered assistant that provides natural language querying capabilities for the Workwize data cache. This document covers the implementation, features, and configuration of the AI assistant system.
+The HAM Agent 2.0 platform includes an AI-powered assistant that provides natural language querying capabilities for the Workwize data cache with **automatic query execution** and **intelligent device classification**. This document covers the implementation, features, and configuration of the AI assistant system.
+
+## Key Improvements (Latest)
+
+- ✅ **Single Source of Truth**: One system prompt (Settings page), no dual prompts
+- ✅ **Automatic Query Execution**: AI executes database queries directly, never asks users to run code
+- ✅ **Device Classification**: Built-in logic with explicit rules (Dell Pro 14/16 = Standard Windows)
+- ✅ **Intelligent Filtering**: Country filtering includes both deployed and warehouse-based devices
+- ✅ **Prompt Migration**: Automatically updates outdated prompts to latest comprehensive version
 
 ---
 
@@ -20,15 +28,25 @@ The HAM Agent 2.0 platform includes an AI-powered assistant that provides natura
 **Backend** (`packages/backend/src/routes/ai.ts`):
 
 - Azure OpenAI integration
+- **Automatic query execution** - detects keywords and runs database queries
+- **No default prompt** - requires prompt from frontend (single source of truth)
 - Dynamic database context injection
-- Custom prompt handling
 - Conversation history management
+- Natural language parameter extraction (countries, device classes, status)
+
+**Shared** (`packages/shared/device-classification.ts`):
+
+- Centralized device classification logic
+- `parseDeviceSpecs()` - extracts RAM, CPU, model from asset name
+- `classifyDevice()` - returns Enhanced/Standard Windows/Mac
+- Explicit exclusion rules (Pro 14/16 = Standard Windows)
 
 **Settings** (`packages/frontend/src/app/settings/`):
 
-- System prompt customization interface
+- System prompt customization interface (single source of truth)
+- **Automatic prompt migration** - detects outdated prompts and upgrades
 - Save/restore functionality
-- Smart button UX states
+- Comprehensive default prompt with device classification rules
 
 ---
 
@@ -75,9 +93,74 @@ useEffect(() => {
 - Testing prompt changes
 - Removing sensitive queries from history
 
-### 3. Custom System Prompts
+### 3. Automatic Query Execution
 
-**Feature**: Full customization of AI assistant behavior through editable system prompts
+**Feature**: AI assistant automatically executes database queries without asking users to run code
+
+**Implementation**:
+
+```typescript
+// Backend detects query keywords and parameters
+if (lowerQuery.includes('how many') || lowerQuery.includes('show') || ...) {
+  queryResult = await queryDatabase(message);
+}
+
+// Natural language parameter extraction
+const detectedCountry = countries.find(c => lowerQuery.includes(c.toLowerCase()));
+if (lowerQuery.match(/enhanced.*windows/i)) {
+  searchParams.deviceClass = 'Enhanced Windows';
+}
+if (lowerQuery.includes('in warehouse')) {
+  searchParams.warehouseOnly = true;
+}
+```
+
+**Benefits**:
+- Users get direct answers, not code snippets
+- No need to run PowerShell/JavaScript manually
+- AI understands "in warehouse" vs "in Canada" semantics
+- Results are automatically formatted and presented
+
+### 4. Device Classification System
+
+**Feature**: Centralized device classification logic with explicit exclusion rules
+
+**Location**: `packages/shared/device-classification.ts`
+
+**Functions**:
+
+```typescript
+export function parseDeviceSpecs(assetName: string): DeviceSpecs {
+  // Extracts manufacturer, model, RAM, CPU from asset name string
+  // Example: "Dell, XPS 16 9640, 32GB RAM" → {manufacturer: 'Dell', ramGb: 32, ...}
+}
+
+export function classifyDevice(assetName: string): DeviceClass {
+  // Returns: 'Enhanced Windows' | 'Standard Windows' | 'Enhanced Mac' | 'Standard Mac' | 'Other'
+  
+  // Windows: Check for Pro 14/16 FIRST (explicit exclusion)
+  if (assetName.match(/Latitude|Pro 14|Pro 16|Vostro|Inspiron/i)) {
+    return 'Standard Windows';
+  }
+  
+  // Then check for Enhanced: XPS/Precision/Pro Max with >16GB OR high-end CPU
+  if (assetName.match(/\b(Xps|Precision|Pro Max)\b/i)) {
+    if ((ramGb > 16) || assetName.match(/\b(i9|Ultra 9)\b|i7.*HX/i)) {
+      return 'Enhanced Windows';
+    }
+  }
+}
+```
+
+**Key Rules**:
+- Dell Pro 14 Plus = Standard Windows (no discrete GPU)
+- Only XPS/Precision/Pro Max qualify as Enhanced
+- Word boundaries prevent "Pro 14" matching "Pro Max"
+- Mac: M3/M4/M5 Pro/Max with 32GB+ = Enhanced
+
+### 5. Custom System Prompts
+
+**Feature**: Single source of truth for AI behavior - editable in Settings page
 
 **Storage**:
 
@@ -85,19 +168,35 @@ useEffect(() => {
 - Format: Plain text string
 - Sent with every chat request
 
-**Default Prompt** (Scope-Limited):
+**Default Prompt** (Comprehensive):
 
 ```
-You are a specialized AI assistant for the HAM Agent Workwize Management Platform.
-Your ONLY purpose is to help users query and analyze data from their local Workwize
-database cache.
+You are the AI assistant for the HAM Agent Workwize Management Platform with DIRECT DATABASE ACCESS.
 
-STRICT SCOPE LIMITATION:
-- You can ONLY answer questions about the Workwize data in this database
-- You can ONLY query: employees, assets, products, orders, offices, warehouses, and offboards
-- You MUST decline any questions outside this scope, including:
-  - General knowledge questions
-  - Programming help unrelated to querying this data
+CRITICAL - AUTOMATIC QUERY EXECUTION:
+- You have the ability to AUTOMATICALLY query the database - DO NOT ask users to run queries
+- NEVER provide code snippets or ask users to run PowerShell/JavaScript
+- ALWAYS execute queries yourself and present the results directly
+
+DEVICE CLASSIFICATION RULES (UNDERSTAND THESE):
+
+Enhanced Windows:
+- Models: Dell XPS, Dell Precision, Dell Pro Max ONLY
+- Exclusions: Dell Pro 14, Dell Pro 16, Latitude, Vostro, Inspiron = Standard Windows
+- Requirements: Must have >16GB RAM OR high-end CPU (i9, Ultra 9, HX-series)
+- Why: These have discrete GPUs (NVIDIA RTX) and workstation-grade specs
+
+Standard Windows:
+- Models: Dell Latitude, Pro 14, Pro 16, Vostro, Inspiron
+- Specs: ≤16GB RAM, integrated graphics only
+
+Enhanced Mac:
+- CPUs: M3/M4/M5 Pro or Max chips ONLY
+- RAM: ≥32GB required
+
+Standard Mac:
+- Models: All MacBook Air, Intel-based MacBook Pro
+- CPUs: M1, M2, base M3/M4/M5
   - Other business systems or platforms
   - Personal advice or opinions
 
