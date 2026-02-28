@@ -1,5 +1,94 @@
 # HAM Agent 2.0 - Changelog
 
+## [2.1.0] - February 28, 2026
+
+### Changed
+
+#### AI Assistant Architecture Overhaul
+
+- **Function Calling Implementation**: Complete refactor from hardcoded pattern matching to AI function calling
+  - AI now uses tools (`query_database`, `read_file`, `search_code`) to reason about queries
+  - No more regex patterns or string matching for country/device detection
+  - AI determines query parameters through reasoning, not templates
+  - Handles typos, variations, and complex queries naturally
+  - See: [packages/backend/src/lib/ai-tools.ts](../packages/backend/src/lib/ai-tools.ts)
+
+- **Removed Hardcoded Logic**: Eliminated 100+ lines of pattern matching code
+  - Deleted country adjective mappings (canadian→Canada, etc.)
+  - Removed device class regex patterns
+  - Eliminated keyword detection for "in warehouse" queries
+  - AI now reasons about these concepts instead of matching strings
+
+- **Tool-Based Architecture**: AI operates like a senior engineer
+  - `query_database`: Execute filtered database queries with AI-determined parameters
+  - `read_file`: Inspect code to understand implementation details
+  - `search_code`: Find patterns in codebase for debugging
+  - `analyze_filter_logic`: Debug query filtering issues
+  - Can chain tools to investigate and solve problems
+
+- **Azure OpenAI Integration Fix**: Updated function calling for Azure compatibility
+  - Azure doesn't support `tool` role properly
+  - Tool results now sent as `user` messages with `[Tool: function_name]` prefix
+  - Maintains conversation flow while working within Azure limitations
+
+### Fixed
+
+- **warehouseId Type Mismatch**: Fixed number/string comparison bug
+  - Database stores warehouseId as number, mapping returned string
+  - JavaScript `===` failed on number vs string comparison
+  - Now converts to string for comparison: `warehouseId?.toString() === '8'`
+  - Previously returned incorrect warehouse results
+
+### Added
+
+- **Device Classification System**: Centralized classification logic
+  - New file: [packages/shared/device-classification.ts](../packages/shared/device-classification.ts)
+  - `parseDeviceSpecs()`: Extracts RAM, CPU, model from asset names
+  - `classifyDevice()`: Returns Enhanced/Standard Windows/Mac
+  - Explicit exclusion rules (Dell Pro 14/16 = Standard Windows first)
+  - Used by both frontend and backend for consistency
+
+- **AI Tools Module**: Comprehensive tool execution framework
+  - File: [packages/backend/src/lib/ai-tools.ts](../packages/backend/src/lib/ai-tools.ts)
+  - Exports tool definitions and execution handlers
+  - Handles file reading, code searching, database querying
+  - Provides clean interface for Azure OpenAI function calling
+
+### Improved
+
+- **Query Performance**: Faster and more accurate results
+  - No pre-querying on every message
+  - Only queries when AI determines it's needed
+  - More precise parameter determination through reasoning
+  - Handles edge cases without hardcoded special cases
+
+- **Natural Language Understanding**: Better handling of variations
+  - Understands "canadian warehouse", "devices in Canada", "Canada inventory"
+  - Handles typos naturally (netherladns, philipines, etc.)
+  - No need to maintain typo dictionaries or variation lists
+  - AI reasoning adapts to new phrasings without code changes
+
+- **System Prompt**: Updated to reflect tool-based capabilities
+  - Added "CODE INSPECTION TOOLS" section
+  - Documented available tools and when to use them
+  - Instructions for debugging with tools
+  - Example: "If results seem wrong, use analyze_filter_logic"
+
+### Documentation
+
+- **Updated README**: Reflects function calling architecture
+  - Emphasizes "True AI reasoning" vs SQL frontend
+  - Documents tool-based approach
+  - Updated feature list with function calling benefits
+
+- **Updated AI_ASSISTANT_FEATURES.md**: Complete rewrite of architecture section
+  - Documents function calling implementation
+  - Explains tool usage patterns
+  - Provides examples of AI reasoning
+  - Covers benefits over hardcoded patterns
+
+---
+
 ## [2.0.3] - February 26, 2026
 
 ### Added

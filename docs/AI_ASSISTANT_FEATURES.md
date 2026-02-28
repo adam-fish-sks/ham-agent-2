@@ -2,14 +2,16 @@
 
 ## Overview
 
-The HAM Agent 2.0 platform includes an AI-powered assistant that provides natural language querying capabilities for the Workwize data cache with **automatic query execution** and **intelligent device classification**. This document covers the implementation, features, and configuration of the AI assistant system.
+The HAM Agent 2.0 platform includes an AI-powered assistant that uses **function calling** to provide intelligent natural language querying capabilities for the Workwize data cache. The AI reasons about queries like a human engineer and uses tools to execute database queries, read code, and debug issues. This document covers the implementation, features, and configuration of the AI assistant system.
 
 ## Key Improvements (Latest)
 
+- ✅ **Function Calling Architecture**: AI uses tools (query_database, read_file, search_code) instead of hardcoded patterns
+- ✅ **True AI Reasoning**: AI decides query parameters based on understanding, not string matching
 - ✅ **Single Source of Truth**: One system prompt (Settings page), no dual prompts
 - ✅ **Automatic Query Execution**: AI executes database queries directly, never asks users to run code
 - ✅ **Device Classification**: Built-in logic with explicit rules (Dell Pro 14/16 = Standard Windows)
-- ✅ **Intelligent Filtering**: Country filtering includes both deployed and warehouse-based devices
+- ✅ **Natural Language Flexibility**: Handles typos, variations, and complex queries without hardcoding
 - ✅ **Prompt Migration**: Automatically updates outdated prompts to latest comprehensive version
 
 ---
@@ -27,12 +29,13 @@ The HAM Agent 2.0 platform includes an AI-powered assistant that provides natura
 
 **Backend** (`packages/backend/src/routes/ai.ts`):
 
-- Azure OpenAI integration
-- **Automatic query execution** - detects keywords and runs database queries
+- Azure OpenAI integration with function calling support
+- **Tool-based architecture** - AI uses `query_database` tool to execute queries
+- **No hardcoded patterns** - AI reasons about queries and determines parameters
 - **No default prompt** - requires prompt from frontend (single source of truth)
 - Dynamic database context injection
 - Conversation history management
-- Natural language parameter extraction (countries, device classes, status)
+- Supports multiple tools: query_database, read_file, search_code, analyze_filter_logic
 
 **Shared** (`packages/shared/device-classification.ts`):
 
@@ -95,31 +98,46 @@ useEffect(() => {
 
 ### 3. Automatic Query Execution
 
-**Feature**: AI assistant automatically executes database queries without asking users to run code
+### 3. Function Calling Architecture
+
+**Feature**: AI uses tools to query database and debug issues, reasoning like a human engineer
 
 **Implementation**:
 
 ```typescript
-// Backend detects query keywords and parameters
-if (lowerQuery.includes('how many') || lowerQuery.includes('show') || ...) {
-  queryResult = await queryDatabase(message);
-}
+// AI decides which tool to use and with what parameters
+const AI_TOOLS = [
+  {
+    name: 'query_database',
+    description: 'Execute database query with intelligent filters',
+    parameters: {
+      country: 'Filter by country name (Canada, United States, etc.)',
+      deviceClass: 'Enhanced Windows | Standard Windows | Enhanced Mac | Standard Mac',
+      warehouseOnly: 'true when user asks about devices "in warehouse"',
+      availableOnly: 'Only show devices with status=available',
+    }
+  },
+  // Also: read_file, search_code, analyze_filter_logic
+];
 
-// Natural language parameter extraction
-const detectedCountry = countries.find(c => lowerQuery.includes(c.toLowerCase()));
-if (lowerQuery.match(/enhanced.*windows/i)) {
-  searchParams.deviceClass = 'Enhanced Windows';
-}
-if (lowerQuery.includes('in warehouse')) {
-  searchParams.warehouseOnly = true;
-}
+// AI reasons and calls tool
+// User: "Enhanced Windows in Canadian warehouse"
+// AI thinks: warehouse query → country='Canada', deviceClass='Enhanced Windows', warehouseOnly=true
+// AI calls: query_database({country: 'Canada', deviceClass: 'Enhanced Windows', warehouseOnly: true})
 ```
 
 **Benefits**:
-- Users get direct answers, not code snippets
-- No need to run PowerShell/JavaScript manually
-- AI understands "in warehouse" vs "in Canada" semantics
-- Results are automatically formatted and presented
+- No hardcoded string matching or regex patterns
+- AI handles typos, variations, and complex queries naturally
+- Can combine multiple tools (query, then read code to debug issues)
+- Works like a real engineer, not a SQL template engine
+- Faster and more accurate than pattern matching
+
+**Tools Available**:
+- `query_database` - Execute filtered database queries
+- `read_file` - Inspect code files to understand implementation
+- `search_code` - Find patterns in codebase
+- `analyze_filter_logic` - Debug query filtering issues
 
 ### 4. Device Classification System
 
@@ -171,12 +189,27 @@ export function classifyDevice(assetName: string): DeviceClass {
 **Default Prompt** (Comprehensive):
 
 ```
-You are the AI assistant for the HAM Agent Workwize Management Platform with DIRECT DATABASE ACCESS.
+You are the AI assistant for the HAM Agent Workwize Management Platform with DIRECT DATABASE ACCESS and CODE INSPECTION TOOLS.
+
+YOUR CAPABILITIES (LIKE A SENIOR ENGINEER):
+✓ Read any code file in the project to understand implementation
+✓ Search the codebase for specific patterns or logic
+✓ Query the database with intelligent filters
+✓ Debug your own queries by inspecting the filtering logic
+✓ Iterate on solutions - if something doesn't work, investigate and try again
 
 CRITICAL - AUTOMATIC QUERY EXECUTION:
-- You have the ability to AUTOMATICALLY query the database - DO NOT ask users to run queries
+- You have the ability to AUTOMATICALLY query the database using tools
 - NEVER provide code snippets or ask users to run PowerShell/JavaScript
-- ALWAYS execute queries yourself and present the results directly
+- ALWAYS use the query_database tool and present results directly
+- If results seem wrong, use analyze_filter_logic or read_file to debug
+
+TOOL USAGE - WHEN TO INVESTIGATE:
+- If query results seem wrong (0 devices when you expect some):
+  1. Use analyze_filter_logic to inspect how the query was parsed
+  2. Use read_file to check the actual filtering code
+  3. Explain what SHOULD have happened vs. what DID happen
+- Be proactive: If results are suspicious, investigate automatically
 
 DEVICE CLASSIFICATION RULES (UNDERSTAND THESE):
 
@@ -195,6 +228,8 @@ Enhanced Mac:
 - RAM: ≥32GB required
 
 Standard Mac:
+- Models: All MacBook Air, Intel-based MacBook Pro
+- CPUs: M1, M2, base M3/M4/M5
 - Models: All MacBook Air, Intel-based MacBook Pro
 - CPUs: M1, M2, base M3/M4/M5
   - Other business systems or platforms
